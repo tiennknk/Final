@@ -1,0 +1,185 @@
+#customers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: separate;   /* Để border-radius hoạt động */
+  border-spacing: 0;
+  width: 90%;
+  max-width: 950px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 18px;         /* Bo góc đều */
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+#customers th:first-child {
+  border-top-left-radius: 18px;
+}
+#customers th:last-child {
+  border-top-right-radius: 18px;
+}
+#customers tr:last-child td:first-child {
+  border-bottom-left-radius: 18px;
+}
+#customers tr:last-child td:last-child {
+  border-bottom-right-radius: 18px;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+}
+
+.btn-edit{
+    width: 50px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: orange;
+
+    &:hover{
+        background-color: transparent !important;
+        color: orange !important;
+    }
+}
+
+.btn-delete{
+    width: 50px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: red;
+
+    &:hover{
+        background-color: transparent !important;
+        color: red !important;
+    }
+}
+
+.user-redux-container {
+  max-width: 700px;
+  margin: 36px auto 0 auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 32px 38px 18px 38px;
+}
+
+.user-redux-container .title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1677ff;
+  letter-spacing: 1px;
+}
+
+.user-redux-body .row {
+  justify-content: center;
+}
+
+.user-redux-body .col-5 {
+  flex: 0 0 45%;
+  max-width: 45%;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.modal-user-container{
+  .modal-content{
+    .modal-header{
+      button{
+        background-color: transparent !important;
+        border: none;
+        color: white;
+        font-size: 30px;
+      }
+    }
+  }
+
+  .modal-user-body{
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    .input-container{
+      width: 59%;
+      display: flex;
+      flex-direction: column;
+
+      &.max-width-input{
+        width: 100%;
+      }
+
+      input{
+        padding: 0 10px;
+        border-radius: 5px;
+        border: 1px solid grey;
+        height: 30px;
+        outline: none;
+      }
+    }
+  }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1677ff;
+  letter-spacing: 1px;
+}
+
+.user-redux-body .btn-primary:hover {
+  background: #095ecb;
+}
+
+@media (max-width: 900px) {
+  .user-redux-container {
+    max-width: 98vw;
+    padding: 16px 2vw;
+  }
+  .user-redux-body .col-5,
+  .user-redux-body .col-6 {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+}
+
+/* Nút thêm mới người dùng nổi ở góc phải dưới */
+.add-user-btn-floating {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  z-index: 999;
+  background: #1677ff;
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 26px;
+  box-shadow: 0 4px 16px rgba(22,119,255,0.1);
+  cursor: pointer;
+  transition: background 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.add-user-btn-floating:hover {
+  background: #095ecb;
+}

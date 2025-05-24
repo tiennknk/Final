@@ -1,0 +1,114 @@
+.user-redux-container {
+
+    .title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #1677ff;
+        letter-spacing: 1px;
+      }
+
+    max-width: 700px;
+    margin: 36px auto 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px 38px 18px 38px;
+  }
+  
+  .user-redux-container .title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1677ff;
+    letter-spacing: 1px;
+  }
+  
+  .user-redux-body .row {
+    justify-content: center;
+  }
+  
+  .user-redux-body .col-6, .user-redux-body .col-4, .user-redux-body .col-12 {
+    margin-bottom: 18px;
+  }
+  
+  .user-redux-body label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #222;
+    font-size: 1rem;
+  }
+  
+  .user-redux-body input.form-control,
+  .user-redux-body select.form-control {
+    width: 100%;
+    font-size: 1rem;
+    border-radius: 6px;
+    padding: 6px 12px;
+    border: 1px solid #bfc6d1;
+    background: #f9fafe;
+    margin-bottom: 2px;
+    transition: border 0.18s;
+  }
+  .user-redux-body input.form-control:focus,
+  .user-redux-body select.form-control:focus {
+    border: 1.5px solid #1677ff;
+    background: #fff;
+  }
+  
+  .label-upload {
+    color: #1677ff;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 1rem;
+  }
+  
+  .preview-image {
+    width: 60px;
+    height: 60px;
+    background: #eee center center/cover no-repeat;
+    border-radius: 8px;   /* hình vuông */
+    margin-left: 16px;
+    cursor: pointer;
+    border: 1.5px solid #bfc6d1;
+    display: block;
+    object-fit: cover;
+  }
+  
+  .btn-save-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .table-wrapper-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+  
+  /* Table bo tròn */
+  #customers {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin: 0 auto;
+    width: 100%;
+    background: #fff;
+  }
+  #customers th:first-child {
+    border-top-left-radius: 14px;
+  }
+  #customers th:last-child {
+    border-top-right-radius: 14px;
+  }
+  #customers tr:last-child td:first-child {
+    border-bottom-left-radius: 14px;
+  }
+  #customers tr:last-child td:last-child {
+    border-bottom-right-radius: 14px;
+  }

@@ -1,0 +1,174 @@
+.home-header-container {
+    height: 60px;
+    width: 100%;
+    padding: 0 20px;
+
+    .home-header-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        border: 1px solid black;
+
+        .left-content {
+            width: 25%;
+            display: flex;
+            align-items: center;
+            
+
+            .header-logo {
+                background: center center no-repeat;
+                height: 100%;
+                width: 100%;
+                cursor: pointer;
+            }
+
+            i {
+                font-size: 30px;
+                color: black;
+                cursor: pointer;
+            }
+        }
+
+        .center-content {
+            width: 35%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid blue;
+
+            .child-content {
+                .subs-title {
+                    font-weight: 400;
+                    font-size: 12px;
+                }
+            }
+        }
+
+        .right-content {
+            padding: 15px;
+            width: 25%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            
+            .support{
+                padding-right: 50px;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+
+                i{
+                    font-size: 15px;
+                    margin-right: 5px;
+                }
+            }
+        }
+
+    }
+
+
+}
+
+.home-header-banner{
+    background: url('../../assets/images/backgroundheader.webp') center center no-repeat;
+    height: 900px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+
+    .content-up{
+        border: 1px solid black;
+        height: 50%;
+        padding-top: 50px;
+
+        .title1{
+            text-align: center;
+            font-size: 40px;
+            color: white;
+            text-shadow: 1px 1px 1px #333;
+            margin-top: 60px;
+            margin-bottom: 50px;
+        }
+    
+        .title2{
+            text-align: center;
+            font-size: 40px;
+            color: white;
+            text-shadow: 1px 1px 1px #333;
+            margin-bottom: 55px;
+        }
+    
+        .search{
+            width: fit-content;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+            align-items: center;
+            padding: 15px;
+            border-radius: 25px;
+            background-color: yellow;
+    
+            i {
+                margin: 0 5px;
+            }
+    
+            input{
+                height: 30px;
+                width: 500px;
+                background: transparent;
+                border: none;
+                outline: none;
+            }
+        }
+    }
+
+    .content-down{
+        border: 1px solid green;
+        height: 50%;
+        padding-bottom: 200px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.5));
+
+        .options{
+            text-align: center;
+            display: flex;
+            gap: 80px; // tăng khoảng cách nếu muốn
+            justify-content: space-between;
+
+            .option-child{
+                width: 220px; // tăng lên
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .icon-child{
+                    background: white;
+                    width: 70px;    // tăng lên
+                    height: 70px;   // tăng lên
+                    padding: 0;     // padding không cần nhiều nữa
+                    border-radius: 50%;
+                    text-align: center;
+                    margin: 0 auto;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    i {
+                        font-size: 36px; // tăng icon lên cho to hơn
+                        color: #222;
+                    }
+                }
+                .text-child{
+                    margin-top: 10px;
+                    font-size: 20px; // tăng chữ lên cho nổi
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
