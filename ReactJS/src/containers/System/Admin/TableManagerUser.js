@@ -3,14 +3,22 @@ import {FormattedMessage} from "react-intl";
 import {connect} from "react-redux";
 import * as actions from "../../../store/actions";
 import "./TableManagerUser.scss";
+import MarkdownIt from "markdown-it";
+import MdEditor from "react-markdown-editor-lite";
+import "react-markdown-editor-lite/lib/index.css";
+
+const mdParser = new MarkdownIt(/* Markdown-it options */);
+
+function handleEditorChange({ html, text }) {
+    console.log("handleEditorChange", html, text);
+}
 
 class TableManagerUser extends Component {
     constructor(props) {
         super(props);
         this.state = {
             usersRedux: [],
-
-        }
+        };
     }
 
     componentDidMount() {
@@ -21,7 +29,7 @@ class TableManagerUser extends Component {
         if (prevProps.listUsers !== this.props.listUsers) {
             this.setState({
                 usersRedux: this.props.listUsers
-            })
+            });
         }
     }
 
@@ -32,37 +40,42 @@ class TableManagerUser extends Component {
     render() {
         let arrUsers = this.state.usersRedux;
         return (
-            <table id="TableManagerUser">
-                <tbody>
-                <tr>
-                    <th>Email</th>
-                    <th>Tên</th>
-                    <th>Họ</th>
-                    <th>Địa chỉ</th>
-                    <th>Hành động</th>
-                </tr>
-                {arrUsers && arrUsers.length > 0 &&
-                arrUsers.map((item, index) => {
-                    return (
-                        <tr key={index}>
-                            <td>{item.email}</td>
-                            <td>{item.firstName}</td>
-                            <td>{item.lastName}</td>
-                            <td>{item.address}</td>
-                            <td>
-                                <button className="btn-edit">
-                                    <i className="fas fa-pencil-alt"></i>
-                                </button>
-                                <button className="btn-delete" onClick={() => this.handleDeleteUser(item)}>
-                                    <i className="fas fa-trash"></i>
-                                </button>
-                            </td>
+            <React.Fragment>
+                <table id="TableManagerUser">
+                    <tbody>
+                        <tr>
+                            <th>Email</th>
+                            <th>Tên</th>
+                            <th>Họ</th>
+                            <th>Địa chỉ</th>
+                            <th>Hành động</th>
                         </tr>
-                    )
-                })}
-                </tbody>
-            </table>
-        )
+                        {arrUsers && arrUsers.length > 0 &&
+                        arrUsers.map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td>{item.email}</td>
+                                    <td>{item.firstName}</td>
+                                    <td>{item.lastName}</td>
+                                    <td>{item.address}</td>
+                                    <td>
+                                        <button
+                                            className="btn-edit"
+                                            onClick={() => this.props.handleEditUserFromParent(item)}
+                                        >
+                                            <i className="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button className="btn-delete" onClick={() => this.handleDeleteUser(item)}>
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </React.Fragment>
+        );
     }
 }
 

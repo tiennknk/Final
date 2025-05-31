@@ -1,9 +1,9 @@
-import db from "../models/index.js";
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
+import db from '../models/index.js';
 
 const salt = bcrypt.genSaltSync(10);
 
-let hashUserPassword = (password) => {
+const hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
         try {
             let hashPassword = await bcrypt.hashSync(password, salt);
@@ -11,21 +11,18 @@ let hashUserPassword = (password) => {
         } catch (e) {
             reject(e);
         }
-    })
-}
+    });
+};
 
-let handleUserLogin = (email, password) => {
+const handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             let userData = {};
             let isExist = await checkUserEmail(email);
             if (isExist) {
-
                 let user = await db.User.findOne({
                     attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'],
-                    where: {
-                        email: email
-                    },
+                    where: { email: email },
                     raw: true,
                 });
 
@@ -40,7 +37,6 @@ let handleUserLogin = (email, password) => {
                         userData.errCode = 3;
                         userData.errMessage = 'Wrong password';
                     }
-
                 } else {
                     userData.errCode = 2;
                     userData.errMessage = 'User not found';
@@ -49,21 +45,18 @@ let handleUserLogin = (email, password) => {
                 userData.errCode = 1;
                 userData.errMessage = 'Sai email';
             }
-
             resolve(userData);
         } catch (e) {
             reject(e);
         }
-    })
-}
+    });
+};
 
-let checkUserEmail = (userEmail) => {
+const checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: {
-                    email: userEmail
-                }
+                where: { email: userEmail }
             });
             if (user) {
                 resolve(true);
@@ -74,37 +67,31 @@ let checkUserEmail = (userEmail) => {
             reject(e);
         }
     });
-}
+};
 
-let getAllUsers = (userId) => {
+const getAllUsers = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let users = '';
             if (userId == 'ALL') {
                 users = await db.User.findAll({
-                    attributes: {
-                        exclude: ['password']
-                    }
-                })
+                    attributes: { exclude: ['password'] }
+                });
             }
             if (userId && userId !== 'ALL') {
                 users = await db.User.findOne({
-                    where: {
-                        id: userId
-                    },
-                    attributes: {
-                        exclude: ['password']
-                    }
-                })
+                    where: { id: userId },
+                    attributes: { exclude: ['password'] }
+                });
             }
-            resolve(users)
+            resolve(users);
         } catch (e) {
             reject(e);
         }
-    })
-}
+    });
+};
 
-let createNewUser = (data) => {
+const createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let check = await checkUserEmail(data.email);
@@ -112,9 +99,16 @@ let createNewUser = (data) => {
                 resolve({
                     errCode: 1,
                     errMessage: 'Email da ton tai'
-                })
+                });
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+
+                // SỬA TẠI ĐÂY: luôn loại bỏ prefix nếu có
+                let base64String = data.avatar;
+                if (base64String) {
+                    base64String = base64String.replace(/^data:image\/\w+;base64,/, "");
+                }
+
                 await db.User.create({
                     email: data.email,
                     password: hashPasswordFromBcrypt,
@@ -124,71 +118,75 @@ let createNewUser = (data) => {
                     phonenumber: data.phonenumber,
                     gender: data.gender,
                     roleId: data.roleId,
-                    positionId: data.positionId
-                })
+                    positionId: data.positionId,
+                    image: base64String ? Buffer.from(base64String, 'base64') : null, // SỬA Ở ĐÂY
+                });
                 resolve({
                     errCode: 0,
                     message: 'tao user thanh cong'
-                })
+                });
             }
         } catch (e) {
             reject(e);
         }
-    })
-}
+    });
+};
 
-let deleteUser = (userId) => {
+
+const deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         let founduser = await db.User.findOne({
-            where: {
-                id: userId
-            }
-        })
+            where: { id: userId }
+        });
         if (!founduser) {
             resolve({
                 errCode: 2,
                 errMessage: `user khong ton tai`
-            })
+            });
         }
         await db.User.destroy({
-            where: {
-                id: userId
-            }
-        })
+            where: { id: userId }
+        });
         resolve({
             errCode: 0,
             message: 'Delete user thanh cong'
         });
-    })
-}
+    });
+};
 
-let updateUserData = (data) => {
+const updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id) {
+            if (!data.id || !data.roleId || !data.positionId || !data.gender) {
                 resolve({
                     errCode: 2,
                     errMessage: 'Missing required parameter'
-                })
+                });
             }
 
             let user = await db.User.findOne({
-                where: {
-                    id: data.id
-                },
+                where: { id: data.id },
                 raw: false
-            })
+            });
             if (user) {
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
-
+                user.phonenumber = data.phonenumber;
+                user.gender = data.gender;
+                user.roleId = data.roleId;
+                user.positionId = data.positionId;
+                if (data.avatar) {
+                    // SỬA TẠI ĐÂY: luôn loại bỏ prefix nếu có
+                    let base64String = data.avatar.replace(/^data:image\/\w+;base64,/, "");
+                    user.image = Buffer.from(base64String, 'base64');
+                }
                 await user.save();
 
                 resolve({
                     errCode: 0,
                     message: 'Update the user succeed'
-                })
+                });
             } else {
                 resolve({
                     errCode: 1,
@@ -198,40 +196,37 @@ let updateUserData = (data) => {
         } catch (e) {
             reject(e);
         }
-    })
-}
+    });
+};
 
-let getAllCodeSerVice = (typeInput) => {
+const getAllCodeSerVice = (typeInput) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!typeInput) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing required parameters !'
-                })
+                });
             } else {
                 let res = {};
                 let allcode = await db.Allcode.findAll({
-                    where: {
-                        type: typeInput
-                    }
+                    where: { type: typeInput }
                 });
                 res.errCode = 0;
                 res.data = allcode;
                 resolve(res);
-
             }
         } catch (e) {
             reject(e);
         }
-    })
-}
+    });
+};
 
-module.exports = {
-    handleUserLogin: handleUserLogin,
-    getAllUsers: getAllUsers,
-    createNewUser: createNewUser,
-    updateUserData: updateUserData,
-    deleteUser: deleteUser,
-    getAllCodeSerVice: getAllCodeSerVice
-}
+export default {
+    handleUserLogin,
+    getAllUsers,
+    createNewUser,
+    updateUserData,
+    deleteUser,
+    getAllCodeSerVice
+};

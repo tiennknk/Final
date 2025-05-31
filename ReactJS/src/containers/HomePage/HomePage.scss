@@ -58,7 +58,7 @@
             }
 
             &.section-outstanding-doctor{
-                background-image: url('../../assets/images/Download.jpg');
+                // background-image: url('../../assets/images/Download.jpg');
                 width: 120px;
                 height: 120px;
                 border-radius: 50%;
@@ -70,6 +70,10 @@
         }
         }
     }
+}
+
+.sick-disabled{
+    display: none !important;
 }
 
 .section-share{

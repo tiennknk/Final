@@ -10,6 +10,13 @@ export const languages = {
     VI: 'vi',
     EN: 'en'
 };
+
+export const CRUD_ACTIONS = {
+    CREATE: 'CREATE',
+    EDIT: 'EDIT',
+    UPDATE: 'UPDATE',
+    DELETE: 'DELETE'
+};
  
 export const manageActions = {
     ADD: "ADD",
