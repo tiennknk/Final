@@ -16,6 +16,34 @@ const getTopDoctorHome = async (req, res) => {
     }
 };
 
+const getAllDoctors = async (req, res) => {
+    try {
+        let doctors = await doctorService.getAllDoctors();
+        return res.status(200).json(doctors);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errorCode: -1,
+            message: 'Error from server',
+        });
+    }
+}
+
+const postInfoDoctor = async (req, res) => {
+    try {
+        let response = await doctorService.saveDetailInfoDoctor(req.body);
+        return res.status(200).json(response); // <-- trả response từ service
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+        });
+    }
+}
+
 export default {
     getTopDoctorHome,
+    getAllDoctors,
+    postInfoDoctor
 };
