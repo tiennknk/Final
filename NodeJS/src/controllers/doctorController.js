@@ -29,6 +29,19 @@ const getAllDoctors = async (req, res) => {
     }
 }
 
+const getDetailDoctorById = async (req, res) => {
+    try {
+        let info = await doctorService.getDetailDoctorById(req.query.id);
+        return res.status(200).json(info);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errorCode: -1,
+            message: 'Error from server',
+        });
+    }
+}
+
 const postInfoDoctor = async (req, res) => {
     try {
         let response = await doctorService.saveDetailInfoDoctor(req.body);
@@ -45,5 +58,6 @@ const postInfoDoctor = async (req, res) => {
 export default {
     getTopDoctorHome,
     getAllDoctors,
-    postInfoDoctor
+    postInfoDoctor,
+    getDetailDoctorById,
 };

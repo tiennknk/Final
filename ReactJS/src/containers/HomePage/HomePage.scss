@@ -123,11 +123,17 @@
         }
         .section-customize{
             padding: 5px;
-            border: 1px solid red;
+            cursor: pointer;
 
             .customize-border{
                 border: 1px solid orange;
                 padding: 20px;
             }
     }
+}
+
+.home-footer{
+    text-align: center;
+    padding: 20px;
+    
 }

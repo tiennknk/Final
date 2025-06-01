@@ -5,7 +5,7 @@ import { Model } from 'sequelize';
 export default (sequelize, DataTypes) => {
     class Markdown extends Model {
         static associate(models) {
-            // define association here
+            Markdown.belongsTo(models.User, { foreignKey: 'doctorId' });
         }
     }
 
