@@ -5,6 +5,7 @@ import UserManage from '../containers/System/UserManage';
 import UserRedux from '../containers/System/Admin/UserRedux';
 import Header from '../containers/Header/Header';
 import ManageDoctor from '../containers/System/Admin/ManageDoctor';
+import ManageSchedule from '../containers/System/Doctor/ManageSchedule'; // Thêm dòng này
 
 class System extends Component {
     render() {
@@ -12,16 +13,17 @@ class System extends Component {
         return (
             <React.Fragment>
                 {isLoggedIn && <Header />}
-            <div className="system-container">
-                <div className="system-list">
-                    <Switch>
-                        <Route path="/system/user-manage" component={UserManage} />
-                        <Route path="/system/user-redux" component={UserRedux} />
-                        <Route path="/system/manage-doctor" component={ManageDoctor} />
-                        <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />
-                    </Switch>
-                </div>
-            </div> 
+                <div className="system-container">
+                    <div className="system-list">
+                        <Switch>
+                            <Route path="/system/user-manage" component={UserManage} />
+                            <Route path="/system/user-redux" component={UserRedux} />
+                            <Route path="/system/manage-doctor" component={ManageDoctor} />
+                            <Route path="/system/manage-schedule" component={ManageSchedule} /> {/* Thêm dòng này */}
+                            <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />
+                        </Switch>
+                    </div>
+                </div> 
             </React.Fragment>
         );
     }

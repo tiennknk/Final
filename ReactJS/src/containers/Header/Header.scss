@@ -4,26 +4,57 @@
     z-index: 99;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     background-color: $colormain;
     color: $common-text-color;
-    height: 40px;
+    height: 42px;
     position: relative;
+    padding: 0 16px;
+
+    .header-tabs-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        right: 55px;
+        top: 0;
+        height: 100%;
+
+        .welcome {
+            margin-right: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+    }
+
     .btn-logout {
         color: $common-text-color;
-        line-height: 40px;
-        height: 40px;
+        line-height: 42px;
+        height: 42px;
         padding: 0 10px;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        top: 0;
+
         &:hover {
             background-color: darken($colormain, 5);
         }
         i {
-            font-size: $base-size + 1px;
-        }
-    }
-
-    .header-right{
-        .welcome{
-            margin-right: 10px;
+            font-size: 22px;
         }
     }
 }

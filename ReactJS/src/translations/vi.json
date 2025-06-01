@@ -6,7 +6,7 @@
         "decentralize": "Phân quyền",
         "close": "Đóng",
         "save": "Lưu",
-        "refresh": "Refresh",
+        "refresh": "Làm mới",
         "accept": "Chấp nhận",
         "confirm": "Xác nhận",
         "confirm-this-task": "Bạn có chắc chắn thực hiện tác vụ này?",
@@ -132,5 +132,12 @@
             "remove-assign-fail": "Bỏ gán gói dịch vụ cho khách hàng thất bại",
             "sure-delete-assign": "Bạn có chắc chắn muốn bỏ gán gói dịch vụ cho khách hàng?"
         }
+    },
+    "manage-schedule": {
+        "title": "Quản lý kế hoạch khám bệnh của bác sĩ",
+        "select-doctor": "Chọn bác sĩ",
+        "choose-date": "Chọn ngày",
+        "save": "Lưu thông tin",
+        "select-doctor-placeholder": "Chọn bác sĩ..."
     }
 }
