@@ -1,0 +1,90 @@
+.doctor-schedule-container {
+    width: 100%;
+    .all-schedule {
+        margin-bottom: 14px;
+        position: relative;
+        display: inline-block;
+        select {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2176bd;
+            border: none;
+            background: #f7fafd;
+            padding: 10px 40px 10px 16px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(33, 118, 189, 0.07);
+            appearance: none;
+            min-width: 170px;
+            transition: border 0.2s;
+        }
+        select:focus {
+            border: 1.5px solid #2176bd;
+            background: #eaf4fd;
+        }
+        &::after {
+            content: "";
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            width: 0;
+            height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 7px solid #2176bd;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+    }
+    .all-available-time {
+        .text-calendar {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .time-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            min-height: 56px;
+            .time-content-btns {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 18px 18px;
+                align-items: center;
+            }
+            .btn-primary {
+                background: #fff04b;
+                color: #222;
+                font-weight: 700;
+                border-radius: 7px;
+                border: none;
+                min-width: 120px;
+                font-size: 15px;      /* Giảm từ 16px xuống 15px (hoặc nhỏ hơn nếu muốn) */
+                padding: 10px 0;      /* Có thể giảm padding nếu muốn nút gọn hơn */
+                transition: background 0.2s, color 0.2s;
+                margin-bottom: 8px;
+                box-shadow: none;
+                &:hover {
+                    background: #2176bd;
+                    color: #fff;
+                }
+            }
+            .no-schedule {
+                color: #2176bd;
+                font-style: italic;
+                font-size: 15px;
+                margin-left: 8px;
+            }
+        }
+        .book-free {
+            margin-top: 0;
+            margin-left: 8px;
+            font-size: 15px;
+            color: #333;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+}

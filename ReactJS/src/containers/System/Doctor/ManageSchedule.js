@@ -126,6 +126,7 @@ class ManageSchedule extends Component {
 
     render() {
         let { rangeTime } = this.state;
+        let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
         return (
             <React.Fragment>
                 <div className="manage-schedule-container">
@@ -150,7 +151,7 @@ class ManageSchedule extends Component {
                                     value={this.state.currentDate}
                                     onChange={this.handleOnChangeDatePicker}
                                     className="form-control"
-                                    minDate={new Date()}
+                                    minDate={yesterday}
                                 />
                             </div>
                         </div>

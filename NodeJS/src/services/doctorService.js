@@ -168,16 +168,8 @@ let saveBulkScheduleDoctor = async (data) => {
                     raw: true
                 });
 
-
-                if (existing && existing.length > 0) {
-                    existing = existing.map(item => {
-                        item.date = new Date(item.date).getTime();
-                        return item;
-                    });
-                }
-
                 let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                    return a.timeType === b.timeType && a.date === b.date;
+                    return a.timeType === b.timeType && +a.date === +b.date;
                 });
 
                 if (toCreate && toCreate.length > 0) {
@@ -194,10 +186,48 @@ let saveBulkScheduleDoctor = async (data) => {
     });
 }
 
+const getScheduleByDate = async (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameter!'
+                });
+            } else {
+                let dataSchedule = await db.Schedule.findAll({
+                    where: { doctorId: doctorId, date: date },
+
+                    include: [
+                        {
+                            model: db.Allcode,
+                            as: 'timeTypeData',
+                        },
+                    ],
+                    raw: false,
+                    nest: true
+                });
+
+                if (!dataSchedule) {
+                    dataSchedule = [];
+                }
+
+                resolve({
+                    errCode: 0,
+                    data: dataSchedule
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
     getDetailDoctorById,
     saveDetailInfoDoctor,
     saveBulkScheduleDoctor,
+    getScheduleByDate
 };

@@ -68,10 +68,24 @@ const saveBulkScheduleDoctor = async (req, res) => {
     }
 }
 
+const getScheduleByDate = async (req, res) => {
+    try {
+        let response = await doctorService.getScheduleByDate(req.query.doctorId, req.query.date);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+        });
+    }
+}
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
     postInfoDoctor,
     getDetailDoctorById,
     saveBulkScheduleDoctor,
+    getScheduleByDate,
 };
