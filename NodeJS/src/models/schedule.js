@@ -16,6 +16,7 @@ export default (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Schedule',
+    tableName: 'schedule'
   });
   return Schedule;
 };
