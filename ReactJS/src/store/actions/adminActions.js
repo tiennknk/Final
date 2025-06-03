@@ -1,8 +1,17 @@
 import actionTypes from "./actionTypes";
-import { getAllCodeService, createNewUserService, getAllUsers,
-     deleteUserService, editUserService,
-      getTopDoctorHomeService, getAllDoctors, saveDetailDoctorService } from "../../services/userService";
-import { toast, Toast } from "react-toastify";
+import { 
+    getAllCodeService, 
+    createNewUserService, 
+    getAllUsers,
+    deleteUserService, 
+    editUserService,
+    getTopDoctorHomeService, 
+    getAllDoctors, 
+    saveDetailDoctorService,
+} from "../../services/userService";
+import { toast } from "react-toastify";
+
+// USER ACTIONS
 
 export const fetchAllUserStart = () => {
     return async (dispatch, getState) => {
@@ -151,7 +160,7 @@ export const fetchAllUsersSuccess = (userData) => ({
 export const fetchAllUsersFailed = () => ({
     type: actionTypes.FETCH_ALL_USERS_FAILED
 })
- 
+
 export const deleteUser = (userId) => {
     return async (dispatch, getState) => {
         try {
@@ -164,7 +173,7 @@ export const deleteUser = (userId) => {
                 toast.error("Delete user failed!");
                 dispatch(deleteUserFailed());
             }
-            return res; // ĐỪNG BỎ DÒNG NÀY!
+            return res;
         } catch (e) {
             toast.error("Delete user failed!");
             dispatch(deleteUserFailed());
@@ -192,7 +201,7 @@ export const editAUser = (data) => {
                 toast.error("Update user failed!");
                 dispatch(editUserFailed());
             }
-            return res; // ĐỪNG BỎ DÒNG NÀY!
+            return res;
         } catch (e) {
             toast.error("Update user failed!");
             dispatch(editUserFailed());
@@ -207,6 +216,8 @@ export const editUserSuccess = () => ({
 export const editUserFailed = () => ({
     type: actionTypes.EDIT_USER_FAILED
 })
+
+// DOCTOR ACTIONS
 
 export const fetchTopDoctors = () => {
     return async (dispatch, getState) => {
@@ -253,6 +264,7 @@ export const fetchAllDoctors = () => {
 }
 
 export const saveDetailDoctor = (data) => {
+    console.log("DATA gửi lên backend:", data);
     return async (dispatch, getState) => {
         try {
             let res = await saveDetailDoctorService(data);
@@ -267,7 +279,7 @@ export const saveDetailDoctor = (data) => {
                     type: actionTypes.SAVE_DETAIL_DOCTOR_FAILED,
                 });
             }
-            return res; // ĐỪNG BỎ DÒNG NÀY!
+            return res;
         } catch (e) {
             toast.error("Save detail doctor failed!");
             dispatch({
@@ -295,6 +307,42 @@ export const fetchAllScheduleTime = () => {
             dispatch({
                 type: actionTypes.FETCH_ALLCODE_SCHEDULE_TIME_FAILED,
             });
+        }
+    };
+}
+
+export const fetchRequiredDoctorInfoSuccess = (data) => ({
+    type: actionTypes.FETCH_REQUIRED_DOCTOR_INFO_SUCCESS,
+    data: data,
+});
+
+export const fetchRequiredDoctorInfoFailed = () => ({
+    type: actionTypes.FETCH_REQUIRED_DOCTOR_INFO_FAILED,
+});
+
+export const getAllRequiredDoctorInfo = () => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_REQUIRED_DOCTOR_INFO_START });
+            let resPrice = await getAllCodeService("PRICE");
+            let resPayment = await getAllCodeService("PAYMENT");
+            let resProvince = await getAllCodeService("PROVINCE");
+
+            if (resPrice && resPrice.errCode === 0 &&
+                resPayment && resPayment.errCode === 0 &&
+                resProvince && resProvince.errCode === 0) {
+                let data = {
+                    rePrice: resPrice.data,
+                    rePayment: resPayment.data,
+                    reProvince: resProvince.data
+                };
+                dispatch(fetchRequiredDoctorInfoSuccess(data));
+            } else {
+                dispatch(fetchRequiredDoctorInfoFailed());
+            }
+        } catch (e) {
+            dispatch(fetchRequiredDoctorInfoFailed());
+            console.log('getAllRequiredDoctorInfo error', e);
         }
     };
 }

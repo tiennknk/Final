@@ -1,0 +1,92 @@
+.doctor-extra-info-container {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 20px;
+    margin-bottom: 32px;
+
+    .content-up {
+        margin-bottom: 8px;
+        .text-address {
+            color: #999;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .name-clinic {
+            font-weight: bold;
+            color: #222;
+            font-size: 15px;
+        }
+        .detail-address {
+            color: #222;
+            font-size: 15px;
+        }
+    }
+    .content-down {
+        .short-info {
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+
+            .price {
+                font-weight: bold;
+                color: #45c3d2;
+                margin-left: 5px;
+            }
+        }
+        .detail-link {
+            color: #007bff;
+            cursor: pointer;
+            margin-left: 8px;
+            font-weight: 500;
+            text-decoration: underline;
+            transition: color 0.2s;
+            display: inline-block;
+        }
+        .detail-link:hover {
+            color: #0056b3;
+        }
+        .extra-detail-info {
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            .detail-info-row {
+                display: flex;
+                justify-content: space-between;
+                font-size: 15px;
+                padding-bottom: 6px;
+                .left {
+                    color: #333;
+                }
+                .right {
+                    color: #45c3d2;
+                    font-weight: bold;
+                }
+            }
+            .note {
+                margin: 8px 0;
+                color: #666;
+                font-size: 14px;
+            }
+            .payment {
+                color: #222;
+                font-size: 14px;
+            }
+            .hide-detail-link {
+                color: #007bff;
+                cursor: pointer;
+                margin-top: 10px;
+                font-weight: 500;
+                text-decoration: underline;
+                display: inline-block;
+                transition: color 0.2s;
+            }
+            .hide-detail-link:hover {
+                color: #0056b3;
+            }
+        }
+    }
+}

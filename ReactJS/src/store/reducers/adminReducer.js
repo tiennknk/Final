@@ -8,7 +8,8 @@ const initialState = {
     users: [],
     topDoctors: [],
     allDoctors: [],
-    allScheduleTime: [], // Đã dùng S hoa đồng nhất
+    allScheduleTime: [],
+    allRequiredDoctorInfo: [],
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -89,6 +90,16 @@ const adminReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allScheduleTime: [], // S hoa
+            };
+        case actionTypes.FETCH_REQUIRED_DOCTOR_INFO_SUCCESS:
+            return {
+                ...state,
+                allRequiredDoctorInfo: action.data,
+            };
+        case actionTypes.FETCH_REQUIRED_DOCTOR_INFO_FAILED:
+            return {
+                ...state,
+                allRequiredDoctorInfo: [],
             };
         default:
             return state;
