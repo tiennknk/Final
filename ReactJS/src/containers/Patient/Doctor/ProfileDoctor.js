@@ -3,6 +3,9 @@ import {connect} from "react-redux";
 import './ProfileDoctor.scss';
 import { getProfileDoctorById } from "../../../services/userService";
 import NumberFormat from "react-number-format";
+import _ from "lodash";
+import moment from "moment";
+import "moment/locale/vi"; // Thêm nếu muốn hiển thị thứ bằng tiếng Việt
 
 class ProfileDoctor extends Component {
 
@@ -28,19 +31,46 @@ class ProfileDoctor extends Component {
                 result = res.data;
             }
         }
-
         return result;
     }
 
-    async componentDidUpdate(prevProps, prevState, snapshot) {
+    async componentDidUpdate(prevProps, prevState) {
+        // Thêm: Nếu đổi doctorId thì load lại profile
+        if (prevProps.doctorId !== this.props.doctorId) {
+            let data = await this.getInfoDoctor(this.props.doctorId);
+            this.setState({
+                dataProfile: data,
+            });
+        }
+    }
+
+    // Thêm: Hàm render thông tin giờ khám đẹp (giờ - thứ - ngày)
+    renderTimeBooking = (dataTime) => {
+        if (!dataTime || _.isEmpty(dataTime)) return null;
+        // timeTypeData.valueVi là giờ, date là timestamp dạng số
+        let time = dataTime.timeTypeData ? dataTime.timeTypeData.valueVi : '';
+        let date = dataTime.date
+            ? moment.unix(+dataTime.date / 1000).format('dddd - DD/MM/YYYY')
+            : '';
+        return (
+            <div className="doctor-time">
+                {time && <span>{time}</span>}
+                {time && date && <span> - </span>}
+                {date && <span>{date}</span>}
+            </div>
+        );
     }
 
     render() {
         let { dataProfile } = this.state;
-        let nameVi = '';
-        if (dataProfile && dataProfile.PositionData) {
-            nameVi = dataProfile.PositionData.valueVi;
-        }
+        // Sửa: lấy dataTime từ props, không dùng prop time nữa!
+        let { isShowDescription = true, dataTime } = this.props;
+
+        // Sửa: Đổi thứ tự họ tên cho đúng kiểu Việt Nam
+        let fullName = dataProfile && dataProfile.firstName
+            ? `${dataProfile.lastName} ${dataProfile.firstName}`
+            : '';
+
         return (
             <div className="profile-doctor-container">
                 <div className="intro-doctor">
@@ -51,44 +81,51 @@ class ProfileDoctor extends Component {
                         ></div>
                     </div>
                     <div className="content-right">
-                    <div className="up">
-    {dataProfile && dataProfile.firstName ? `${dataProfile.lastName} ${dataProfile.firstName}` : ''}
-</div>
+                        <div className="up">
+                            {fullName}
+                        </div>
                         <div className="down">
-                            {dataProfile && dataProfile.Markdown
-                            && dataProfile.Markdown.description
-                            &&
-                            <span>
-                                {dataProfile.Markdown.description}
-                            </span>}
+                            {isShowDescription === true ? (
+                                <>
+                                    {dataProfile && dataProfile.Markdown
+                                    && dataProfile.Markdown.description
+                                    &&
+                                    <span>
+                                        {dataProfile.Markdown.description}
+                                    </span>}
+                                </>
+                            ) : (
+                                // Thêm: render thông tin giờ khám khi là modal booking
+                                <>
+                                    {this.renderTimeBooking(dataTime)}
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
                 <div className="price">
-    Giá khám:&nbsp;
-    {dataProfile && dataProfile.Doctor_Info && dataProfile.Doctor_Info.priceTypeData &&
-        <NumberFormat
-            value={dataProfile.Doctor_Info.priceTypeData.valueVi}
-            className="currency"
-            displayType={'text'}
-            thousandSeparator={true}
-            suffix={' VND'}
-        />
-    }
-</div>
+                    Giá khám:&nbsp;
+                    {dataProfile && dataProfile.Doctor_Info && dataProfile.Doctor_Info.priceTypeData &&
+                        <NumberFormat
+                            value={dataProfile.Doctor_Info.priceTypeData.valueVi}
+                            className="currency"
+                            displayType={'text'}
+                            thousandSeparator={true}
+                            suffix={' VND'}
+                        />
+                    }
+                </div>
             </div>
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    return {
-    };
+    return {};
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return {
-    };
+    return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileDoctor);

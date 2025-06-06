@@ -2,6 +2,7 @@ import db from "../models/index.js";
 import dotenv from "dotenv";
 import lodash from 'lodash'
 
+const _ = lodash;
 dotenv.config();
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
@@ -249,6 +250,11 @@ const getScheduleByDate = async (doctorId, date) => {
                             model: db.Allcode,
                             as: 'timeTypeData',
                         },
+                        {
+                            model: db.User,
+                            as: 'doctorData',
+                            attributes: ['firstName', 'lastName']
+                        }
                     ],
                     raw: false,
                     nest: true

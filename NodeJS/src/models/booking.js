@@ -11,8 +11,9 @@ export default (sequelize, DataTypes) => {
     statusId: DataTypes.STRING,
     doctorId: DataTypes.INTEGER,
     patientId: DataTypes.INTEGER,
-    date: DataTypes.DATE,
-    timeType: DataTypes.STRING
+    date: DataTypes.STRING,
+    timeType: DataTypes.STRING,
+    token: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Booking',
