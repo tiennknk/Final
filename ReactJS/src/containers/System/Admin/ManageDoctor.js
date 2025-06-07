@@ -27,9 +27,13 @@ class ManageDoctor extends Component {
             listPrice: [],
             listPayment: [],
             listProvince: [],
+            listSpecialty: [],
+
             selectedPrice: null,
             selectedPayment: null,
             selectedProvince: null,
+            selectedSpecialty: null,
+
             nameClinic: '',
             addressClinic: '',
             note: '',
@@ -56,9 +60,17 @@ class ManageDoctor extends Component {
             if (type === 'PRICE' || type === 'PAYMENT' || type === 'PROVINCE') {
                 inputData.map((item) => {
                     let object = {};
-                    // SỬA LỖI: Dùng đúng field valueVi hoặc valueEn, KHÔNG PHẢI item.value
-                    object.label = item.valueVi; // hoặc item.valueEn nếu muốn tiếng Anh
+                    object.label = item.valueVi;
                     object.value = item.keyMap;
+                    result.push(object);
+                    return null;
+                });
+            }
+            if (type === 'SPECIALTY') {
+                inputData.map((item) => {
+                    let object = {};
+                    object.label = item.name;
+                    object.value = item.id;
                     result.push(object);
                     return null;
                 });
@@ -76,15 +88,17 @@ class ManageDoctor extends Component {
         }
 
         if (prevProps.allRequiredDoctorInfo !== this.props.allRequiredDoctorInfo) {
-            let { rePayment, rePrice, reProvince } = this.props.allRequiredDoctorInfo;
+            let { rePayment, rePrice, reProvince, resSpecialty } = this.props.allRequiredDoctorInfo || {};
 
             let dataSelectPrice = this.buildDataInputSelect(rePrice, 'PRICE');
             let dataSelectPayment = this.buildDataInputSelect(rePayment, 'PAYMENT');
             let dataSelectProvince = this.buildDataInputSelect(reProvince, 'PROVINCE');
+            let dataSelectSpecialty = this.buildDataInputSelect(resSpecialty, 'SPECIALTY');
             this.setState({
                 listPrice: dataSelectPrice,
                 listPayment: dataSelectPayment,
                 listProvince: dataSelectProvince,
+                listSpecialty: dataSelectSpecialty,
             });
         }
     }
@@ -107,6 +121,7 @@ class ManageDoctor extends Component {
             priceId: this.state.selectedPrice ? this.state.selectedPrice.value : null,
             paymentId: this.state.selectedPayment ? this.state.selectedPayment.value : null,
             provinceId: this.state.selectedProvince ? this.state.selectedProvince.value : null,
+            specialtyId: this.state.selectedSpecialty ? this.state.selectedSpecialty.value : null,
             nameClinic: this.state.nameClinic,
             addressClinic: this.state.addressClinic,
             note: this.state.note,
@@ -115,34 +130,30 @@ class ManageDoctor extends Component {
 
     handleChangeSelect = async (selectedOption) => {
         this.setState({ selectedOption });
-        let { listPrice, listPayment, listProvince } = this.state;
+        let { listPrice, listPayment, listProvince, listSpecialty } = this.state;
         let res = await getDetailInfoDoctor(selectedOption.value);
         if (res && res.errCode === 0 && res.data && res.data.Markdown) {
             let markdown = res.data.Markdown;
             let { Doctor_Infor } = res.data;
             let addressClinic = '', nameClinic = '', note = '',
-            paymentId = '', priceId = '', provinceId = '',
-            selectedPrice = '', selectedPayment = '', selectedProvince = '';
+            paymentId = '', priceId = '', provinceId = '', specialtyId = '',
+            selectedPrice = '', selectedPayment = '', selectedProvince = '',
+            selectedSpecialty = ''
+            ;
 
-            if (res.data.Doctor_Infor) {
+            if (Doctor_Infor) {
                 addressClinic = Doctor_Infor.addressClinic;
                 nameClinic = Doctor_Infor.nameClinic;
                 note = Doctor_Infor.note;
                 paymentId = Doctor_Infor.paymentId;
                 priceId = Doctor_Infor.priceId;
                 provinceId = Doctor_Infor.provinceId;
-                
-                selectedPayment = listPayment.find(item => {
-                    return item && item.value === paymentId;
-                })
+                specialtyId = Doctor_Infor.specialtyId;
 
-                selectedPrice = listPrice.find(item => {
-                    return item && item.value === priceId;
-                });
-                
-                selectedProvince = listProvince.find(item => {
-                    return item && item.value === provinceId;
-                });
+                selectedPayment = listPayment.find(item => item && item.value === paymentId);
+                selectedPrice = listPrice.find(item => item && item.value === priceId);
+                selectedProvince = listProvince.find(item => item && item.value === provinceId);
+                selectedSpecialty = listSpecialty.find(item => item && item.value === specialtyId);
             }
             this.setState({
                 contentHTML: markdown.contentHTML,
@@ -150,7 +161,9 @@ class ManageDoctor extends Component {
                 description: markdown.description,
                 hasOldData: true,
                 selectedPrice: selectedPrice,
+                selectedPayment: selectedPayment,
                 selectedProvince: selectedProvince,
+                selectedSpecialty: selectedSpecialty,
                 nameClinic: nameClinic,
                 addressClinic: addressClinic,
                 note: note,
@@ -164,6 +177,10 @@ class ManageDoctor extends Component {
                 nameClinic: '',
                 addressClinic: '',
                 note: '',
+                selectedPrice: '',
+                selectedPayment: '',
+                selectedProvince: '',
+                selectedSpecialty: '',
             });
         }
     }
@@ -191,7 +208,9 @@ class ManageDoctor extends Component {
     }
 
     render() {
-        let { hasOldData, listDoctors, listPrice, listPayment, listProvince, selectedOption, selectedPrice, selectedPayment, selectedProvince, nameClinic, addressClinic, note, description, contentMarkdown } = this.state;
+        let { hasOldData, listDoctors, listPrice, listPayment, listProvince, listSpecialty,
+            selectedOption, selectedPrice, selectedPayment, selectedProvince, selectedSpecialty,
+            nameClinic, addressClinic, note, description, contentMarkdown } = this.state;
         return (
             <div className="manage-doctor-container">
                 <div className="manage-doctor-title">
@@ -273,9 +292,21 @@ class ManageDoctor extends Component {
                         />
                     </div>
                 </div>
+                <div className="row">
+                    <div className="col-12 form-group">
+                        <label>Chọn chuyên khoa</label>
+                        <Select
+                            value={selectedSpecialty}
+                            onChange={this.handleChangeSelectDoctorInfo}
+                            options={listSpecialty}
+                            placeholder="Chọn chuyên khoa..."
+                            name="selectedSpecialty"
+                        />
+                    </div>
+                </div>
                 <div className="manage-doctor-editor">
                     <MdEditor
-                        style={{ height: '500px' }}
+                        style={{ height: '300px' }}
                         renderHTML={text => mdParser.render(text)}
                         onChange={this.handleEditorChange}
                         value={contentMarkdown}

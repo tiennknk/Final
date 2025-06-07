@@ -6,6 +6,7 @@ import "moment/locale/vi";
 import { getScheduleByDate } from "../../../services/userService";
 import localization from "../../../utils/Localization";
 import BookingModal from "./BookingModal";
+import { get } from "lodash";
 
 moment.locale("vi");
 
@@ -21,15 +22,22 @@ class DoctorSchedule extends Component {
         };
     }
 
-    componentDidMount = async () => {
+    async componentDidMount() {
         let allDays = this.setarrDays();
         this.setState({ allDays, selectedDate: allDays[0]?.value || null });
-        if (this.props.doctorIdFromParent && allDays.length > 0) {
-            await this.fetchAvailableTime(this.props.doctorIdFromParent, allDays[0].value);
+        if (this.props.doctorIdFromParent) {
+            let res = await getScheduleByDate(this.props.doctorIdFromParent, allDays[0].value);
+            if (res && res.errCode === 0) {
+                this.setState({
+                    allAvailableTime: res.data ? res.data : [],
+                });
+            } else {
+                this.setState({ allAvailableTime: [] });
+            }
         }
-    };
+    }
 
-    componentDidUpdate = async (prevProps) => {
+    async componentDidUpdate(prevProps) {
         if (prevProps.doctorIdFromParent !== this.props.doctorIdFromParent) {
             let allDays = this.setarrDays();
             this.setState({ allDays, selectedDate: allDays[0]?.value || null });
@@ -37,7 +45,7 @@ class DoctorSchedule extends Component {
                 await this.fetchAvailableTime(this.props.doctorIdFromParent, allDays[0].value);
             }
         }
-    };
+    }
 
     setarrDays = () => {
         let allDays = [];
@@ -57,7 +65,7 @@ class DoctorSchedule extends Component {
     };
 
     handleOnChangeSelect = async (event) => {
-        let date = event.value || event.target.value;
+        let date = event.target.value || event.value;
         this.setState({ selectedDate: date });
         await this.fetchAvailableTime(this.props.doctorIdFromParent, date);
     };
@@ -91,57 +99,57 @@ class DoctorSchedule extends Component {
 
         return (
             <>
-            <div className="doctor-schedule-container">
-                <div className="all-schedule">
-                    <select value={selectedDate || ''} onChange={this.handleOnChangeSelect}>
-                        {allDays && allDays.length > 0 &&
-                            allDays.map((item, index) => (
-                                <option key={index} value={item.value}>
-                                    {item.label}
-                                </option>
-                            ))}
-                    </select>
-                </div>
-                <div className="all-available-time">
-                    <div className="text-calendar">
-                        <span>{localization.patient.schedule}</span>
+                <div className="doctor-schedule-container">
+                    <div className="all-schedule">
+                        <select value={selectedDate || ''} onChange={this.handleOnChangeSelect}>
+                            {allDays && allDays.length > 0 &&
+                                allDays.map((item, index) => (
+                                    <option key={index} value={item.value}>
+                                        {item.label}
+                                    </option>
+                                ))}
+                        </select>
                     </div>
-                    <div className="time-content">
-                        {allAvailableTime && allAvailableTime.length > 0 ? (
-                            <>
-                                <div className="time-content-btns">
-                                    {allAvailableTime.map((item, index) => {
-                                        const timesDisplay =
-                                            item.timeTypeData?.valueVi ||
-                                            item.timeTypeData?.valueEn ||
-                                            item.timeType ||
-                                            "";
-                                        return (
-                                            <button
-                                                key={index}
-                                                className="btn btn-primary"
-                                                onClick={() => this.handleClickScheduleTime(item)}
-                                            >
-                                                {timesDisplay}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                                <div className="book-free">
-                                    Chọn <span role="img" aria-label="mouse">🖱️</span> và đặt (miễn phí)
-                                </div>
-                            </>
-                        ) : (
-                            <span className="no-schedule">{localization.patient.noAvailable}</span>
-                        )}
+                    <div className="all-available-time">
+                        <div className="text-calendar">
+                            <span>{localization.patient.schedule}</span>
+                        </div>
+                        <div className="time-content">
+                            {allAvailableTime && allAvailableTime.length > 0 ? (
+                                <>
+                                    <div className="time-content-btns">
+                                        {allAvailableTime.map((item, index) => {
+                                            const timesDisplay =
+                                                item.timeTypeData?.valueVi ||
+                                                item.timeTypeData?.valueEn ||
+                                                item.timeType ||
+                                                "";
+                                            return (
+                                                <button
+                                                    key={index}
+                                                    className="btn btn-primary"
+                                                    onClick={() => this.handleClickScheduleTime(item)}
+                                                >
+                                                    {timesDisplay}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    <div className="book-free">
+                                        Chọn <span role="img" aria-label="mouse">🖱️</span> và đặt (miễn phí)
+                                    </div>
+                                </>
+                            ) : (
+                                <span className="no-schedule">{localization.patient.noAvailable}</span>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <BookingModal 
-            isOpenModalBooking = {isOpenModalBooking}
-            closeBookingModal = {this.closeBookingModal}
-            dataTime = {dataScheduleTimeModal}
-            />
+                <BookingModal 
+                    isOpenModalBooking={isOpenModalBooking}
+                    closeBookingModal={this.closeBookingModal}
+                    dataTime={dataScheduleTimeModal}
+                />
             </>
         );
     }

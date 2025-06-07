@@ -5,7 +5,7 @@ import { getProfileDoctorById } from "../../../services/userService";
 import NumberFormat from "react-number-format";
 import _ from "lodash";
 import moment from "moment";
-import "moment/locale/vi"; // Thêm nếu muốn hiển thị thứ bằng tiếng Việt
+import {Link} from "react-router-dom";
 
 class ProfileDoctor extends Component {
 
@@ -63,10 +63,7 @@ class ProfileDoctor extends Component {
 
     render() {
         let { dataProfile } = this.state;
-        // Sửa: lấy dataTime từ props, không dùng prop time nữa!
-        let { isShowDescription = true, dataTime } = this.props;
-
-        // Sửa: Đổi thứ tự họ tên cho đúng kiểu Việt Nam
+        let { isShowDescription = true, dataTime, isShowLinkDetail, isShowPrice, doctorId } = this.props;
         let fullName = dataProfile && dataProfile.firstName
             ? `${dataProfile.lastName} ${dataProfile.firstName}`
             : '';
@@ -103,6 +100,12 @@ class ProfileDoctor extends Component {
                         </div>
                     </div>
                 </div>
+                {isShowLinkDetail && (
+                    <div className="view-detail-doctor">
+                        <Link to={`/detail-doctor/${doctorId}`}>Xem chi tiết</Link>
+                    </div>
+                )}
+                {isShowPrice === true && 
                 <div className="price">
                     Giá khám:&nbsp;
                     {dataProfile && dataProfile.Doctor_Info && dataProfile.Doctor_Info.priceTypeData &&
@@ -115,6 +118,7 @@ class ProfileDoctor extends Component {
                         />
                     }
                 </div>
+                }
             </div>
         );
     }

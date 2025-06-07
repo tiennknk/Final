@@ -8,6 +8,8 @@ import {
     getTopDoctorHomeService, 
     getAllDoctors, 
     saveDetailDoctorService,
+    getAllSpecialty,
+    getAllClinic,
 } from "../../services/userService";
 import { toast } from "react-toastify";
 
@@ -327,14 +329,19 @@ export const getAllRequiredDoctorInfo = () => {
             let resPrice = await getAllCodeService("PRICE");
             let resPayment = await getAllCodeService("PAYMENT");
             let resProvince = await getAllCodeService("PROVINCE");
+            let resSpecialty = await getAllSpecialty(); // chỉ lấy chuyên khoa
 
-            if (resPrice && resPrice.errCode === 0 &&
+            if (
+                resPrice && resPrice.errCode === 0 &&
                 resPayment && resPayment.errCode === 0 &&
-                resProvince && resProvince.errCode === 0) {
+                resProvince && resProvince.errCode === 0 &&
+                resSpecialty && resSpecialty.errCode === 0
+            ) {
                 let data = {
                     rePrice: resPrice.data,
                     rePayment: resPayment.data,
-                    reProvince: resProvince.data
+                    reProvince: resProvince.data,
+                    resSpecialty: resSpecialty.data // giữ đúng tên này
                 };
                 dispatch(fetchRequiredDoctorInfoSuccess(data));
             } else {

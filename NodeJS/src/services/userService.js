@@ -222,6 +222,22 @@ const getAllCodeSerVice = (typeInput) => {
     });
 };
 
+const getAllSpecialty = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let specialties = await db.Specialty.findAll({
+                attributes: ['id', 'name', 'image', 'descriptionHTML', 'descriptionMarkdown']
+            });
+            resolve({
+                errCode: 0,
+                data: specialties
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 
 
 export default {
@@ -230,5 +246,6 @@ export default {
     createNewUser,
     updateUserData,
     deleteUser,
-    getAllCodeSerVice
+    getAllCodeSerVice,
+    getAllSpecialty
 };

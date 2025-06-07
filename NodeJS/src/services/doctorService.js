@@ -118,20 +118,12 @@ const getDetailDoctorById = async (id) => {
 const saveDetailInfoDoctor = async (inputData) => {
     return new Promise(async (resolve, reject) => { 
         try {
-            // Đổi selectedPrice/... sang priceId/... cho đúng field FE gửi lên!
-            if (!inputData.doctorId 
-                || !inputData.contentHTML 
-                || !inputData.contentMarkdown 
-                || !inputData.action
-                || !inputData.priceId
-                || !inputData.provinceId
-                || !inputData.paymentId
-                || !inputData.nameClinic
-                || !inputData.addressClinic
+            const checkObject = checkRequiredFields(inputData);
+            if (!checkObject.isValid === false
             ) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing required parameter!'
+                    errMessage: `Missing required parameter! ${checkObject.element}`
                 });
             } else {
                 if (inputData.action === 'CREATE'){
@@ -163,22 +155,26 @@ const saveDetailInfoDoctor = async (inputData) => {
     
                 if (doctorInfo) {
                     doctorInfo.doctorId = inputData.doctorId;
-                    doctorInfo.priceId = inputData.priceId;
-                    doctorInfo.provinceId = inputData.provinceId;
-                    doctorInfo.paymentId = inputData.paymentId;
+                    doctorInfo.priceId = inputData.selectedPrice;
+                    doctorInfo.provinceId = inputData.selectedProvince;
+                    doctorInfo.paymentId = inputData.selectedPayment;
                     doctorInfo.addressClinic = inputData.addressClinic;
                     doctorInfo.nameClinic = inputData.nameClinic;
                     doctorInfo.note = inputData.note;
+                    doctorInfo.specialtyId = inputData.specialtyId;
+                    doctorInfo.clinicId = inputData.clinicId;
                     await doctorInfo.save();
                 } else {
                     await db.Doctor_Info.create({
                         doctorId: inputData.doctorId,
-                        priceId: inputData.priceId,
-                        provinceId: inputData.provinceId,
-                        paymentId: inputData.paymentId,
+                        priceId: inputData.selectedPrice,
+                        provinceId: inputData.selectedProvince,
+                        paymentId: inputData.selectedPayment,
                         addressClinic: inputData.addressClinic,
                         nameClinic: inputData.nameClinic,
                         note: inputData.note,
+                        specialtyId: inputData.specialtyId,
+                        clinicId: inputData.clinicId
                     });
                 }
                 resolve({
@@ -362,6 +358,29 @@ const getProfileDoctorById = async (doctorId) => {
             reject(e);
         }
     });
+}
+
+const checkRequiredFields = (inputData) => {
+    const arrFields = [
+        'doctorId', 'contentHTML', 'contentMarkdown', 'action',
+        'selectedPrice', 'selectedPayment', 'selectedProvince', 'nameClinic', 
+        'addressClinic', 'note', 'specialtyId'
+    ];
+
+    let isValid = true;
+    let element = ''; // Đổi từ const element = '' sang let element = ''
+    for (let i = 0; i < arrFields.length; i++) {
+        if (!inputData[arrFields[i]]) {
+            isValid = false;
+            element = arrFields[i];
+            break;
+        }
+    }
+
+    return {
+        isValid,
+        element
+    };
 }
 
 export default {
