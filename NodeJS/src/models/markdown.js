@@ -1,11 +1,10 @@
 'use strict';
-
 import { Model } from 'sequelize';
 
 export default (sequelize, DataTypes) => {
     class Markdown extends Model {
         static associate(models) {
-            Markdown.belongsTo(models.User, { foreignKey: 'doctorId' });
+            Markdown.belongsTo(models.User, { foreignKey: 'doctorId', as: 'doctor' });
         }
     }
 
@@ -23,4 +22,4 @@ export default (sequelize, DataTypes) => {
         freezeTableName: true
     });
     return Markdown;
-}
+};

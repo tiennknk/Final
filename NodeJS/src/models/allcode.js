@@ -22,7 +22,7 @@ export default (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Allcode',
     tableName: 'allcodes',
-    timestamps: true, // Quan trọng: Sequelize sẽ tự quản lý createdAt, updatedAt
+    timestamps: true,
   });
   return Allcode;
 };

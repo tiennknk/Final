@@ -78,10 +78,11 @@ const getDetailDoctorById = async (id) => {
                         exclude: ['password']
                     },
                     include: [
-                        { model: db.Markdown, attributes: ['contentHTML', 'contentMarkdown', 'description'] },
+                        { model: db.Markdown,as: 'Markdown', attributes: ['contentHTML', 'contentMarkdown', 'description'] },
                         { model: db.Allcode, as: 'positionData' },
                         {
                             model: db.Doctor_Info,
+                            as: 'doctorInfo',
                             attributes: {
                                 exclude: ['id', 'doctorId'],
                             },
@@ -119,12 +120,12 @@ const saveDetailInfoDoctor = async (inputData) => {
     return new Promise(async (resolve, reject) => { 
         try {
             const checkObject = checkRequiredFields(inputData);
-            if (!checkObject.isValid === false
-            ) {
+            if (!checkObject.isValid === false) {
                 resolve({
                     errCode: 1,
                     errMessage: `Missing required parameter! ${checkObject.element}`
                 });
+                return;
             } else {
                 if (inputData.action === 'CREATE'){
                     await db.Markdown.create({
@@ -138,7 +139,6 @@ const saveDetailInfoDoctor = async (inputData) => {
                         where: { doctorId: inputData.doctorId },
                         raw: false
                     });
-    
                     if (doctorMarkdown) {
                         doctorMarkdown.contentHTML = inputData.contentHTML;
                         doctorMarkdown.contentMarkdown = inputData.contentMarkdown;
@@ -148,16 +148,17 @@ const saveDetailInfoDoctor = async (inputData) => {
                     }
                 }
     
+                // Kiểm tra doctorId + specialtyId thay vì chỉ doctorId
                 let doctorInfo = await db.Doctor_Info.findOne({
-                    where: { doctorId: inputData.doctorId },
+                    where: { doctorId: inputData.doctorId, specialtyId: inputData.specialtyId },
                     raw: false
                 });
     
                 if (doctorInfo) {
                     doctorInfo.doctorId = inputData.doctorId;
-                    doctorInfo.priceId = inputData.selectedPrice;
-                    doctorInfo.provinceId = inputData.selectedProvince;
-                    doctorInfo.paymentId = inputData.selectedPayment;
+                    doctorInfo.priceId = inputData.priceId;
+                    doctorInfo.provinceId = inputData.provinceId;
+                    doctorInfo.paymentId = inputData.paymentId;
                     doctorInfo.addressClinic = inputData.addressClinic;
                     doctorInfo.nameClinic = inputData.nameClinic;
                     doctorInfo.note = inputData.note;
@@ -167,9 +168,9 @@ const saveDetailInfoDoctor = async (inputData) => {
                 } else {
                     await db.Doctor_Info.create({
                         doctorId: inputData.doctorId,
-                        priceId: inputData.selectedPrice,
-                        provinceId: inputData.selectedProvince,
-                        paymentId: inputData.selectedPayment,
+                        priceId: inputData.priceId,
+                        provinceId: inputData.provinceId,
+                        paymentId: inputData.paymentId,
                         addressClinic: inputData.addressClinic,
                         nameClinic: inputData.nameClinic,
                         note: inputData.note,
@@ -323,7 +324,8 @@ const getProfileDoctorById = async (doctorId) => {
                     attributes: { exclude: ['password'] },
                     include: [
                         { 
-                            model: db.Markdown, 
+                            model: db.Markdown,
+                            as: 'Markdown', 
                             attributes: ['contentHTML', 'contentMarkdown', 'description'] 
                         },
                         { 
@@ -332,7 +334,8 @@ const getProfileDoctorById = async (doctorId) => {
                             attributes: ['valueVi'] 
                         },
                         { 
-                            model: db.Doctor_Info, 
+                            model: db.Doctor_Info,
+                            as: 'doctorInfo', 
                             attributes: { exclude: ['id', 'doctorId'] },
                             include: [
                                 { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi'] },
@@ -363,12 +366,12 @@ const getProfileDoctorById = async (doctorId) => {
 const checkRequiredFields = (inputData) => {
     const arrFields = [
         'doctorId', 'contentHTML', 'contentMarkdown', 'action',
-        'selectedPrice', 'selectedPayment', 'selectedProvince', 'nameClinic', 
+        'priceId', 'paymentId', 'provinceId', 'nameClinic', 
         'addressClinic', 'note', 'specialtyId'
     ];
 
     let isValid = true;
-    let element = ''; // Đổi từ const element = '' sang let element = ''
+    let element = '';
     for (let i = 0; i < arrFields.length; i++) {
         if (!inputData[arrFields[i]]) {
             isValid = false;
@@ -391,5 +394,5 @@ export default {
     saveBulkScheduleDoctor,
     getScheduleByDate,
     getExtraInfoDoctorById,
-    getProfileDoctorById
+    getProfileDoctorById,
 };

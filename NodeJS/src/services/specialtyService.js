@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import specialty from "../models/specialty.js";
 
 const createNewSpecialty = async (data) => {
     return new Promise(async (resolve, reject) => {
@@ -46,10 +47,10 @@ const getAllSpecialty = async () => {
     });
 };
 
-const getDetailSpecialtyById = async (id, location) => {
+const getDetailSpecialtyById = async (inputId, location) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!id || !location) {
+            if (!inputId || !location) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters",
@@ -57,42 +58,41 @@ const getDetailSpecialtyById = async (id, location) => {
             } else {
                 let data = await db.Specialty.findOne({
                     where: { id: inputId },
-                    attributes: ['descriptionHTML', 'descriptionMarkdown'],
+                    attributes: ['name', 'descriptionHTML', 'descriptionMarkdown'],
                 });
 
                 if (data) {
                     let doctorSpecialty = [];
                     if (location === 'ALL') {
-                        doctorSpecialty = await db.Doctor_Info.findAll({
-                            where: { specialtyId: inputId },
-                            attributes: ['doctorId', 'provinceId'],
-                        });
-                    } else {
-                        doctorSpecialty = await db.Doctor_Info.findAll({
-                            where: { specialtyId: inputId, provinceId: location },
-                            attributes: ['doctorId', 'provinceId'],
-                        });
-                    }
-
-                    resolve({
-                        errCode: 0,
-                        data: {
-                            ...data.dataValues,
-                            doctorSpecialty: doctorSpecialty,
-                        },
+                    doctorSpecialty = await db.Doctor_Info.findAll({
+                        where: {specialtyId: inputId},
+                        attributes: ['doctorId', 'provinceId'],
                     });
                 } else {
-                    resolve({
-                        errCode: 2,
-                        errMessage: "Specialty not found",
+                    doctorSpecialty = await db.Doctor_Info.findAll({
+                        where: {
+                            specialtyId: inputId,
+                            provinceId: location,
+                        },
+                        attributes: ['doctorId', 'provinceId'],
                     });
                 }
-            }
-        } catch (error) {
+
+                data.doctorSpecialty = doctorSpecialty;
+            } else data = {};
+
+                    resolve({
+                        errMessage: "OK",
+                        errCode: 0,
+                        data
+                    })
+                }
+    } catch (error) {
             reject(error);
         }
-    });
+})
 }
+
 
 export default {
     createNewSpecialty,

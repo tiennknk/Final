@@ -1,0 +1,97 @@
+.profile-doctor-container {
+    width: 100%;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 18px;
+    background: #fff;
+
+    .intro-doctor {
+        display: flex;
+        align-items: flex-start;
+
+        .content-left {
+            .image {
+                width: 92px;
+                height: 92px;
+                border-radius: 50%;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                border: 2px solid #eaeaea;
+                margin-right: 18px;
+            }
+        }
+
+        .content-right {
+            flex: 1;
+            .up {
+                font-weight: 600;
+                font-size: 19px;
+                color: #222;
+                margin-bottom: 7px;
+            }
+            .down {
+                color: #585858;
+                font-size: 15px;
+                margin-bottom: 5px;
+                span {
+                    display: inline-block;
+                    margin-bottom: 3px;
+                }
+            }
+        }
+    }
+
+    .view-detail-doctor {
+        margin-top: 8px;
+        a {
+            color: #16b7ad;
+            font-size: 15px;
+            text-decoration: none;
+            cursor: pointer;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .price {
+        color: #222;
+        font-weight: 500;
+        font-size: 16px;
+        margin-top: 8px;
+        .currency {
+            color: #16b7ad;
+            margin-left: 6px;
+            font-weight: 400;
+            font-size: 15px;
+        }
+    }
+
+    .doctor-time {
+        display: inline-block;
+        background: #FFF6D4;
+        color: #222;
+        padding: 4px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 15px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-doctor-container {
+        .intro-doctor {
+            flex-direction: column;
+            .content-left {
+                margin-bottom: 12px;
+                .image {
+                    margin-right: 0;
+                    margin-bottom: 8px;
+                }
+            }
+        }
+    }
+}

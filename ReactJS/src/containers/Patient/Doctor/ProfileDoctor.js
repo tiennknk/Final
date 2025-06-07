@@ -35,7 +35,6 @@ class ProfileDoctor extends Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        // Thêm: Nếu đổi doctorId thì load lại profile
         if (prevProps.doctorId !== this.props.doctorId) {
             let data = await this.getInfoDoctor(this.props.doctorId);
             this.setState({
@@ -44,10 +43,8 @@ class ProfileDoctor extends Component {
         }
     }
 
-    // Thêm: Hàm render thông tin giờ khám đẹp (giờ - thứ - ngày)
     renderTimeBooking = (dataTime) => {
         if (!dataTime || _.isEmpty(dataTime)) return null;
-        // timeTypeData.valueVi là giờ, date là timestamp dạng số
         let time = dataTime.timeTypeData ? dataTime.timeTypeData.valueVi : '';
         let date = dataTime.date
             ? moment.unix(+dataTime.date / 1000).format('dddd - DD/MM/YYYY')
@@ -63,10 +60,14 @@ class ProfileDoctor extends Component {
 
     render() {
         let { dataProfile } = this.state;
-        let { isShowDescription = true, dataTime, isShowLinkDetail, isShowPrice, doctorId } = this.props;
+        let { isShowDescriptionDoctor = true, dataTime, isShowLinkDetail, isShowPrice, doctorId } = this.props;
         let fullName = dataProfile && dataProfile.firstName
             ? `${dataProfile.lastName} ${dataProfile.firstName}`
             : '';
+
+        let imageBase64 = dataProfile.image
+            ? `data:image/jpeg;base64,${dataProfile.image}`
+            : "https://ui-avatars.com/api/?name=Doctor";
 
         return (
             <div className="profile-doctor-container">
@@ -74,7 +75,7 @@ class ProfileDoctor extends Component {
                     <div className="content-left">
                         <div
                             className="image"
-                            style={{ backgroundImage: `url(${dataProfile.image})` }}
+                            style={{ backgroundImage: `url(${imageBase64})` }}
                         ></div>
                     </div>
                     <div className="content-right">
@@ -82,7 +83,7 @@ class ProfileDoctor extends Component {
                             {fullName}
                         </div>
                         <div className="down">
-                            {isShowDescription === true ? (
+                            {isShowDescriptionDoctor === true ? (
                                 <>
                                     {dataProfile && dataProfile.Markdown
                                     && dataProfile.Markdown.description
@@ -92,7 +93,6 @@ class ProfileDoctor extends Component {
                                     </span>}
                                 </>
                             ) : (
-                                // Thêm: render thông tin giờ khám khi là modal booking
                                 <>
                                     {this.renderTimeBooking(dataTime)}
                                 </>
@@ -105,20 +105,7 @@ class ProfileDoctor extends Component {
                         <Link to={`/detail-doctor/${doctorId}`}>Xem chi tiết</Link>
                     </div>
                 )}
-                {isShowPrice === true && 
-                <div className="price">
-                    Giá khám:&nbsp;
-                    {dataProfile && dataProfile.Doctor_Info && dataProfile.Doctor_Info.priceTypeData &&
-                        <NumberFormat
-                            value={dataProfile.Doctor_Info.priceTypeData.valueVi}
-                            className="currency"
-                            displayType={'text'}
-                            thousandSeparator={true}
-                            suffix={' VND'}
-                        />
-                    }
-                </div>
-                }
+                {/* Không render giá khám ở đây */}
             </div>
         );
     }
