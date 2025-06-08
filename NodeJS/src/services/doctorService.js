@@ -117,10 +117,12 @@ const getDetailDoctorById = async (id) => {
 }
 
 const saveDetailInfoDoctor = async (inputData) => {
+    
     return new Promise(async (resolve, reject) => { 
         try {
             const checkObject = checkRequiredFields(inputData);
-            if (!checkObject.isValid === false) {
+            if (!checkObject.isValid) {
+                
                 resolve({
                     errCode: 1,
                     errMessage: `Missing required parameter! ${checkObject.element}`
@@ -184,6 +186,7 @@ const saveDetailInfoDoctor = async (inputData) => {
                 });
             }
         } catch (e) {
+            
             reject(e);
         }
     });
@@ -378,6 +381,10 @@ const checkRequiredFields = (inputData) => {
             element = arrFields[i];
             break;
         }
+    }
+
+    if (!isValid) {
+        console.log("Thiếu field: ", element, inputData[element]);
     }
 
     return {

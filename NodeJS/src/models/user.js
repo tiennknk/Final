@@ -7,8 +7,9 @@ export default (sequelize, DataTypes) => {
       User.belongsTo(models.Allcode, { foreignKey: 'positionId', targetKey: 'keyMap', as: 'positionData' });
 User.belongsTo(models.Allcode, { foreignKey: 'gender', targetKey: 'keyMap', as: 'genderData' });
 User.hasOne(models.Markdown, { foreignKey: 'doctorId', as: 'Markdown' });
-User.hasOne(models.Doctor_Info, { foreignKey: 'doctorId', as: 'doctorInfo' });
-User.hasMany(models.Schedule, { foreignKey: 'doctorId', as: 'schedules' }); // đổi 'Schedule' => 'schedules' cho thống nhất
+User.hasMany(models.Doctor_Info, { foreignKey: 'doctorId', as: 'doctorInfo' });
+User.hasMany(models.Schedule, { foreignKey: 'doctorId', as: 'schedules' });
+
     }
   }
   User.init({
