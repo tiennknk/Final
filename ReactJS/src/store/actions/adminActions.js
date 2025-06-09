@@ -9,7 +9,7 @@ import {
     getAllDoctors, 
     saveDetailDoctorService,
     getAllSpecialty,
-    getAllClinic,
+    getAllClinic
 } from "../../services/userService";
 import { toast } from "react-toastify";
 
@@ -266,7 +266,7 @@ export const fetchAllDoctors = () => {
 }
 
 export const saveDetailDoctor = (data) => {
-    console.log("DATA gửi lên backend:", data);
+    
     return async (dispatch, getState) => {
         try {
             let res = await saveDetailDoctorService(data);
@@ -329,19 +329,22 @@ export const getAllRequiredDoctorInfo = () => {
             let resPrice = await getAllCodeService("PRICE");
             let resPayment = await getAllCodeService("PAYMENT");
             let resProvince = await getAllCodeService("PROVINCE");
-            let resSpecialty = await getAllSpecialty(); // chỉ lấy chuyên khoa
+            let resSpecialty = await getAllSpecialty();
+            let resClinic = await getAllClinic();
 
             if (
                 resPrice && resPrice.errCode === 0 &&
                 resPayment && resPayment.errCode === 0 &&
                 resProvince && resProvince.errCode === 0 &&
-                resSpecialty && resSpecialty.errCode === 0
+                resSpecialty && resSpecialty.errCode === 0 &&
+                resClinic && resClinic.errCode === 0
             ) {
                 let data = {
                     rePrice: resPrice.data,
                     rePayment: resPayment.data,
                     reProvince: resProvince.data,
-                    resSpecialty: resSpecialty.data // giữ đúng tên này
+                    resSpecialty: resSpecialty.data,
+                    resClinic: resClinic.data,
                 };
                 dispatch(fetchRequiredDoctorInfoSuccess(data));
             } else {
@@ -353,3 +356,4 @@ export const getAllRequiredDoctorInfo = () => {
         }
     };
 }
+

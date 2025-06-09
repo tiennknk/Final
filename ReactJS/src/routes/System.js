@@ -5,8 +5,9 @@ import UserManage from '../containers/System/UserManage';
 import UserRedux from '../containers/System/Admin/UserRedux';
 import Header from '../containers/Header/Header';
 import ManageDoctor from '../containers/System/Admin/ManageDoctor';
-import ManageSchedule from '../containers/System/Doctor/ManageSchedule'; // Thêm dòng này
-import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty'; // Thêm dòng này
+import ManageSchedule from '../containers/System/Doctor/ManageSchedule'; 
+import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty';
+import ManageClinic from '../containers/System/Clinic/ManageClinic';
 
 class System extends Component {
     render() {
@@ -20,8 +21,9 @@ class System extends Component {
                             <Route path="/system/user-manage" component={UserManage} />
                             <Route path="/system/user-redux" component={UserRedux} />
                             <Route path="/system/manage-doctor" component={ManageDoctor} />
-                            <Route path="/system/manage-schedule" component={ManageSchedule} /> {/* Thêm dòng này */}
-                            <Route path="/system/manage-specialty" component={ManageSpecialty} /> {/* Thêm dòng này */}
+                            <Route path="/system/manage-schedule" component={ManageSchedule} /> 
+                            <Route path="/system/manage-specialty" component={ManageSpecialty} />
+                            <Route path="/system/manage-clinic" component={ManageClinic} />
                             <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />
                         </Switch>
                     </div>

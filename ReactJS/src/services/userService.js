@@ -79,8 +79,20 @@ const getDetailSpecialtyById = (id, location) => {
     return axios.get(`/api/get-detail-specialty-by-id?id=${id}&location=${location}`);
 };
 
+const createNewClinic = (data) => {
+    return axios.post('/api/create-new-clinic', data);
+}
+
+const getAllClinic = () => {
+    return axios.get('/api/get-all-clinic');
+}
+
+const getDetailClinicById = (data) => {
+    return axios.get(`/api/get-detail-clinic-by-id?id=${data.id}`);
+}
+
 export {handleLoginApi, getAllUsers, createNewUserService, editUserService, deleteUserService,
     getAllCodeService, getTopDoctorHomeService, getAllDoctors, saveDetailDoctorService,
     getDetailInfoDoctor, saveBulkScheduleDoctor, getScheduleByDate, getExtraInfoDoctorById,
     getProfileDoctorById, postBookAppointment, postVerifyBookingAppointment, createNewSpecialty,
-    getAllSpecialty, getDetailSpecialtyById};
+    getAllSpecialty, getDetailSpecialtyById, createNewClinic, getDetailClinicById, getAllClinic};

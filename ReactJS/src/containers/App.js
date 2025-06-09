@@ -21,6 +21,7 @@ import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import Doctor from '../routes/Doctor.js';
 import VerifyEmail from './Patient/VerifyEmail.js';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
+import DetailClinic from './Patient/Clinic/DetailClinic.js';
 
 class App extends Component {
 
@@ -57,6 +58,7 @@ class App extends Component {
                                 <Route path={path.HOMEPAGE} component={HomePage} />
                                 <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
                                 <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
+                                <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
                                 <Route path={'/verify-email'} component={VerifyEmail} /> {/* Added route for VerifyEmail */}
                             </Switch>
                             </CustomScrollbars>

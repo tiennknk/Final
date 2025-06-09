@@ -18,7 +18,7 @@ class HomeHeader extends Component {
                         <div className='left-content'>
                             <i className="fas fa-bars"></i>
                             <div className='header-logo' onClick={this.returntoHome}>
-                                <img src='https://bookingcare.vn/assets/icon/bookingcare-2020.svg' alt='logo' />
+                                {/* <img src='https://bookingcare.vn/assets/icon/bookingcare-2020.svg' alt='logo' /> */}
                             </div>
                         </div>
                         <div className='center-content'>
