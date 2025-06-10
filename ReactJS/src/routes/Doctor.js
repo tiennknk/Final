@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
 import Header from '../containers/Header/Header';
-// import thêm các page khác nếu cần
+import ManagePatient from '../containers/System/Doctor/ManagePatient';
 
 class Doctor extends Component {
     render() {
@@ -13,6 +13,7 @@ class Doctor extends Component {
                 <div className="doctor-container">
                     <Switch>
                         <Route path="/doctor/manage-schedule" component={ManageSchedule} />
+                        <Route path="/doctor/manage-patient" component={ManagePatient} />
                         {/* Thêm các route doctor khác nếu có */}
                     </Switch>
                 </div>

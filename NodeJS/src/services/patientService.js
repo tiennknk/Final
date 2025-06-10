@@ -14,7 +14,9 @@ const buildUrlEmail = (doctorId, token) => {
 const postBookAppointment = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName) {
+            if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName
+                || !data.selectedGender || !data.address
+            ) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing required parameters',
@@ -34,6 +36,9 @@ const postBookAppointment = async (data) => {
                     defaults: {
                         email: data.email,
                         roleId: 'R3',
+                        gender: data.selectedGender,
+                        firstName: data.fullName,
+                        address: data.address,
                     },
                 });
 

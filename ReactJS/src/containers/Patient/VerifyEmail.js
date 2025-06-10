@@ -1,16 +1,15 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
+import React, { Component } from "react";
+import { connect } from "react-redux";
 import { postVerifyBookingAppointment } from "../../services/userService";
 import HomeHeader from "../HomePage/HomeHeader";
+import "./VerifyEmail.scss";
 
-
-class ProfileDoctor extends Component {
-
+class VerifyEmail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            statusVerify: false, // Thêm: Trạng thái xác nhận lịch hẹn
-            errCode: 0, // Thêm: Mã lỗi để hiển thị thông báo
+            statusVerify: false,
+            errCode: 0,
         };
     }
 
@@ -20,8 +19,8 @@ class ProfileDoctor extends Component {
             const doctorId = urlParams.get('doctorId');
             const token = urlParams.get('token');
             let res = await postVerifyBookingAppointment({
-                doctorId: doctorId,
-                token: token,
+                doctorId,
+                token,
             });
 
             if (res && res.errCode === 0) {
@@ -29,11 +28,10 @@ class ProfileDoctor extends Component {
                     statusVerify: true,
                     errCode: res.errCode,
                 });
-            }
-            else {
+            } else {
                 this.setState({
                     statusVerify: false,
-                    errCode: res.errCode || -1, // Nếu không có errCode thì mặc định là -1
+                    errCode: res.errCode || -1,
                 });
             }
         }
@@ -46,7 +44,7 @@ class ProfileDoctor extends Component {
                 <HomeHeader />
                 <div className="verify-email-container">
                     <div className="verify-email-content">
-                        {statusVerify === false ? (
+                        {statusVerify === true && errCode === 0 ? (
                             <div className="success-message">
                                 <h2>Xác nhận lịch hẹn thành công!</h2>
                                 <p>Cảm ơn bạn đã đặt lịch hẹn với bác sĩ.</p>
@@ -61,17 +59,12 @@ class ProfileDoctor extends Component {
                         )}
                     </div>
                 </div>
-            </> 
+            </>
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    return {};
-}
+const mapStateToProps = (state) => { return {}; };
+const mapDispatchToProps = (dispatch) => { return {}; };
 
-const mapDispatchToProps = (dispatch) => {
-    return {};
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileDoctor);
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyEmail);

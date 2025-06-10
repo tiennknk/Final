@@ -59,7 +59,9 @@ class App extends Component {
                                 <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
                                 <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
                                 <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
-                                <Route path={'/verify-email'} component={VerifyEmail} /> {/* Added route for VerifyEmail */}
+                                <Route path={'/verify-email'} component={VerifyEmail} />
+                                <Route path={'/verify-booking'} component={VerifyEmail} />
+
                             </Switch>
                             </CustomScrollbars>
                         </div>

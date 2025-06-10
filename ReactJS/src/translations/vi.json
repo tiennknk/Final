@@ -52,7 +52,9 @@
             "manage-user": "Quản lý người dùng"
         },
         "doctor": {
-            "manage-schedule": "Quản lý lịch khám"
+            "header": "Bác sĩ",
+            "manage-schedule": "Quản lý lịch khám",
+            "manage-patient": "Quản lý bệnh nhân"
         }
     },
     "system": {

@@ -4,7 +4,8 @@ import { Model } from 'sequelize';
 export default (sequelize, DataTypes) => {
   class Booking extends Model {
     static associate(models) {
-      // define association here
+      Booking.belongsTo(models.User, { foreignKey: 'patientId', as: 'patientData' });
+      Booking.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'timeTypeDataPatient' });
     }
   }
   Booking.init({

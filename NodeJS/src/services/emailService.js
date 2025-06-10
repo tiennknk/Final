@@ -1,10 +1,8 @@
-// emailService.js
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 
 dotenv.config();
 
-// Hàm tạo nội dung HTML của email
 const getBodyHTMLEmail = (dataSend) => {
     return `
         <h3>Xin chào ${dataSend.patientName}!</h3>
@@ -17,32 +15,66 @@ const getBodyHTMLEmail = (dataSend) => {
     `;
 };
 
-// Hàm gửi email
 const sendEmail = async (dataSend) => {
-    // 1. Tạo transporter (kết nối SMTP server của Gmail)
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
-        secure: false, // true nếu dùng port 465, false cho 587
+        secure: false,
         auth: {
-            user: process.env.EMAIL_APP,            // Email người gửi (từ biến môi trường)
-            pass: process.env.EMAIL_APP_PASSWORD,   // Mật khẩu ứng dụng
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
         },
     });
 
-    // 2. Gửi email với nội dung đã dựng ở trên
     let info = await transporter.sendMail({
-        from: `"Booking" <${process.env.EMAIL_APP}>`, // Tên người gửi
-        to: dataSend.receiverEmail,                   // Email người nhận
-        subject: "Thông tin đặt lịch khám bệnh",     // Tiêu đề email
-        html: getBodyHTMLEmail(dataSend),            // Nội dung HTML của email
+        from: `"Booking" <${process.env.EMAIL_APP}>`,
+        to: dataSend.email || dataSend.receiverEmail,
+        subject: "Thông tin đặt lịch khám bệnh",
+        html: getBodyHTMLEmail(dataSend),
     });
 
-    // 3. Trả về thông tin gửi mail
     return info;
 };
 
-// Export module
+const getBodyHTMLEmailRemedy = (dataSend) => {
+    return `
+        <h3>Xin chào ${dataSend.patientName}!</h3>
+        <p>Bạn đã xác nhận lịch khám bệnh thành công với bác sĩ: ${dataSend.doctorName}</p>
+        <p>Thông tin chi tiết:</p>
+        <div><b>Thời gian:</b> ${dataSend.time}</div>
+        <div><b>Ngày khám:</b> ${dataSend.date}</div>
+        <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+    `;
+};
+
+const sendAttachment = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+
+    let info = await transporter.sendMail({
+        from: `"Booking" <${process.env.EMAIL_APP}>`,
+        to: dataSend.email || dataSend.receiverEmail,
+        subject: "Kết quả đặt lịch khám bệnh",
+        html: getBodyHTMLEmailRemedy(dataSend),
+        attachments: [
+            {
+                filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.png`,
+                content: dataSend.imgBase64.split("base64,")[1],
+                encoding: 'base64',
+            },
+        ],
+    });
+    return info;
+}
+
 export default {
     sendEmail,
-};
+    sendAttachment,
+}

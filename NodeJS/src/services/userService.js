@@ -21,7 +21,7 @@ const handleUserLogin = (email, password) => {
             let isExist = await checkUserEmail(email);
             if (isExist) {
                 let user = await db.User.findOne({
-                    attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'],
+                    attributes: ['id','email', 'roleId', 'password', 'firstName', 'lastName'],
                     where: { email: email },
                     raw: true,
                 });
@@ -30,12 +30,12 @@ const handleUserLogin = (email, password) => {
                     let check = await bcrypt.compareSync(password, user.password);
                     if (check) {
                         userData.errCode = 0;
-                        userData.errMessage = 'Login success';
+                        userData.errMessage = 'Đăng nhập thành công';
                         delete user.password;
                         userData.user = user;
                     } else {
                         userData.errCode = 3;
-                        userData.errMessage = 'Wrong password';
+                        userData.errMessage = 'Sai mật khẩu';
                     }
                 } else {
                     userData.errCode = 2;
@@ -237,7 +237,6 @@ const getAllSpecialty = () => {
         }
     });
 };
-
 
 
 export default {

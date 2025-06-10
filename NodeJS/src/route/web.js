@@ -41,6 +41,8 @@ const initWebRoutes = (app) => {
     router.post('/api/create-new-clinic', clinicController.createClinic);
     router.get('/api/get-all-clinic', clinicController.getAllClinic);
     router.get('/api/get-detail-clinic-by-id', clinicController.getDetailClinicById);
+    router.get('/api/get-list-patient-for-doctor', doctorController.getListPatientForDoctor);
+    router.post('/api/send-remedy', doctorController.sendRemedy);
     // Patient routes
     router.post('/api/patient-book-appointment', patientController.postBookAppointment);
     router.post('/api/verify-booking', patientController.postVerifyBookingAppointment);

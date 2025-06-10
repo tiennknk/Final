@@ -1,6 +1,7 @@
 import db from "../models/index.js";
 import dotenv from "dotenv";
-import lodash from 'lodash'
+import lodash from 'lodash';
+import emailService from './emailService.js';
 
 const _ = lodash;
 dotenv.config();
@@ -12,13 +13,9 @@ const getTopDoctorHome = async (limit) => {
         try {
             let users = await db.User.findAll({
                 limit: limit,
-                where: {
-                    roleId: 'R2',
-                },
+                where: { roleId: 'R2' },
                 order: [['createdAt', 'DESC']],
-                attributes: {
-                    exclude: ['password']
-                },
+                attributes: { exclude: ['password'] },
                 include: [
                     { model: db.Allcode, as: 'positionData' },
                     { model: db.Allcode, as: 'genderData' }
@@ -46,12 +43,8 @@ const getAllDoctors = async () => {
     return new Promise(async (resolve, reject) => {
         try {
             let doctor = await db.User.findAll({
-                where: [
-                    { roleId: 'R2' }
-                ],
-                attributes: {
-                    exclude: ['password']
-                },
+                where: [{ roleId: 'R2' }],
+                attributes: { exclude: ['password'] },
             });
             resolve({
                 errCode: 0,
@@ -61,7 +54,7 @@ const getAllDoctors = async () => {
             reject(e);
         }
     });
-}
+};
 
 const getDetailDoctorById = async (id) => {
     return new Promise(async (resolve, reject) => {
@@ -74,18 +67,14 @@ const getDetailDoctorById = async (id) => {
             } else {
                 let info = await db.User.findOne({
                     where: { id: id },
-                    attributes: {
-                        exclude: ['password']
-                    },
+                    attributes: { exclude: ['password'] },
                     include: [
-                        { model: db.Markdown,as: 'Markdown', attributes: ['contentHTML', 'contentMarkdown', 'description'] },
+                        { model: db.Markdown, as: 'Markdown', attributes: ['contentHTML', 'contentMarkdown', 'description'] },
                         { model: db.Allcode, as: 'positionData' },
                         {
                             model: db.Doctor_Info,
                             as: 'doctorInfo',
-                            attributes: {
-                                exclude: ['id', 'doctorId'],
-                            },
+                            attributes: { exclude: ['id', 'doctorId'] },
                             include: [
                                 { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi'] },
                                 { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueVi'] },
@@ -95,7 +84,7 @@ const getDetailDoctorById = async (id) => {
                     ],
                     raw: false,
                     nest: true
-                }); 
+                });
 
                 if (info && info.image) {
                     info.image = Buffer.from(info.image).toString('base64');
@@ -114,22 +103,20 @@ const getDetailDoctorById = async (id) => {
             reject(e);
         }
     });
-}
+};
 
 const saveDetailInfoDoctor = async (inputData) => {
-    
-    return new Promise(async (resolve, reject) => { 
+    return new Promise(async (resolve, reject) => {
         try {
             const checkObject = checkRequiredFields(inputData);
             if (!checkObject.isValid) {
-                
                 resolve({
                     errCode: 1,
                     errMessage: `Missing required parameter! ${checkObject.element}`
                 });
                 return;
             } else {
-                if (inputData.action === 'CREATE'){
+                if (inputData.action === 'CREATE') {
                     await db.Markdown.create({
                         contentHTML: inputData.contentHTML,
                         contentMarkdown: inputData.contentMarkdown,
@@ -149,13 +136,12 @@ const saveDetailInfoDoctor = async (inputData) => {
                         await doctorMarkdown.save();
                     }
                 }
-    
-                // Kiểm tra doctorId + specialtyId thay vì chỉ doctorId
+
                 let doctorInfo = await db.Doctor_Info.findOne({
                     where: { doctorId: inputData.doctorId, specialtyId: inputData.specialtyId },
                     raw: false
                 });
-    
+
                 if (doctorInfo) {
                     doctorInfo.doctorId = inputData.doctorId;
                     doctorInfo.priceId = inputData.priceId;
@@ -186,13 +172,12 @@ const saveDetailInfoDoctor = async (inputData) => {
                 });
             }
         } catch (e) {
-            
             reject(e);
         }
     });
 };
 
-let saveBulkScheduleDoctor = async (data) => {
+const saveBulkScheduleDoctor = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!data.arrSchedule || !data.doctorId || !data.formattedDate) {
@@ -231,7 +216,7 @@ let saveBulkScheduleDoctor = async (data) => {
             reject(e);
         }
     });
-}
+};
 
 const getScheduleByDate = async (doctorId, date) => {
     return new Promise(async (resolve, reject) => {
@@ -244,7 +229,6 @@ const getScheduleByDate = async (doctorId, date) => {
             } else {
                 let dataSchedule = await db.Schedule.findAll({
                     where: { doctorId: doctorId, date: date },
-
                     include: [
                         {
                             model: db.Allcode,
@@ -273,7 +257,7 @@ const getScheduleByDate = async (doctorId, date) => {
             reject(e);
         }
     });
-}
+};
 
 const getExtraInfoDoctorById = async (doctorId) => {
     return new Promise(async (resolve, reject) => {
@@ -286,9 +270,7 @@ const getExtraInfoDoctorById = async (doctorId) => {
             } else {
                 let data = await db.Doctor_Info.findOne({
                     where: { doctorId: doctorId },
-                    attributes: {
-                        exclude: ['id', 'doctorId'],
-                    },
+                    attributes: { exclude: ['id', 'doctorId'] },
                     include: [
                         { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi'] },
                         { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueVi'] },
@@ -311,7 +293,7 @@ const getExtraInfoDoctorById = async (doctorId) => {
             reject(e);
         }
     });
-}
+};
 
 const getProfileDoctorById = async (doctorId) => {
     return new Promise(async (resolve, reject) => {
@@ -326,19 +308,19 @@ const getProfileDoctorById = async (doctorId) => {
                     where: { id: doctorId },
                     attributes: { exclude: ['password'] },
                     include: [
-                        { 
+                        {
                             model: db.Markdown,
-                            as: 'Markdown', 
-                            attributes: ['contentHTML', 'contentMarkdown', 'description'] 
+                            as: 'Markdown',
+                            attributes: ['contentHTML', 'contentMarkdown', 'description']
                         },
-                        { 
-                            model: db.Allcode, 
-                            as: 'positionData', 
-                            attributes: ['valueVi'] 
+                        {
+                            model: db.Allcode,
+                            as: 'positionData',
+                            attributes: ['valueVi']
                         },
-                        { 
+                        {
                             model: db.Doctor_Info,
-                            as: 'doctorInfo', 
+                            as: 'doctorInfo',
                             attributes: { exclude: ['id', 'doctorId'] },
                             include: [
                                 { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi'] },
@@ -364,12 +346,12 @@ const getProfileDoctorById = async (doctorId) => {
             reject(e);
         }
     });
-}
+};
 
 const checkRequiredFields = (inputData) => {
     const arrFields = [
         'doctorId', 'contentHTML', 'contentMarkdown', 'action',
-        'priceId', 'paymentId', 'provinceId', 'nameClinic', 
+        'priceId', 'paymentId', 'provinceId', 'nameClinic',
         'addressClinic', 'note', 'specialtyId'
     ];
 
@@ -391,7 +373,127 @@ const checkRequiredFields = (inputData) => {
         isValid,
         element
     };
-}
+};
+
+const getListPatientForDoctor = async (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameter!'
+                });
+            } else {
+                let data = await db.Booking.findAll({
+                    where: {
+                        statusId: 'S2',
+                        doctorId: doctorId,
+                        date: date
+                    },
+                    include: [
+                        {
+                            model: db.User,
+                            as: 'patientData',
+                            attributes: ['firstName', 'lastName', 'email', 'gender', 'address'],
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueVi', 'valueEn'] }
+                            ]
+                        },
+                        { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi', 'valueEn'] }
+                    ],
+                    raw: false,
+                    nest: true
+                });
+
+                resolve({
+                    errCode: 0,
+                    data
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+// SỬA ĐẦY ĐỦ DỮ LIỆU GỬI EMAIL REMEDY
+const sendRemedy = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (
+                !data.email ||
+                !data.doctorId ||
+                !data.patientId ||
+                !data.timeType ||
+                !data.imgBase64 ||
+                !data.date
+            ) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameter!'
+                });
+                return;
+            }
+
+            // Truy vấn thông tin bệnh nhân
+            let patient = await db.User.findOne({
+                where: { id: data.patientId },
+                raw: true,
+            });
+
+            // Truy vấn thông tin bác sĩ
+            let doctor = await db.User.findOne({
+                where: { id: data.doctorId },
+                raw: true,
+            });
+
+            // Lấy thông tin timeType (giờ khám)
+            let timeTypeData = await db.Allcode.findOne({
+                where: { keyMap: data.timeType },
+                raw: true,
+            });
+            let timeLabel = timeTypeData ? timeTypeData.valueVi : '';
+
+            // Format ngày khám thành chuỗi đẹp
+            let formattedDate = new Date(Number(data.date)).toLocaleDateString('vi-VN');
+
+            // Cập nhật trạng thái lịch hẹn (booking)
+            let appointment = await db.Booking.findOne({
+                where: {
+                    patientId: data.patientId,
+                    doctorId: data.doctorId,
+                    date: data.date,
+                    timeType: data.timeType,
+                    statusId: 'S2'
+                },
+                raw: false
+            });
+
+            if (appointment) {
+                appointment.statusId = 'S3';
+                await appointment.save();
+            }
+
+            // Chuẩn bị dữ liệu đầy đủ cho email
+            let dataSend = {
+                ...data,
+                patientName: patient ? `${patient.lastName} ${patient.firstName}` : "",
+                doctorName: doctor ? `${doctor.lastName} ${doctor.firstName}` : "",
+                time: timeLabel,
+                date: formattedDate,
+            };
+
+            await emailService.sendAttachment(dataSend);
+
+            resolve({
+                errCode: 0,
+                errMessage: 'Send remedy successfully!'
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
 
 export default {
     getTopDoctorHome,
@@ -402,4 +504,6 @@ export default {
     getScheduleByDate,
     getExtraInfoDoctorById,
     getProfileDoctorById,
+    getListPatientForDoctor,
+    sendRemedy
 };

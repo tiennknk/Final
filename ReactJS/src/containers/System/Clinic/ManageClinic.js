@@ -1,15 +1,15 @@
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './ManageClinic.scss';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
-import {CommonUtils} from '../../../utils';
-import {createNewClinic} from '../../../services/userService';
+import { CommonUtils } from '../../../utils';
+import { createNewClinic } from '../../../services/userService';
 import { toast } from 'react-toastify';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
-class ManageClinic extends Component {
 
+class ManageClinic extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,7 +22,7 @@ class ManageClinic extends Component {
     }
 
     handleOnChangeInput = (event, id) => {
-        let copyState = {...this.state};
+        let copyState = { ...this.state };
         copyState[id] = event.target.value;
         this.setState({
             ...copyState
@@ -72,8 +72,8 @@ class ManageClinic extends Component {
 
     render() {
         return (
-            <div>
-                <div className="ms-title"> Quản lý phòng khám </div>
+            <div className="manage-clinic-container">
+                <div className="ms-title">Quản lý phòng khám</div>
                 <div className="add-new-specialty row">
                     <div className="col-6 form-group">
                         <label>Tên phòng khám</label>
@@ -103,13 +103,13 @@ class ManageClinic extends Component {
                     <div className="col-12 form-group">
                         <label>Mô tả phòng khám</label>
                         <MdEditor
-                            style={{height: '300px'}}
+                            style={{ height: '300px' }}
                             value={this.state.descriptionMarkdown}
                             renderHTML={text => mdParser.render(text)}
                             onChange={this.handleEditorChange}
                         />
                     </div>
-                    <div className="col-12">
+                    <div className="col-12 text-center">
                         <button
                             className="btn btn-primary"
                             onClick={() => this.handleSaveNewClinic()}
