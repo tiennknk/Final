@@ -1,0 +1,133 @@
+.clinic-list-page {
+    max-width: 1200px;
+    margin: 0 auto 40px auto;
+    padding: 32px 10px;
+  
+    .clinic-list-title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 28px;
+      color: #444;
+      text-align: center;
+    }
+  
+    .clinic-filter {
+      text-align: right;
+      margin-bottom: 20px;
+      select {
+        padding: 6px 16px;
+        border-radius: 8px;
+        border: 1px solid #bcd6ee;
+        font-size: 1rem;
+        outline: none;
+        background: #f8fafc;
+      }
+    }
+  
+    .clinic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+  
+    .clinic-card {
+      background: #fff;
+      border-radius: 25px;
+      box-shadow: 0 2px 20px rgba(0,154,223,.09);
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      transition: box-shadow .18s;
+      min-height: 200px;
+      &:hover { box-shadow: 0 6px 30px rgba(0,154,223,.16); }
+  
+      .clinic-img {
+        width: 370px;
+        height: 200px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        cursor: pointer;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border-radius: 25px 0 0 25px;
+          display: block;
+          background: #f5f5f5;
+        }
+      }
+  
+      .clinic-info {
+        flex: 1;
+        padding: 24px 34px 18px 34px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+  
+        .clinic-name {
+          font-size: 1.4rem;
+          font-weight: 700;
+          margin-bottom: 7px;
+          color: #333;
+        }
+        .clinic-address {
+          font-size: 1.07rem;
+          color: #666;
+          margin-bottom: 7px;
+        }
+        .clinic-description {
+          font-size: 1rem;
+          color: #3a6076;
+          margin-bottom: 12px;
+          line-height: 1.42;
+        }
+        .clinic-contacts {
+          margin-top: 5px;
+          .clinic-phone {
+            color: #009adf;
+            font-weight: 500;
+            i { margin-right: 7px; color: #009adf; }
+            a {
+              color: #009adf;
+              font-weight: bold;
+              margin-left: 4px;
+              text-decoration: none;
+            }
+          }
+        }
+      }
+    }
+  
+    .no-clinic {
+      text-align: center;
+      color: #c00;
+      padding: 30px 0;
+      font-size: 1.1rem;
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 900px) {
+    .clinic-list-page {
+      padding: 12px 1vw;
+      .clinic-card { flex-direction: column; border-radius: 14px; }
+      .clinic-img { width: 100%; height: 180px;
+        img { border-radius: 14px 14px 0 0; }
+      }
+      .clinic-info { padding: 15px 14px 13px 14px; }
+    }
+  }
+  @media (max-width: 600px) {
+    .clinic-list-page {
+      .clinic-card { box-shadow: 0 1px 9px rgba(0,154,223,.14); border-radius: 8px; }
+      .clinic-img { height: 110px !important; }
+      .clinic-info {
+        .clinic-name { font-size: 1.05rem; }
+        .clinic-address { font-size: 0.98rem; }
+        .clinic-description { font-size: 0.95rem; }
+      }
+    }
+  }

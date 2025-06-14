@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import './MedicalFacility.scss';
-import Slider from 'react-slick';
-import {getAllClinic} from '../../../services/userService';
+import { getAllClinic } from '../../../services/userService';
 import { withRouter } from 'react-router';
 
 class MedicalFacility extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataClinics: []
+            dataClinics: [],
+            filterLocation: 'all'
         };
     }
 
@@ -18,7 +17,7 @@ class MedicalFacility extends Component {
         let res = await getAllClinic();
         if (res && res.errCode === 0) {
             this.setState({
-                dataClinics: res.data ? res.data : []
+                dataClinics: res.data || []
             });
         }
     }
@@ -29,31 +28,65 @@ class MedicalFacility extends Component {
         }
     }
 
+    handleFilterChange = (e) => {
+        this.setState({ filterLocation: e.target.value });
+    }
+
+    getLocations = () => {
+        const { dataClinics } = this.state;
+        const locations = dataClinics.map(clinic => clinic.address).filter(Boolean);
+        return Array.from(new Set(locations));
+    }
+
     render() {
+        const { dataClinics, filterLocation } = this.state;
+        const filteredClinics = filterLocation === 'all'
+            ? dataClinics
+            : dataClinics.filter(clinic => clinic.address === filterLocation);
+
         return (
-            <div className='section-share section-medical-facility'>
-                <div className='section-container'>
-                    <div className='section-header'>
-                        <span className='title-section'>Cơ sở y tế nổi bật</span>
-                        <button className='btn-section'>Xem thêm</button>
-                    </div>
-                    <div className='section-body'>
-                        <Slider {...this.props.settings}>
-                            {this.state.dataClinics && this.state.dataClinics.length > 0 &&
-                                this.state.dataClinics.map((item, index) => {
-                                    return (
-                                        <div className='section-customize clinic-child' key={index}
-                                            onClick={() => this.handleViewDetailClinic(item)}>
-                                            <div className='bg-image section-medical-facility'
-                                                style={{ backgroundImage: `url(${item.image})` }}>
-                                            </div>
-                                            <div className='clinic-name'>{item.name}</div>
+            <div className="clinic-list-page">
+                <h2 className="clinic-list-title">Danh sách Phòng Khám</h2>
+                <div className="clinic-filter">
+                    <label>Lọc theo địa điểm:&nbsp;</label>
+                    <select value={filterLocation} onChange={this.handleFilterChange}>
+                        <option value="all">Tất cả</option>
+                        {this.getLocations().map(loc => (
+                            <option value={loc} key={loc}>{loc}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="clinic-list">
+                    {filteredClinics.length === 0 && (
+                        <div className="no-clinic">Không có phòng khám phù hợp</div>
+                    )}
+                    {filteredClinics.map((clinic, idx) => (
+                        <div className="clinic-card" key={clinic.id || idx}>
+                            <div className="clinic-img" onClick={() => this.handleViewDetailClinic(clinic)}>
+                                <img src={clinic.image} alt={clinic.name} />
+                            </div>
+                            <div className="clinic-info">
+                                <div className="clinic-name">{clinic.name}</div>
+                                {clinic.address && (
+                                    <div className="clinic-address">{clinic.address}</div>
+                                )}
+                                {clinic.descriptionMarkdown && clinic.descriptionMarkdown !== "Không có" ? (
+        <div className="clinic-description">{clinic.descriptionMarkdown}</div>
+    ) : clinic.descriptionHTML && clinic.descriptionHTML !== "<p>Không có</p>" ? (
+        <div className="clinic-description" dangerouslySetInnerHTML={{ __html: clinic.descriptionHTML }}></div>
+    ) : null}
+                                {clinic.phone && (
+                                    <div className="clinic-contacts">
+                                        <div className="clinic-phone">
+                                            <i className="fas fa-phone-alt"></i>
+                                            <span>Điện thoại </span>
+                                            <a href={`tel:${clinic.phone}`}>{clinic.phone}</a>
                                         </div>
-                                    );
-                                })
-                            }
-                        </Slider>
-                    </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         );

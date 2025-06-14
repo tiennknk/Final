@@ -2,6 +2,7 @@
   "name": "react-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@formatjs/intl-pluralrules": "^3.5.6",
     "@formatjs/intl-relativetimeformat": "^7.3.6",
@@ -21,6 +22,7 @@
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.14.0",
     "react-flatpickr": "^3.10.7",
+    "react-icons": "^5.5.0",
     "react-image-lightbox": "^5.1.1",
     "react-intl": "^5.20.2",
     "react-loading-overlay": "^1.0.1",
