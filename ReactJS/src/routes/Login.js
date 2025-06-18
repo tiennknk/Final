@@ -2,15 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from "connected-react-router";
 
-import * as actions from "../store/actions";
-import { KeyCodeUtils, LanguageUtils } from "../utils";
+import * as actions from "../../store/actions";
+import { KeyCodeUtils, LanguageUtils } from "../../utils";
 
 import userIcon from '../../src/assets/images/user.svg';
 import passIcon from '../../src/assets/images/pass.svg';
 import './Login.scss';
 import { FormattedMessage } from 'react-intl';
-
-import adminService from '../services/adminService';
 
 class Login extends Component {
     constructor(props) {
@@ -48,32 +46,42 @@ class Login extends Component {
         navigate(`${redirectPath}`);
     }
 
-    processLogin = () => {
+    processLogin = async () => {
         const { username, password } = this.state;
-
-        const { adminLoginSuccess, adminLoginFail } = this.props;
-        let loginBody = {
-            username: 'admin',
-            password: '123456'
+        const { adminLoginSuccess, adminLoginFail, navigate } = this.props;
+    
+        // Thêm kiểm tra rỗng
+        if (!username || !password) {
+            this.setState({ loginError: 'Vui lòng nhập đầy đủ tài khoản và mật khẩu!' });
+            return;
         }
-        //sucess
-        let adminInfo = {
-            "tlid": "0",
-            "tlfullname": "Administrator",
-            "custype": "A",
-            "accessToken": "eyJhbGciOiJIU"
-        }
-
-        adminLoginSuccess(adminInfo);
-        this.refresh();
-        this.redirectToSystemPage();
+    
         try {
-            adminService.login(loginBody)
+            // Demo API giả định
+            let res = {
+                errCode: 0,
+                user: {
+                    id: 1,
+                    username,
+                    roleId: username === 'admin' ? 'R1' : 'R3'
+                }
+            };
+            if (res && res.errCode === 0 && res.user) {
+                adminLoginSuccess(res.user);
+                this.setState({ username: '', password: '', loginError: '' });
+                if (res.user.roleId === 'R1') navigate('/system/user-manage');
+                else if (res.user.roleId === 'R2') navigate('/doctor');
+                else navigate('/home');
+            } else {
+                this.setState({ loginError: 'Sai tài khoản hoặc mật khẩu!' });
+                adminLoginFail();
+            }
         } catch (e) {
-            console.log('error login : ', e)
+            this.setState({ loginError: 'Lỗi kết nối server!' });
+            adminLoginFail();
         }
-
     }
+    
 
     handlerKeyDown = (event) => {
         const keyCode = event.which || event.keyCode;
@@ -161,6 +169,9 @@ const mapStateToProps = state => {
         lang: state.app.language
     };
 };
+
+const res = await handleLoginApi(username, password);
+console.log("Login API trả về:", res);
 
 const mapDispatchToProps = dispatch => {
     return {

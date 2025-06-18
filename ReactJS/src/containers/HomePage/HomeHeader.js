@@ -1,25 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './HomeHeader.scss';
-import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
+import { withRouter, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch, FaSearchMinus } from "react-icons/fa";
+import * as actions from '../../store/actions';
 
-// Hàm loại bỏ dấu tiếng Việt đơn giản, hiệu quả
 function removeVietnameseTones(str) {
-  if (!str) return "";
-  return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D");
+    if (!str) return "";
+    return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D");
 }
+
+const roleMap = {
+    R1: "Quản trị viên",
+    R2: "Bác sĩ",
+    R3: "Người dùng"
+};
 
 class HomeHeader extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showAuthModal: false,
             searchValue: '',
             searchResults: [],
             searching: false,
@@ -30,14 +35,17 @@ class HomeHeader extends Component {
         };
         this.searchBoxRef = React.createRef();
         this.suggestRef = React.createRef();
+        this._isMounted = false;
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.fetchAllData();
         document.addEventListener('mousedown', this.handleClickOutside);
     }
 
     componentWillUnmount() {
+        this._isMounted = false;
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
@@ -53,6 +61,7 @@ class HomeHeader extends Component {
     };
 
     async fetchAllData() {
+        if (!this._isMounted) return;
         this.setState({ loading: true });
         try {
             const [doctorsRes, clinicsRes, specialtiesRes] = await Promise.all([
@@ -60,6 +69,7 @@ class HomeHeader extends Component {
                 axios.get('/api/get-all-clinic'),
                 axios.get('/api/get-all-specialty')
             ]);
+            if (!this._isMounted) return;
             const allDoctors = (doctorsRes.data && doctorsRes.data.data)
                 ? doctorsRes.data.data.map(d => ({
                     ...d,
@@ -84,6 +94,7 @@ class HomeHeader extends Component {
                     image: c.image || ''
                 }))
                 : [];
+            if (!this._isMounted) return;
             this.setState({
                 allDoctors,
                 allClinics,
@@ -91,7 +102,7 @@ class HomeHeader extends Component {
                 loading: false
             });
         } catch (err) {
-            this.setState({ loading: false });
+            if (this._isMounted) this.setState({ loading: false });
         }
     }
 
@@ -99,12 +110,6 @@ class HomeHeader extends Component {
         if (this.props.history) {
             this.props.history.push('/home');
         }
-    }
-
-    toggleAuthModal = () => {
-        this.setState(prev => ({
-            showAuthModal: !prev.showAuthModal
-        }));
     }
 
     scrollToSection = (id) => {
@@ -118,7 +123,6 @@ class HomeHeader extends Component {
 
     handleSearch = (e) => {
         if (e && e.preventDefault) e.preventDefault();
-        // Loại bỏ dấu và chuyển về chữ thường cho cả keyword và name khi filter
         const keyword = removeVietnameseTones(this.state.searchValue).toLowerCase().trim();
         if (!keyword) {
             this.setState({ searchResults: [], searching: false });
@@ -159,22 +163,45 @@ class HomeHeader extends Component {
         this.setState({ searching: false, searchValue: '' });
     }
 
+    handleLogin = () => {
+        this.props.history.push('/login');
+    };
+
+    handleRegister = () => {
+        this.props.history.push('/register');
+    };
+
+    handleLogout = () => {
+        this.props.processLogout();
+    };
+
+    getRoleName = () => {
+        const { userInfo } = this.props;
+        if (!userInfo || !userInfo.roleId) return "Người dùng";
+        return roleMap[userInfo.roleId] || "Người dùng";
+    }
+
+    getUserName = () => {
+        const { userInfo } = this.props;
+        if (!userInfo) return "";
+        return userInfo.name || userInfo.fullName || userInfo.username || "";
+    }
+
     render() {
         const { searchValue, searchResults, searching, loading } = this.state;
+        const { isLoggedIn } = this.props;
+
+        if (!isLoggedIn) {
+            return <Redirect to="/login" />;
+        }
+
         return (
             <React.Fragment>
                 <div className='home-header-container'>
                     <div className='home-header-content'>
                         <div className='left-content'>
-                            <i className="fas fa-bars" onClick={this.toggleAuthModal}></i>
+                            <i className="fas fa-bars"></i>
                             <div className='header-logo' onClick={this.returntoHome}></div>
-                            {this.state.showAuthModal && (
-                                <div className="auth-modal">
-                                    <button className="btn-auth" onClick={() => this.props.history.push('/register')}>Đăng ký</button>
-                                    <button className="btn-auth" onClick={() => this.props.history.push('/login')}>Đăng nhập</button>
-                                    <span className="close-modal" onClick={this.toggleAuthModal}>&times;</span>
-                                </div>
-                            )}
                         </div>
                         <div className='center-content'>
                             <div className='child-content' onClick={() => this.scrollToSection('specialty-section')}>
@@ -193,6 +220,22 @@ class HomeHeader extends Component {
                                 <div><b>Gói Khám</b></div>
                                 <div className='subs-title'>Khám sức khỏe tổng quát</div>
                             </div>
+                        </div>
+                        <div className="right-content">
+                            {!isLoggedIn ? (
+                                <div className="auth-buttons">
+                                    <button className="btn-auth" onClick={this.handleRegister}>Đăng ký</button>
+                                    <button className="btn-auth" onClick={this.handleLogin}>Đăng nhập</button>
+                                </div>
+                            ) : (
+                                <div className="user-greeting">
+                                    <span className="greeting-text">
+                                        Xin chào {this.getRoleName()}
+                                        {this.getUserName() ? `, ${this.getUserName()}` : ""}
+                                    </span>
+                                    <button className="btn-logout" onClick={this.handleLogout}>Đăng xuất</button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -293,11 +336,12 @@ class HomeHeader extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.admin.isLoggedIn,
-        userInfo: state.user.userInfo,
-    };
-};
+const mapStateToProps = state => ({
+    isLoggedIn: state.user.isLoggedIn,
+    userInfo: state.user.userInfo,
+});
+const mapDispatchToProps = dispatch => ({
+    processLogout: () => dispatch(actions.processLogout())
+});
 
-export default withRouter(connect(mapStateToProps)(HomeHeader));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomeHeader));

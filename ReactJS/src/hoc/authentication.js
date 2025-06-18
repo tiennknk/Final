@@ -10,9 +10,12 @@ export const userIsAuthenticated = connectedRouterRedirect({
 });
 
 export const userIsNotAuthenticated = connectedRouterRedirect({
-    // Want to redirect the user when they are authenticated
     authenticatedSelector: state => !state.user.isLoggedIn,
     wrapperDisplayName: 'UserIsNotAuthenticated',
-    redirectPath: (state, ownProps) => locationHelper.getRedirectQueryParam(ownProps) || '/',
+    redirectPath: (state, ownProps) => {
+        // Nếu user đã login, không cho vào trang login/register nữa, redirect về /home (hoặc trang nào bạn muốn)
+        // locationHelper.getRedirectQueryParam(ownProps) chỉ dùng cho redirect lại sau khi login, nhưng nếu đã login thì nên về home
+        return '/home';
+    },
     allowRedirectBack: false
 });

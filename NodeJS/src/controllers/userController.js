@@ -12,7 +12,6 @@ const handleLogin = async (req, res) => {
     }
 
     let userData = await userService.handleUserLogin(email, password);
-    console.log(userData);
     return res.status(200).json({
         errCode: userData.errCode,
         message: userData.errMessage,
@@ -39,7 +38,10 @@ const handleGetAllUsers = async (req, res) => {
 };
 
 const handleCreateNewUser = async (req, res) => {
-    let message = await userService.createNewUser(req.body);
+    const data = req.body;
+    console.log("Tạo user với data:", data);
+    let message = await userService.createNewUser(data);
+    console.log("Kết quả trả về FE:", message);
     return res.status(200).json(message);
 };
 
@@ -65,7 +67,6 @@ const getAllCode = async (req, res) => {
         let data = await userService.getAllCodeSerVice(req.query.type);
         return res.status(200).json(data);
     } catch (e) {
-        console.log('Get all code error: ', e);
         return res.status(200).json({
             errCode: -1,
             errMessage: 'Error from server'

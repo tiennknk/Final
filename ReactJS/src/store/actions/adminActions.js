@@ -357,3 +357,14 @@ export const getAllRequiredDoctorInfo = () => {
     };
 }
 
+
+// ADMIN ACTIONS
+
+export const adminLoginSuccess = (adminInfo) => ({
+    type: actionTypes.ADMIN_LOGIN_SUCCESS,
+    adminInfo
+});
+
+export const adminLoginFail = () => ({
+    type: actionTypes.ADMIN_LOGIN_FAIL
+});

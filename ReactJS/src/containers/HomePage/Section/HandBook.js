@@ -1,53 +1,67 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import './SectionList.scss';
 
-import Slider from "react-slick";
-
+const handbookArticles = [
+    {
+        id: 1,
+        title: "Cẩm nang sức khỏe mùa hè",
+        image: "",
+        summary: "Những lời khuyên giúp bạn bảo vệ sức khỏe trong mùa hè nắng nóng."
+    },
+    {
+        id: 2,
+        title: "Phòng tránh các bệnh truyền nhiễm",
+        image: "",
+        summary: "Hướng dẫn phòng ngừa các bệnh thường gặp khi thời tiết thay đổi."
+    },
+    {
+        id: 3,
+        title: "Chế độ dinh dưỡng hợp lý",
+        image: "",
+        summary: "Các nguyên tắc ăn uống để giữ cơ thể khỏe mạnh và phòng bệnh."
+    },
+    {
+        id: 4,
+        title: "Hướng dẫn kiểm tra sức khỏe định kỳ",
+        image: "",
+        summary: "Tại sao nên kiểm tra sức khỏe định kỳ và cần lưu ý những gì?"
+    },
+];
 
 class HandBook extends Component {
     render() {
-        
-            return (
-            <div>
-                <div className='section-share section-handbook'>
-                    <div className='section-container'>
-                        <div className='section-header'>
-                            <span className='title-section'>Cẩm nang</span>
-                            <button className='btn-section'>Xem thêm</button>
+        return (
+            <div className="section-list-page">
+                <div className="section-list-title">Cẩm nang</div>
+                
+                <div className="section-list">
+                    {handbookArticles.length === 0 && (
+                        <div className="no-section">Không có bài viết</div>
+                    )}
+                    {handbookArticles.map((article, idx) => (
+                        <div className="section-card handbook-card" key={article.id}>
+                            <div className="section-img handbook-img">
+                                {article.image ? (
+                                    <img src={article.image} alt={article.title} />
+                                ) : (
+                                    <div className="handbook-img-placeholder" />
+                                )}
+                            </div>
+                            <div className="section-info handbook-info">
+                                <div className="section-name handbook-title">{article.title}</div>
+                                <div className="section-description handbook-summary">{article.summary}</div>
+                            </div>
                         </div>
-                        <div className='section-body'>
-                            <Slider {...this.props.settings}>
-                                <div className='section-customize'>
-                                    <div className='bg-image section-handbook'></div>
-                                    <div>Chuyên khoa 1</div>
-                                </div>
-                                <div className='section-customize'>
-                                    <div className='bg-image section-handbook'></div>
-                                    <div>Chuyên khoa 1</div>
-                                </div>
-                                <div className='section-customize'>
-                                    <div className='bg-image section-handbook'></div>
-                                    <div>Chuyên khoa 1</div>
-                                </div>
-                                <div className='section-customize'>
-                                    <div className='bg-image section-handbook'></div>
-                                    <div>Chuyên khoa 1</div>
-                                </div>
-                            </Slider>
-                        </div>
-                    </div>
-
+                    ))}
                 </div>
             </div>
         );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.admin.isLoggedIn
-    };
-};
+const mapStateToProps = state => ({
+    isLoggedIn: state.admin.isLoggedIn
+});
 
 export default connect(mapStateToProps)(HandBook);

@@ -6,14 +6,12 @@ import Specialty from './Section/Specialty';
 import MedicalFacility from './Section/MedicalFacility';
 import OutStandingDoctor from './Section/OutStandingDoctor';
 import HandBook from './Section/HandBook';
-import Footer from './Section/Footer'; // Thêm dòng này
+import Footer from './Section/Footer';
 import './HomePage.scss';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-
 class HomePage extends Component {
-
     render() {
         let settings = {
             dots: false,
@@ -29,33 +27,25 @@ class HomePage extends Component {
         return (
             <div>
                 <HomeHeader isShowBanner={true} />
-                <Specialty 
-                  settings={settings}
-                />
-                <MedicalFacility
-                  settings={settings}
-                />
-                <OutStandingDoctor
-                  settings={settings}
-                />
-                <HandBook
-                  settings={settings}
-                />
-                <Footer /> {/* Thêm Footer ở đây */}
+                <Specialty settings={settings} />
+                <MedicalFacility settings={settings} />
+                <OutStandingDoctor settings={settings} />
+                <HandBook settings={settings} />
+                <Footer />
             </div>
         );
     }
-
 }
 
 const mapStateToProps = state => {
     return {
-        isLoggedIn: state.admin.isLoggedIn
+        isLoggedIn: state.user.isLoggedIn  // SỬA ĐÚNG Ở ĐÂY
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+
     };
 };
 

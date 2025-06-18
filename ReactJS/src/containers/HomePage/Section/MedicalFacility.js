@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './MedicalFacility.scss';
+import './MedicalFacilityy.scss';
 import { getAllClinic } from '../../../services/userService';
 import { withRouter } from 'react-router';
 
@@ -11,15 +11,21 @@ class MedicalFacility extends Component {
             dataClinics: [],
             filterLocation: 'all'
         };
+        this._isMounted = false;
     }
 
     async componentDidMount() {
+        this._isMounted = true;
         let res = await getAllClinic();
-        if (res && res.errCode === 0) {
+        if (this._isMounted && res && res.errCode === 0) {
             this.setState({
                 dataClinics: res.data || []
             });
         }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     handleViewDetailClinic = (clinic) => {
@@ -45,7 +51,7 @@ class MedicalFacility extends Component {
             : dataClinics.filter(clinic => clinic.address === filterLocation);
 
         return (
-            <div className="clinic-list-page">
+            <div id="clinic-section" className="clinic-list-page">
                 <h2 className="clinic-list-title">Danh sách Phòng Khám</h2>
                 <div className="clinic-filter">
                     <label>Lọc theo địa điểm:&nbsp;</label>
@@ -71,10 +77,10 @@ class MedicalFacility extends Component {
                                     <div className="clinic-address">{clinic.address}</div>
                                 )}
                                 {clinic.descriptionMarkdown && clinic.descriptionMarkdown !== "Không có" ? (
-        <div className="clinic-description">{clinic.descriptionMarkdown}</div>
-    ) : clinic.descriptionHTML && clinic.descriptionHTML !== "<p>Không có</p>" ? (
-        <div className="clinic-description" dangerouslySetInnerHTML={{ __html: clinic.descriptionHTML }}></div>
-    ) : null}
+                                    <div className="clinic-description">{clinic.descriptionMarkdown}</div>
+                                ) : clinic.descriptionHTML && clinic.descriptionHTML !== "<p>Không có</p>" ? (
+                                    <div className="clinic-description" dangerouslySetInnerHTML={{ __html: clinic.descriptionHTML }}></div>
+                                ) : null}
                                 {clinic.phone && (
                                     <div className="clinic-contacts">
                                         <div className="clinic-phone">

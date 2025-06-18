@@ -8,7 +8,6 @@ class Doctor extends Component {
     render() {
         return (
             <React.Fragment>
-                {/* Header luôn hiện ở trên, chứa menu phân quyền */}
                 <Header />
                 <div className="doctor-container">
                     <Switch>

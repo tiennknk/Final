@@ -1,0 +1,181 @@
+.section-list-page {
+    padding: 30px 0 40px 0;
+    background: #f8fafc;
+    min-height: 320px;
+
+    .section-list-title {
+        font-size: 28px;
+        color: #222;
+        font-weight: 700;
+        margin-bottom: 18px;
+        text-align: left;
+        letter-spacing: 1px;
+    }
+
+    .section-list-filter {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 18px;
+        gap: 8px;
+        .btn-section {
+            background: #f6f6f6;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 18px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #575757;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            &:hover {
+                background: #3399ff;
+                color: #fff;
+            }
+        }
+    }
+
+    .section-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: center;
+
+        .section-card {
+            width: 320px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(44,108,255,0.07), 0 1.5px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: box-shadow 0.18s, transform 0.18s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+            &:hover, &:focus {
+                box-shadow: 0 8px 32px rgba(44,108,255,0.13);
+                border: 1px solid #3399ff;
+                transform: translateY(-4px) scale(1.03);
+            }
+            .section-img {
+                width: 100%;
+                height: 170px;
+                background: #f4f4f4;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-top-left-radius: 14px;
+                border-top-right-radius: 14px;
+                overflow: hidden;
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .handbook-img-placeholder {
+                    width: 100%;
+                    height: 100%;
+                    background: #f1f1f1;
+                    border-radius: 8px;
+                }
+            }
+            .section-info {
+                padding: 18px 20px 12px 20px;
+                width: 100%;
+                .section-name {
+                    font-size: 19px;
+                    font-weight: 700;
+                    color: #0a2c4c;
+                    margin-bottom: 7px;
+                    line-height: 1.3;
+                }
+                .section-description {
+                    font-size: 15px;
+                    color: #444;
+                    line-height: 1.35;
+                    margin-bottom: 6px;
+                }
+                .doctor-position {
+                    font-size: 15px;
+                    color: #666;
+                    font-weight: 500;
+                    margin-bottom: 6px;
+                }
+            }
+        }
+        .no-section {
+            text-align: center;
+            color: #888;
+            padding: 36px 0 30px 0;
+            font-size: 17px;
+            width: 100%;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 900px) {
+    .section-list-page {
+        .section-list {
+            gap: 10px;
+            .section-card {
+                width: 98vw;
+                min-width: 0;
+                .section-img {
+                    height: 110px;
+                }
+                .section-info {
+                    padding: 10px 7px 7px 12px;
+                    .section-name { font-size: 15px; }
+                    .section-description, .doctor-position { font-size: 12px; }
+                }
+            }
+        }
+    }
+}
+
+// Doctor style tweaks
+.doctor-card {
+    align-items: center !important;
+    .doctor-img img {
+        width: 110px !important;
+        height: 110px !important;
+        border-radius: 100%;
+        border: 4px solid #fff;
+        box-shadow: 0 0 0 1.5px #3399ff;
+        object-fit: cover;
+        margin: 25px 0 12px 0;
+        background: #f8fafc;
+    }
+    .doctor-info {
+        align-items: center;
+    }
+}
+
+// Handbook style tweaks
+.handbook-card {
+    .handbook-img img,
+    .handbook-img-placeholder {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: #e8e8e8;
+        margin: 22px 0 0 0;
+        object-fit: cover;
+        display: block;
+    }
+    .handbook-info {
+        padding: 12px 15px 12px 15px;
+        .handbook-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1c3766;
+        }
+        .handbook-summary {
+            font-size: 14px;
+            color: #555;
+        }
+    }
+}

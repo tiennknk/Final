@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Slider from 'react-slick';
 import * as actions from '../../../store/actions';
 import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
+import './SectionList.scss';
 
 class OutStandingDoctor extends Component {
     constructor(props) {
@@ -33,58 +34,49 @@ class OutStandingDoctor extends Component {
     render() {
         let arrDoctors = this.state.arrDoctors || [];
         return (
-            <div className='section-share section-outstanding-doctor'>
-                <div className='section-container'>
-                    <div className='section-header'>
-                        <span className='title-section'>Bác sĩ nổi bật</span>
-                        <button className='btn-section'>Xem thêm</button>
-                    </div>
-                    <div className='section-body'>
-                        <Slider {...this.props.settings}>
-                            {arrDoctors && arrDoctors.length > 0 &&
-                                arrDoctors.map((item, index) => {
-                                    let imageBase64 = '';
-                                    if (item.image) {
-                                        imageBase64 = `data:image/jpeg;base64,${item.image}`;
-                                    }
-                                    return (
-                                        <div className='section-customize' key={index} onClick={() => this.handleViewDetailDoctor(item)}>
-                                            <div className='customize-border'>
-                                                <div className='outer-bg'>
-                                                    <div
-                                                        className='bg-image section-outstanding-doctor'
-                                                        style={{
-                                                            backgroundImage: `url(${imageBase64})`
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                                <div className='position text-center'>
-                                                    <div className='name'>{item.lastName} {item.firstName}</div>
-                                                    <div className='position'>{item.positionData?.valueVi || ''}</div>
-                                                </div>
-                                            </div>
+            <div id="doctor-section" className="section-list-page">
+                <div className="section-list-title">Bác sĩ nổi bật</div>
+                <div className="section-list">
+                    {arrDoctors && arrDoctors.length > 0 ? (
+                        arrDoctors.map((item, index) => {
+                            let imageBase64 = '';
+                            if (item.image) {
+                                imageBase64 = `data:image/jpeg;base64,${item.image}`;
+                            }
+                            return (
+                                <div
+                                    className="section-card doctor-card"
+                                    key={index}
+                                    onClick={() => this.handleViewDetailDoctor(item)}
+                                >
+                                    <div className="section-img doctor-img">
+                                        <img src={imageBase64} alt={item.lastName + ' ' + item.firstName} />
+                                    </div>
+                                    <div className="section-info doctor-info" style={{alignItems: 'center', textAlign: 'center'}}>
+                                        <div className="section-name doctor-name">
+                                            {item.lastName} {item.firstName}
                                         </div>
-                                    );
-                                })}
-                        </Slider>
-                    </div>
+                                        <div className="doctor-position">{item.positionData?.valueVi || ''}</div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <div className="no-section">Không có bác sĩ nổi bật</div>
+                    )}
                 </div>
             </div>
         );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.admin.isLoggedIn,
-        topDoctors: state.admin.topDoctors,
-    };
-};
+const mapStateToProps = state => ({
+    isLoggedIn: state.admin.isLoggedIn,
+    topDoctors: state.admin.topDoctors,
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        loadTopDoctors: () => dispatch(actions.fetchTopDoctors()),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    loadTopDoctors: () => dispatch(actions.fetchTopDoctors()),
+});
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OutStandingDoctor));

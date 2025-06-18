@@ -14,10 +14,23 @@ const hashUserPassword = (password) => {
     });
 };
 
-const handleUserLogin = (email, password) => {
+const checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let userData = {};
+            let user = await db.User.findOne({
+                where: { email: userEmail }
+            });
+            resolve(!!user);
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+const handleUserLogin = (email, password) => {
+    return new Promise(async (resolve, reject) => {
+        let userData = {};
+        try {
             let isExist = await checkUserEmail(email);
             if (isExist) {
                 let user = await db.User.findOne({
@@ -27,7 +40,11 @@ const handleUserLogin = (email, password) => {
                 });
 
                 if (user) {
-                    let check = await bcrypt.compareSync(password, user.password);
+                    let check = bcrypt.compareSync(password, user.password);
+                    // LOG đúng vị trí
+                    console.log('===> Đăng nhập với:', email, password);
+                    console.log('===> Dữ liệu user lấy từ DB:', user);
+                    console.log('===> So sánh mật khẩu:', password, user?.password, 'KQ:', check);
                     if (check) {
                         userData.errCode = 0;
                         userData.errMessage = 'Đăng nhập thành công';
@@ -45,24 +62,8 @@ const handleUserLogin = (email, password) => {
                 userData.errCode = 1;
                 userData.errMessage = 'Sai email';
             }
+            console.log('===> Kết quả trả về:', userData);
             resolve(userData);
-        } catch (e) {
-            reject(e);
-        }
-    });
-};
-
-const checkUserEmail = (userEmail) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let user = await db.User.findOne({
-                where: { email: userEmail }
-            });
-            if (user) {
-                resolve(true);
-            } else {
-                resolve(false);
-            }
         } catch (e) {
             reject(e);
         }
@@ -103,7 +104,6 @@ const createNewUser = (data) => {
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
 
-                // SỬA TẠI ĐÂY: luôn loại bỏ prefix nếu có
                 let base64String = data.avatar;
                 if (base64String) {
                     base64String = base64String.replace(/^data:image\/\w+;base64,/, "");
@@ -119,11 +119,11 @@ const createNewUser = (data) => {
                     gender: data.gender,
                     roleId: data.roleId,
                     positionId: data.positionId,
-                    image: base64String ? Buffer.from(base64String, 'base64') : null, // SỬA Ở ĐÂY
+                    image: base64String ? Buffer.from(base64String, 'base64') : null,
                 });
                 resolve({
                     errCode: 0,
-                    message: 'tao user thanh cong'
+                    errMessage: 'Tạo user thành công!'
                 });
             }
         } catch (e) {
@@ -131,7 +131,6 @@ const createNewUser = (data) => {
         }
     });
 };
-
 
 const deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
@@ -177,7 +176,6 @@ const updateUserData = (data) => {
                 user.roleId = data.roleId;
                 user.positionId = data.positionId;
                 if (data.avatar) {
-                    // SỬA TẠI ĐÂY: luôn loại bỏ prefix nếu có
                     let base64String = data.avatar.replace(/^data:image\/\w+;base64,/, "");
                     user.image = Buffer.from(base64String, 'base64');
                 }
@@ -222,29 +220,11 @@ const getAllCodeSerVice = (typeInput) => {
     });
 };
 
-const getAllSpecialty = () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let specialties = await db.Specialty.findAll({
-                attributes: ['id', 'name', 'image', 'descriptionHTML', 'descriptionMarkdown']
-            });
-            resolve({
-                errCode: 0,
-                data: specialties
-            });
-        } catch (e) {
-            reject(e);
-        }
-    });
-};
-
-
 export default {
     handleUserLogin,
     getAllUsers,
     createNewUser,
     updateUserData,
     deleteUser,
-    getAllCodeSerVice,
-    getAllSpecialty
+    getAllCodeSerVice
 };

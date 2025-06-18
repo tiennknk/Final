@@ -1,29 +1,26 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
-class Home extends Component {
+const HomePage = () => <div>Trang chủ</div>;
 
-    render() {
-        const { isLoggedIn } = this.props;
-        let linkToRedirect = isLoggedIn ? '/system/user-manage' : '/home';
-
-        return (
-            <Redirect to={linkToRedirect} />
-        );
+const Home = (props) => {
+    const { isLoggedIn, userInfo, location } = props;
+    let linkToRedirect = "/home";
+    if (isLoggedIn && userInfo && userInfo.roleId) {
+        if (userInfo.roleId === "R1") linkToRedirect = "/system/user-manage";
+        else if (userInfo.roleId === "R2") linkToRedirect = "/doctor";
+        else if (userInfo.roleId === "R3") linkToRedirect = "/home";
     }
-
-}
-
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.user.isLoggedIn
-    };
+    if (isLoggedIn && userInfo && userInfo.roleId && location.pathname !== linkToRedirect) {
+        return <Redirect to={linkToRedirect} />;
+    }
+    if (!isLoggedIn) return <Redirect to="/login" />;
+    return <HomePage />;
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+const mapStateToProps = (state) => ({
+    isLoggedIn: state.user.isLoggedIn,
+    userInfo: state.user.userInfo,
+});
+export default connect(mapStateToProps)(Home);
