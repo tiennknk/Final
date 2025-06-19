@@ -1,12 +1,11 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
-
-import appReducer from "./appReducer";
-import userReducer from "./userReducer";
-
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
+
+import appReducer from './appReducer';
+import userReducer from './userReducer';
 import adminReducer from './adminReducer';
 
 const persistCommonConfig = {
@@ -20,10 +19,10 @@ const userPersistConfig = {
     whitelist: ['isLoggedIn', 'userInfo']
 };
 
-
-export default (history) => combineReducers({
-    router: connectRouter(history),
-    app: appReducer,
-    user: persistReducer(userPersistConfig, userReducer),
-    admin: adminReducer
-})
+export default (history) =>
+    combineReducers({
+        router: connectRouter(history),
+        app: appReducer,
+        user: persistReducer(userPersistConfig, userReducer),
+        admin: adminReducer
+    });

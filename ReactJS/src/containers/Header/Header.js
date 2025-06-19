@@ -5,6 +5,7 @@ import Navigator from '../../components/Navigator';
 import { adminMenu, doctorMenu } from './menuApp';
 import { USER_ROLE } from '../../utils';
 import './Header.scss';
+
 import _ from 'lodash';
 
 class Header extends Component {
@@ -36,17 +37,17 @@ class Header extends Component {
     render() {
         const { processLogout, userInfo } = this.props;
         return (
-            <div className="header-container">
-                <div className="header-tabs-container">
+            <div className="system-header">
+                <div className="header-left">
                     <Navigator menus={this.state.menuApp} />
                 </div>
-                <div className='header-right'>
-                    <span className='welcome'>
+                <div className="header-right">
+                    <span className="welcome-text">
                         Welcome, {userInfo && userInfo.firstName ? userInfo.firstName : ''} !
                     </span>
-                </div>
-                <div className="btn btn-logout" onClick={processLogout}>
-                    <i className="fas fa-sign-out-alt"></i>
+                    <button className="btn-logout" onClick={processLogout}>
+                        <i className="fas fa-sign-out-alt"></i> Logout
+                    </button>
                 </div>
             </div>
         );

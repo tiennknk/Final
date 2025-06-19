@@ -2,7 +2,7 @@ export const adminMenu = [
     {
         name: 'menu.system.header', 
         menus: [
-            { name: 'menu.admin.crud', link: '/system/user-manage' },
+            // { name: 'menu.admin.crud', link: '/system/user-manage' }, // ĐÃ XOÁ DÒNG NÀY
             { name: 'menu.admin.crud-redux', link: '/system/user-redux' },
             { name: 'menu.admin.manage-doctor', link: '/system/manage-doctor' },
             { name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule' }

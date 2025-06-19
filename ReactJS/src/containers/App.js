@@ -1,31 +1,23 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
-import { ConnectedRouter as Router } from 'connected-react-router';
-import { history } from '../redux'
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import { userIsAuthenticated, userIsNotAuthenticated } from '../hoc/authentication';
+import { path } from '../utils';
 
-import { path } from '../utils'
-
-import Home from '../routes/Home';
-// import Login from '../routes/Login';
 import Login from './Auth/Login';
-import Register from './Auth/Register'; // <-- Thêm dòng này
-import Header from './Header/Header';
+import Register from './Auth/Register';
 import System from '../routes/System';
-import { CustomToastCloseButton } from '../components/CustomToast';
-import HomePage from './HomePage/HomePage.js';
-import CustomScrollbars from '../components/CustomScrollbars.js';
-import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
-import Doctor from '../routes/Doctor.js';
-import VerifyEmail from './Patient/VerifyEmail.js';
-import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
-import DetailClinic from './Patient/Clinic/DetailClinic.js';
+import Doctor from '../routes/Doctor';
+import HomePage from './HomePage/HomePage';
+import DetailDoctor from './Patient/Doctor/DetailDoctor';
+import VerifyEmail from './Patient/VerifyEmail';
+import DetailSpecialty from './Patient/Specialty/DetailSpecialty';
+import DetailClinic from './Patient/Clinic/DetailClinic';
+import CustomScrollbars from '../components/CustomScrollbars';
 
-class App extends Component {
-
+class App extends React.Component {
     handlePersistorState = () => {
         const { persistor } = this.props;
         let { bootstrapped } = persistor.getState();
@@ -47,27 +39,30 @@ class App extends Component {
     render() {
         return (
             <Fragment>
-                <Router history={history}>
-                    <div className="main-container">
-                        <div className="content-container">
-                            <CustomScrollbars style={{ height: '100vh', width: '100%' }}>
+                <div className="main-container">
+                    <div className="content-container">
+                        <CustomScrollbars style={{ height: '100vh', width: '100%' }}>
                             <Switch>
-                                <Route path={path.HOME} exact component={Home} />
+                                {/* Trang HomePage giao diện chính */}
+                                <Route path={path.HOMEPAGE} exact component={HomePage} />
+                                <Route path={path.HOME} exact>
+                                    <Redirect to={path.HOMEPAGE} />
+                                </Route>
                                 <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
-                                <Route path="/register" component={userIsNotAuthenticated(Register)} /> {/* <-- Thêm dòng này */}
+                                <Route path="/register" component={userIsNotAuthenticated(Register)} />
                                 <Route path={path.SYSTEM} component={userIsAuthenticated(System)} />
                                 <Route path={'/doctor'} component={userIsAuthenticated(Doctor)} />
-                                <Route path={path.HOMEPAGE} component={HomePage} />
                                 <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
                                 <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
                                 <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
                                 <Route path={'/verify-email'} component={VerifyEmail} />
                                 <Route path={'/verify-booking'} component={VerifyEmail} />
+                                {/* Fallback route */}
+                                <Route component={HomePage} />
                             </Switch>
-                            </CustomScrollbars>
-                        </div>
-
-                        <ToastContainer
+                        </CustomScrollbars>
+                    </div>
+                    <ToastContainer
                         position='bottom-right'
                         autoClose={5000}
                         hideProgressBar={false}
@@ -77,24 +72,16 @@ class App extends Component {
                         pauseOnFocusLoss
                         draggable
                         pauseOnHover
-                        />
-                    </div>
-                </Router>
+                    />
+                </div>
             </Fragment>
-        )
+        );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        started: state.app?.started,
-        isLoggedIn: state.user?.isLoggedIn
-    };
-};
+const mapStateToProps = state => ({
+    started: state.app?.started,
+    isLoggedIn: state.user?.isLoggedIn
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

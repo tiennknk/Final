@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import React from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import HomeHeader from './HomeHeader';
 import Specialty from './Section/Specialty';
 import MedicalFacility from './Section/MedicalFacility';
@@ -11,8 +11,16 @@ import './HomePage.scss';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-class HomePage extends Component {
+class HomePage extends React.Component {
     render() {
+        const { isLoggedIn, userInfo } = this.props;
+        // Redirect user theo role nếu cần
+        if (isLoggedIn && userInfo) {
+            if (userInfo.roleId === 'R1') return <Redirect to="/system/user-manage" />;
+            if (userInfo.roleId === 'R2') return <Redirect to="/doctor" />;
+            // Nếu muốn user thường về /home, không cần redirect
+        }
+
         let settings = {
             dots: false,
             infinite: false,
@@ -37,16 +45,9 @@ class HomePage extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.user.isLoggedIn  // SỬA ĐÚNG Ở ĐÂY
-    };
-};
+const mapStateToProps = state => ({
+    isLoggedIn: state.user.isLoggedIn,
+    userInfo: state.user.userInfo
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
+export default connect(mapStateToProps)(HomePage);

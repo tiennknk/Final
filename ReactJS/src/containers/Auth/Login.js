@@ -11,22 +11,18 @@ const Login = (props) => {
     const [loginError, setLoginError] = useState("");
     const [isShowPassword, setIsShowPassword] = useState(false);
 
-    const { isLoggedIn, userInfo, dispatch } = props;
+    const { isLoggedIn, userInfo, userLoginSuccess, push } = props;
 
     useEffect(() => {
-        // Debug xem dữ liệu roleId thực chất là gì
-        console.log("useEffect - isLoggedIn:", isLoggedIn, "userInfo:", userInfo);
-
         if (isLoggedIn && userInfo && userInfo.roleId) {
-            if (userInfo.roleId === "R1") {
-                dispatch(push("/system/user-manage"));
-            } else if (userInfo.roleId === "R2") {
-                dispatch(push("/doctor"));
-            } else {
-                dispatch(push("/home"));
+            let target = "/home";
+            if (userInfo.roleId === "R1") target = "/system/user-manage";
+            else if (userInfo.roleId === "R2") target = "/doctor";
+            if (window.location.pathname !== target) {
+                push(target);
             }
         }
-    }, [isLoggedIn, userInfo, dispatch]);
+    }, [isLoggedIn, userInfo, push]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -38,7 +34,7 @@ const Login = (props) => {
         try {
             const res = await handleLoginApi(username, password);
             if (res && res.errCode === 0 && res.user) {
-                dispatch(userLoginSuccess(res.user));
+                userLoginSuccess(res.user);
             } else {
                 setLoginError(res?.message || "Sai tài khoản hoặc mật khẩu!");
             }
@@ -89,11 +85,8 @@ const Login = (props) => {
                             <span
                                 className="register-link"
                                 style={{ color: "blue", textDecoration: "underline", cursor: "pointer", marginLeft: 6 }}
-                                onClick={() => dispatch(push('/register'))}
+                                onClick={() => push('/register')}
                             >Đăng ký</span>
-                        </div>
-                        <div className="forgot-password">
-                            Quên mật khẩu?
                         </div>
                     </form>
                 </div>
@@ -106,4 +99,8 @@ const mapStateToProps = (state) => ({
     isLoggedIn: state.user.isLoggedIn,
     userInfo: state.user.userInfo, 
 });
-export default connect(mapStateToProps)(Login);
+const mapDispatchToProps = {
+    userLoginSuccess,
+    push
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

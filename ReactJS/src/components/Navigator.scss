@@ -4,102 +4,110 @@
     display: flex;
     margin: 0;
     padding: 0;
+    position: relative;
+
     &.list-unstyled,
     .list-unstyled {
         list-style-type: none;
     }
+
     .menu-group {
-        &:hover {
-            cursor: pointer;
-            background-color: darken($colormain, 5);
-        }
-        .menu-group-name {
+        position: relative; // QUAN TRỌNG: để dropdown căn theo group
+        > .menu-group-name {
             line-height: 40px;
-            padding: 0 15px;
+            padding: 0 18px;
             border-right: 1px solid $border;
-            &:first-child {
-                border-left: 1px solid $border;
-            }
+            background: $colormain;
+            color: $common-text-color;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 4px 4px 0 0;
         }
+
         .menu-list {
             display: none;
-            background-color: $bg-menu-color;
-            box-shadow: 2px 2px 4px 0 $box-shadow-color;
-            -webkit-box-shadow: 2px 2px 4px 0 $box-shadow-color;
-            color: $text-in-light;
             position: absolute;
-            padding: 0;
+            top: 100%;
+            left: 0;
+            min-width: 180px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.11);
+            border-radius: 0 0 8px 8px;
+            z-index: 1000;
+            padding: 6px 0;
+
             .menu {
-                width: 100%;
-                padding: 0 15px;
-                height: 35px;
-                line-height: 35px;
-                text-transform: none;
+                position: relative;
+                padding: 0 22px;
+                height: 38px;
+                line-height: 38px;
+                background: none;
+                transition: background 0.18s;
+                white-space: nowrap;
 
-                &.active{
-                    a {
-                        color: orange !important;
-                    }
-
-                    background-color: #ededed;
+                &.active, &:hover {
+                    background: #f0f6ff;
                 }
 
                 .menu-link {
                     text-decoration: none;
-                    color: $text-in-light;
+                    color: #222;
+                    font-weight: 500;
                 }
+                &.active .menu-link {
+                    color: $colormain;
+                }
+
+                &.has-sub-menu > .menu-link {
+                    padding-right: 22px;
+                }
+
+                .icon-right {
+                    position: absolute;
+                    right: 8px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+
                 .sub-menu-list {
                     display: none;
-                    background-color: $bg-menu-color;
-                    box-shadow: 2px 2px 4px 0 $box-shadow-color;
-                    -webkit-box-shadow: 2px 2px 4px 0 $box-shadow-color;
                     position: absolute;
                     top: 0;
-                    left: 205px;
-                    padding: 0;
+                    left: 100%;
+                    min-width: 190px;
+                    background: #fff;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.11);
+                    border-radius: 0 8px 8px 0;
+                    z-index: 1100;
+                    padding: 6px 0;
+
                     .sub-menu {
-                        padding: 0 15px;
-                        height: 35px;
-                        line-height: 35px;
+                        padding: 0 20px;
+                        height: 38px;
+                        line-height: 38px;
                         white-space: nowrap;
-                        &:hover {
-                            background-color: darken($bg-menu-color, 5);
-                        }
+
                         .sub-menu-link {
+                            color: #333;
                             text-decoration: none;
-                            color: $text-in-light;
-                        }
-                        a {
                             display: block;
                         }
-                        &.active a {
-                            font-weight: 500;
+                        &.active .sub-menu-link,
+                        &:hover .sub-menu-link {
                             color: $colormain;
+                            font-weight: 600;
                         }
                     }
                 }
-                &.active span {
-                    font-weight: 500;
-                    color: orange;
-                }
-                &:hover {
-                    background-color: darken($bg-menu-color, 3);
-                    .sub-menu-list {
-                        display: block;
-                    }
-                }
-                .icon-right {
+
+                &:hover > .sub-menu-list {
                     display: block;
-                    position: absolute;
-                    top: 0;
-                    right: 10px;
                 }
             }
         }
-        &:hover {
-            .menu-list {
-                display: block;
-            }
+        &:hover > .menu-list {
+            display: block;
         }
     }
 }

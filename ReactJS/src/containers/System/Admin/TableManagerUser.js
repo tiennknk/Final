@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {FormattedMessage} from "react-intl";
 import {connect} from "react-redux";
 import * as actions from "../../../store/actions";
-import "./TableManagerUser.scss";
+import './TableManagerUser.scss';
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";

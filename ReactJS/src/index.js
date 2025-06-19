@@ -1,25 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'react-toastify/dist/ReactToastify.css';
-import './styles/styles.scss';
-
-import App from './containers/App';
-import * as serviceWorker from './serviceWorker';
-import IntlProviderWrapper from "./hoc/IntlProviderWrapper";
-
 import { Provider } from 'react-redux';
-import reduxStore, { persistor } from './redux';
+import reduxStore, { persistor, history } from './redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { ConnectedRouter } from 'connected-react-router';
+import IntlProviderWrapper from "./hoc/IntlProviderWrapper";
+import App from './containers/App';
 
-const renderApp = () => {
-    ReactDOM.render(
-        <Provider store={reduxStore}>
+ReactDOM.render(
+    <Provider store={reduxStore}>
+        <PersistGate loading={null} persistor={persistor}>
             <IntlProviderWrapper>
-                <App persistor={persistor} />
+                <ConnectedRouter history={history}>
+                    <App persistor={persistor} />
+                </ConnectedRouter>
             </IntlProviderWrapper>
-        </Provider>,
-        document.getElementById('root')
-    );
-};
-
-renderApp();
-serviceWorker.unregister();
+        </PersistGate>
+    </Provider>,
+    document.getElementById('root')
+);
