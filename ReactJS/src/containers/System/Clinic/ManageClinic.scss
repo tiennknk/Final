@@ -1,29 +1,30 @@
 .manage-clinic-container {
-    max-width: 1100px;
-    margin: 40px auto;
+    max-width: 700px;
+    margin: 36px auto 0 auto;
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.10);
-    padding: 40px 36px 28px 36px;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px 38px 18px 38px;
     min-height: 650px;
 
     .ms-title {
-        font-size: 2.3rem;
+        font-size: 2rem;
         font-weight: 700;
         text-align: center;
-        margin-bottom: 38px;
+        margin-bottom: 30px;
+        color: #1677ff;
         letter-spacing: 1px;
     }
 
     .add-new-specialty {
-        margin: 0 -10px;
+        margin: 0 -8px;
         display: flex;
         flex-wrap: wrap;
 
         .form-group {
-            margin-bottom: 20px;
-            padding-left: 10px;
-            padding-right: 10px;
+            margin-bottom: 18px;
+            padding-left: 8px;
+            padding-right: 8px;
         }
         .col-6 {
             flex: 0 0 50%;
@@ -40,44 +41,77 @@
 
     input.form-control, input.form-control-file {
         border-radius: 6px;
-        font-size: 1.1rem;
-        padding: 9px 14px;
-        border: 1px solid #e0e0e0;
-        background: #fafbfc;
+        font-size: 1rem;
+        padding: 7px 12px;
+        border: 1px solid #bfc6d1;
+        background: #f9fafe;
+        margin-bottom: 2px;
+        transition: border 0.18s;
+    }
+    input.form-control:focus, input.form-control-file:focus {
+        border: 1.5px solid #1677ff;
+        background: #fff;
     }
 
     label {
-        font-weight: 500;
-        margin-bottom: 7px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #222;
+        font-size: 1rem;
         display: block;
     }
 
     .MdEditor {
         background: #fcfcfc;
         border-radius: 7px;
-        border: 1px solid #e6e6e6;
+        border: 1.5px solid #bfc6d1;
         padding: 6px;
+        margin-bottom: 10px;
     }
 
     button.btn-primary {
         display: flex;
         align-items: center;
         gap: 8px;
-        background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+        background: linear-gradient(90deg, #00c6ff 0%, #1677ff 100%);
         color: #fff;
         border: none;
         border-radius: 5px;
         padding: 12px 36px;
-        font-size: 1.15rem;
+        font-size: 1.12rem;
         font-weight: 500;
-        margin-top: 22px;
+        margin-top: 18px;
         margin-left: auto;
         margin-right: auto;
         transition: background 0.2s;
-        box-shadow: 0 2px 8px rgba(0,110,255,0.08);
+        box-shadow: 0 2px 8px rgba(22,119,255,0.08);
 
         &:hover {
-            background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%);
+            background: linear-gradient(90deg, #1677ff 0%, #00c6ff 100%);
+        }
+    }
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+    .manage-clinic-container {
+        padding: 18px 6px 10px 6px;
+
+        .ms-title {
+            font-size: 1.2rem;
+        }
+        .add-new-specialty {
+            .col-6, .col-12 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+        .MdEditor {
+            padding: 2px;
+        }
+        button.btn-primary {
+            font-size: 0.95rem;
+            padding: 10px 16px;
         }
     }
 }

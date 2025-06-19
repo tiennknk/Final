@@ -281,14 +281,6 @@ class UserRedux extends Component {
                 <div className="table-wrapper-right">
                     <TableManagerUser handleEditUserFromParent={this.handleEditUserFromParent} />
                 </div>
-                {/* Markdown Editor đặt ngoài bảng user */}
-                <div className="markdown-editor-wrapper">
-                    <MdEditor
-                        style={{ height: "500px" }}
-                        renderHTML={text => mdParser.render(text)}
-                        onChange={this.handleEditorChange}
-                    />
-                </div>
                 {isOpen && (
                     <LightBox
                         mainSrc={previewImgURL}

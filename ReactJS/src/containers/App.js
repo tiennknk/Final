@@ -63,16 +63,16 @@ class App extends React.Component {
                         </CustomScrollbars>
                     </div>
                     <ToastContainer
-                        position='bottom-right'
-                        autoClose={5000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                    />
+  position="top-right"
+  autoClose={5000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+/>
                 </div>
             </Fragment>
         );

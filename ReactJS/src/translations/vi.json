@@ -40,7 +40,7 @@
         },
         "admin": {
             "crud": "Quản lý CRUD",
-            "crud-redux": "Quản lý CRUD (Redux)",
+            "crud-redux": "Quản lý CRUD",
             "manage-doctor": "Quản lý bác sĩ",
             "manage-admin": "Quản lý admin",
             "clinic": "Phòng khám",
@@ -136,7 +136,7 @@
         }
     },
     "manage-schedule": {
-        "title": "Quản lý kế hoạch khám bệnh của bác sĩ",
+        "title": "Quản lý lịch khám bệnh",
         "select-doctor": "Chọn bác sĩ",
         "choose-date": "Chọn ngày",
         "save": "Lưu thông tin",

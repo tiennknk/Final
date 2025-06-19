@@ -24,17 +24,22 @@
             background: none;
             padding: 0;
 
-            select.form-control {
-                width: 180px;
-                margin-bottom: 12px;
-                border-radius: 6px;
-                border: 1px solid #e0e0e0;
-                font-size: 15px;
-                height: 36px;
-                color: #333;
-                outline: none;
-                padding-left: 10px;
-                margin-right: 10px;
+            .filter-location {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                margin-bottom: 16px;
+
+                label {
+                    font-size: 15px;
+                    color: #333;
+                    margin-right: 6px;
+                    font-weight: 500;
+                }
+                select.form-control {
+                    min-width: 120px;
+                    font-size: 15px;
+                }
             }
 
             .each-doctor {
@@ -110,7 +115,6 @@
                                 }
                             }
                         }
-                        // Ẩn box giá khám ở đây
                         .price {
                             display: none !important;
                         }

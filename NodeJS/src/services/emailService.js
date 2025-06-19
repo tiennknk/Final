@@ -3,18 +3,39 @@ import nodemailer from "nodemailer";
 
 dotenv.config();
 
+// Hàm tạo HTML email đặt lịch (có bôi đậm, tăng size, loại bỏ thông tin thừa, sửa lỗi undefined)
 const getBodyHTMLEmail = (dataSend) => {
     return `
-        <h3>Xin chào ${dataSend.patientName}!</h3>
-        <p>Bạn đã đặt lịch khám bệnh thành công với bác sĩ: ${dataSend.doctorName}</p>
-        <p>Thông tin chi tiết:</p>
-        <div><b>Thời gian:</b> ${dataSend.time}</div>
-        <div><b>Ngày khám:</b> ${dataSend.date}</div>
-        <p>Vui lòng truy cập vào đường dẫn bên dưới để xác nhận lịch hẹn:</p>
-        <a href="${dataSend.redirectLink}">Xác nhận lịch hẹn</a>
+        <div style="font-family: Arial, sans-serif; color: #222;">
+            <h2 style="color: #1677ff; font-size: 1.4rem; margin-bottom: 12px;">
+                Thông tin đặt lịch khám bệnh
+            </h2>
+            <p style="font-size: 1.08rem; margin-bottom: 8px;">
+                <strong>Xin chào <span style="color:#1677ff;">${dataSend.patientName}</span>!</strong>
+            </p>
+            <p style="font-size: 1.02rem;">
+                Bạn đã đặt lịch khám bệnh thành công với bác sĩ: 
+                <strong style="color:#1677ff;">${dataSend.doctorName}</strong>
+            </p>
+            <div style="margin: 18px 0; padding: 10px 20px; background: #f6faff; border-radius: 7px;">
+                <span style="font-size:1.08rem;"><strong>Thông tin chi tiết:</strong></span><br>
+                <span style="font-size:1.08rem;">
+                    <strong>Thời gian:</strong> <span style="color:#1677ff;">${dataSend.time}</span>
+                </span>
+            </div>
+            <p style="margin-top:12px; font-size: 1.01rem;">
+                Vui lòng truy cập vào đường dẫn bên dưới để xác nhận lịch hẹn:
+            </p>
+            <p>
+                <a href="${dataSend.redirectLink}" style="color: #1677ff; font-size: 1.07rem; font-weight: bold;">
+                    Xác nhận lịch hẹn
+                </a>
+            </p>
+        </div>
     `;
 };
 
+// Hàm gửi mail xác nhận đặt lịch
 const sendEmail = async (dataSend) => {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -36,17 +57,34 @@ const sendEmail = async (dataSend) => {
     return info;
 };
 
+// Hàm tạo HTML email gửi kết quả/remedy (có bôi đậm, tăng size)
 const getBodyHTMLEmailRemedy = (dataSend) => {
     return `
-        <h3>Xin chào ${dataSend.patientName}!</h3>
-        <p>Bạn đã xác nhận lịch khám bệnh thành công với bác sĩ: ${dataSend.doctorName}</p>
-        <p>Thông tin chi tiết:</p>
-        <div><b>Thời gian:</b> ${dataSend.time}</div>
-        <div><b>Ngày khám:</b> ${dataSend.date}</div>
-        <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+        <div style="font-family: Arial, sans-serif; color: #222;">
+            <h2 style="color: #1677ff; font-size: 1.3rem; margin-bottom: 12px;">
+                Xác nhận khám bệnh thành công
+            </h2>
+            <p style="font-size: 1.08rem; margin-bottom: 8px;">
+                <strong>Xin chào <span style="color:#1677ff;">${dataSend.patientName}</span>!</strong>
+            </p>
+            <p style="font-size: 1.02rem;">
+                Bạn đã xác nhận lịch khám bệnh thành công với bác sĩ: 
+                <strong style="color:#1677ff;">${dataSend.doctorName}</strong>
+            </p>
+            <div style="margin: 18px 0; padding: 10px 20px; background: #f6faff; border-radius: 7px;">
+                <span style="font-size:1.08rem;"><strong>Thông tin chi tiết:</strong></span><br>
+                <span style="font-size:1.08rem;">
+                    <strong>Thời gian:</strong> <span style="color:#1677ff;">${dataSend.time}</span>
+                </span>
+            </div>
+            <p style="margin-top:12px; font-size: 1.01rem;">
+                Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!
+            </p>
+        </div>
     `;
 };
 
+// Hàm gửi mail remedy có file đính kèm
 const sendAttachment = async (dataSend) => {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",

@@ -111,7 +111,7 @@ class ManagePatient extends Component {
                     text='Đang xử lý...'
                 >
                     <div className="manage-patient-container">
-                        <div className="m-p-title">Quản lý bệnh nhân</div>
+                        <div className="m-p-title">QUẢN LÝ BỆNH NHÂN</div>
                         <div className="m-p-body">
                             <div className="form-group">
                                 <label>Chọn ngày khám</label>

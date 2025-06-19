@@ -6,6 +6,7 @@ import axios from 'axios';
 import { FaSearch, FaSearchMinus } from "react-icons/fa";
 import * as actions from '../../store/actions';
 
+
 function removeVietnameseTones(str) {
     if (!str) return "";
     return str

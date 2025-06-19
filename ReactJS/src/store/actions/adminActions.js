@@ -271,19 +271,19 @@ export const saveDetailDoctor = (data) => {
         try {
             let res = await saveDetailDoctorService(data);
             if (res && res.errCode === 0) {
-                toast.success("Save detail doctor succeed!");
+                toast.success("Lưu chi tiết bác sĩ thành công!");
                 dispatch({
                     type: actionTypes.SAVE_DETAIL_DOCTOR_SUCCESS,
                 });
             } else {
-                toast.error("Save detail doctor failed!");
+                toast.error("Lưu chi tiết bác sĩ thất bại!");
                 dispatch({
                     type: actionTypes.SAVE_DETAIL_DOCTOR_FAILED,
                 });
             }
             return res;
         } catch (e) {
-            toast.error("Save detail doctor failed!");
+            toast.error("Lưu chi tiết bác sĩ thất bại!");
             dispatch({
                 type: actionTypes.SAVE_DETAIL_DOCTOR_FAILED,
             });

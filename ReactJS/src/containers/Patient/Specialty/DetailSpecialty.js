@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
+import React, { Component } from "react";
+import { connect } from "react-redux";
 import HomeHeader from "../../HomePage/HomeHeader";
 import DoctorSchedule from "../Doctor/DoctorSchedule";
 import DoctorExtraInfo from "../Doctor/DoctorExtraInfo";
 import ProfileDoctor from "../Doctor/ProfileDoctor";
-import { getDetailSpecialtyById, getAllSpecialty } from "../../../services/userService";
+import { getDetailSpecialtyById, getAllCodeService } from "../../../services/userService";
 import _ from "lodash";
 import './DetailSpecialty.scss';
 
@@ -12,9 +12,10 @@ class DetailSpecialty extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            arrDoctorId: [],
+            arrDoctorProvince: [],
             dataDetailSpecialty: {},
             listProvince: [],
+            selectedProvince: 'ALL',
         }
     }
 
@@ -22,56 +23,70 @@ class DetailSpecialty extends Component {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
             let res = await getDetailSpecialtyById(id, 'ALL');
-            let resProvinces = await getAllSpecialty('PROVINCE');
+            let resProvinces = await getAllCodeService('PROVINCE');
+            let selectedProvince = 'ALL';
+
             if (res && res.errCode === 0) {
                 let data = res.data;
-                let arrDoctorId = [];
+                let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
-                        arrDoctorId = data.doctorSpecialty.map(item => item.doctorId);
+                        arrDoctorProvince = data.doctorSpecialty.map(item => ({
+                            doctorId: item.doctorId,
+                            province: item.province
+                        }));
                     }
                 }
                 let dataProvince = resProvinces.data;
                 if (dataProvince && dataProvince.length > 0) {
                     dataProvince.unshift({
-                        createdAt: null,
                         keyMap: 'ALL',
-                        type: 'PROVINCE',
-                        valueVi: 'Toàn quốc',
+                        valueVi: 'Tất cả địa điểm',
                     });
                 }
                 this.setState({
                     dataDetailSpecialty: data,
-                    arrDoctorId: arrDoctorId,
-                    listProvince: dataProvince ? dataProvince : []
+                    arrDoctorProvince: arrDoctorProvince,
+                    listProvince: dataProvince ? dataProvince : [],
+                    selectedProvince
                 });
             }
         }
     }
 
     handleOnChangeSelect = async (event) => {
+        let selectedProvince = event.target.value;
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
-            let location = event.target.value;
-            let res = await getDetailSpecialtyById(id, location);
+            let res = await getDetailSpecialtyById(id, selectedProvince);
             if (res && res.errCode === 0) {
                 let data = res.data;
-                let arrDoctorId = [];
+                let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
-                        arrDoctorId = data.doctorSpecialty.map(item => item.doctorId);
+                        arrDoctorProvince = data.doctorSpecialty.map(item => ({
+                            doctorId: item.doctorId,
+                            province: item.province
+                        }));
                     }
                 }
                 this.setState({
                     dataDetailSpecialty: data,
-                    arrDoctorId: arrDoctorId,
+                    arrDoctorProvince: arrDoctorProvince,
+                    selectedProvince
                 });
             }
         }
     }
 
     render() {
-        let {arrDoctorId, dataDetailSpecialty, listProvince} = this.state;
+        let { arrDoctorProvince, dataDetailSpecialty, listProvince, selectedProvince } = this.state;
+        // Lọc theo khu vực
+        let doctorsToShow = arrDoctorProvince;
+        if (selectedProvince !== 'ALL') {
+            doctorsToShow = arrDoctorProvince.filter(item => item.province === selectedProvince);
+        }
+
         return (
             <div className="detail-specialty-container">
                 <HomeHeader />
@@ -82,39 +97,47 @@ class DetailSpecialty extends Component {
                         }
                     </div>
                     <div className="search-sp-doctor">
-                        <select className="form-control" onChange={this.handleOnChangeSelect}>
-                            {listProvince && listProvince.length > 0 &&
-                                listProvince.map((item, index) => {
-                                    return (
-                                        <option key={index} value={item.keyMap}>
-                                            {item.valueVi}
-                                        </option>
-                                    );
-                                })
-                            }
-                        </select>
-                        {arrDoctorId && arrDoctorId.length > 0 &&
-                            arrDoctorId.map((doctorId, index) => {
-                                return (
-                                    <div className="each-doctor" key={index}>
-                                        <div className="doctor-info">
-                                            <ProfileDoctor
-                                                doctorId={doctorId}
-                                                isShowDescriptionDoctor={true}
-                                                isShowLinkDetail={true}
-                                                isShowPrice={false}
-                                            />
-                                        </div>
-                                        <div className="doctor-schedule">
-                                            <DoctorSchedule doctorIdFromParent={doctorId} />
-                                        </div>
-                                        <div className="doctor-extra-info">
-                                            <DoctorExtraInfo doctorIdFromParent={doctorId} />
-                                        </div>
+                        <div className="filter-location">
+                            <label htmlFor="province-select">Lọc theo địa điểm:</label>
+                            <select
+                                id="province-select"
+                                className="form-control"
+                                onChange={this.handleOnChangeSelect}
+                                value={selectedProvince}
+                            >
+                                {listProvince && listProvince.length > 0 &&
+                                    listProvince.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.keyMap}>
+                                                {item.valueVi}
+                                            </option>
+                                        );
+                                    })
+                                }
+                            </select>
+                        </div>
+                        {doctorsToShow && doctorsToShow.length > 0 ? (
+                            doctorsToShow.map((item, index) => (
+                                <div className="each-doctor" key={index}>
+                                    <div className="doctor-info">
+                                        <ProfileDoctor
+                                            doctorId={item.doctorId}
+                                            isShowDescriptionDoctor={true}
+                                            isShowLinkDetail={true}
+                                            isShowPrice={false}
+                                        />
                                     </div>
-                                );
-                            })
-                        }
+                                    <div className="doctor-schedule">
+                                        <DoctorSchedule doctorIdFromParent={item.doctorId} />
+                                    </div>
+                                    <div className="doctor-extra-info">
+                                        <DoctorExtraInfo doctorIdFromParent={item.doctorId} />
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="no-section">Không có bác sĩ nào phù hợp</div>
+                        )}
                     </div>
                 </div>
             </div>

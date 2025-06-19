@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Slider from 'react-slick';
 import * as actions from '../../../store/actions';
 import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
+import { getAllSpecialty } from '../../../services/userService'; // API lấy danh sách chuyên khoa
 import './SectionList.scss';
 
 class OutStandingDoctor extends Component {
@@ -10,19 +10,26 @@ class OutStandingDoctor extends Component {
         super(props);
         this.state = {
             arrDoctors: [],
+            specialties: [],
+            selectedSpecialty: 'all',
         };
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    async componentDidMount() {
+        this.props.loadTopDoctors();
+        // Lấy danh sách chuyên khoa
+        let res = await getAllSpecialty();
+        if (res && res.errCode === 0 && Array.isArray(res.data)) {
+            this.setState({ specialties: res.data });
+        }
+    }
+
+    componentDidUpdate(prevProps) {
         if (prevProps.topDoctors !== this.props.topDoctors) {
             this.setState({
                 arrDoctors: this.props.topDoctors || [],
             });
         }
-    }
-
-    componentDidMount() {
-        this.props.loadTopDoctors();
     }
 
     handleViewDetailDoctor = (doctor) => {
@@ -31,14 +38,47 @@ class OutStandingDoctor extends Component {
         }
     }
 
+    handleSelectSpecialty = (e) => {
+        this.setState({ selectedSpecialty: e.target.value });
+    }
+
     render() {
         let arrDoctors = this.state.arrDoctors || [];
+        const { specialties, selectedSpecialty } = this.state;
+
+        // Lọc theo chuyên khoa nếu đã chọn
+        let filteredDoctors = arrDoctors;
+        if (selectedSpecialty !== 'all') {
+            filteredDoctors = arrDoctors.filter(doctor => 
+                doctor.specialtyId === selectedSpecialty ||
+                (doctor.Doctor_In_Specialty && doctor.Doctor_In_Specialty.some(s => s.specialtyId === selectedSpecialty))
+            );
+        }
+
         return (
             <div id="doctor-section" className="section-list-page">
-                <div className="section-list-title">Bác sĩ nổi bật</div>
+                <div className="section-list-title" style={{display:'flex', alignItems:'center', gap: 20}}>
+                    <span>Bác sĩ nổi bật</span>
+                    <select
+                        value={selectedSpecialty}
+                        onChange={this.handleSelectSpecialty}
+                        style={{
+                            marginLeft: 16,
+                            borderRadius: 6,
+                            padding: "7px 15px",
+                            border: "1px solid #e0e0e0",
+                            fontSize: 15
+                        }}
+                    >
+                        <option value="all">Tất cả chuyên khoa</option>
+                        {specialties.map(s => (
+                            <option value={s.id} key={s.id}>{s.name}</option>
+                        ))}
+                    </select>
+                </div>
                 <div className="section-list">
-                    {arrDoctors && arrDoctors.length > 0 ? (
-                        arrDoctors.map((item, index) => {
+                    {filteredDoctors.length > 0 ? (
+                        filteredDoctors.map((item, index) => {
                             let imageBase64 = '';
                             if (item.image) {
                                 imageBase64 = `data:image/jpeg;base64,${item.image}`;
@@ -46,7 +86,7 @@ class OutStandingDoctor extends Component {
                             return (
                                 <div
                                     className="section-card doctor-card"
-                                    key={index}
+                                    key={item.id || index}
                                     onClick={() => this.handleViewDetailDoctor(item)}
                                 >
                                     <div className="section-img doctor-img">

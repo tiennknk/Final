@@ -1,17 +1,7 @@
 import React, {Component} from "react";
-import {FormattedMessage} from "react-intl";
 import {connect} from "react-redux";
 import * as actions from "../../../store/actions";
 import './TableManagerUser.scss';
-import MarkdownIt from "markdown-it";
-import MdEditor from "react-markdown-editor-lite";
-import "react-markdown-editor-lite/lib/index.css";
-
-const mdParser = new MarkdownIt(/* Markdown-it options */);
-
-function handleEditorChange({ html, text }) {
-    console.log("handleEditorChange", html, text);
-}
 
 class TableManagerUser extends Component {
     constructor(props) {
@@ -40,9 +30,9 @@ class TableManagerUser extends Component {
     render() {
         let arrUsers = this.state.usersRedux;
         return (
-            <React.Fragment>
+            <div className="table-manager-user-wrapper">
                 <table id="TableManagerUser">
-                    <tbody>
+                    <thead>
                         <tr>
                             <th>Email</th>
                             <th>Tên</th>
@@ -50,6 +40,8 @@ class TableManagerUser extends Component {
                             <th>Địa chỉ</th>
                             <th>Hành động</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {arrUsers && arrUsers.length > 0 &&
                         arrUsers.map((item, index) => {
                             return (
@@ -62,10 +54,15 @@ class TableManagerUser extends Component {
                                         <button
                                             className="btn-edit"
                                             onClick={() => this.props.handleEditUserFromParent(item)}
+                                            title="Sửa"
                                         >
                                             <i className="fas fa-pencil-alt"></i>
                                         </button>
-                                        <button className="btn-delete" onClick={() => this.handleDeleteUser(item)}>
+                                        <button
+                                            className="btn-delete"
+                                            onClick={() => this.handleDeleteUser(item)}
+                                            title="Xóa"
+                                        >
                                             <i className="fas fa-trash"></i>
                                         </button>
                                     </td>
@@ -74,7 +71,7 @@ class TableManagerUser extends Component {
                         })}
                     </tbody>
                 </table>
-            </React.Fragment>
+            </div>
         );
     }
 }

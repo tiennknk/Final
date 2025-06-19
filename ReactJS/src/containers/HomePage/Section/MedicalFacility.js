@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './MedicalFacilityy.scss';
+import './SectionList.scss';
 import { getAllClinic } from '../../../services/userService';
 import { withRouter } from 'react-router';
 

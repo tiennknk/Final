@@ -5,7 +5,7 @@ import Mdeditor from "react-markdown-editor-lite";
 import {CommonUtils} from '../../../utils';
 import {createNewSpecialty } from "../../../services/userService";
 import { toast } from 'react-toastify';
-
+import './ManageSpecialty.scss';
 const mdParser = new MardownIt();
 
 class ManageSpecialty extends Component {
@@ -30,7 +30,6 @@ class ManageSpecialty extends Component {
         });
     }
 
-    // Sửa lại: nhận object { html, text }
     handleEditorChange = ({ html, text }) => {
         this.setState({
             descriptionHTML: html,
@@ -66,8 +65,8 @@ class ManageSpecialty extends Component {
 
     render() {
         return (
-            <div>
-                <div className="ms-title"> Quản lý chuyên khoa </div>
+            <div className="manage-specialty-container">
+                <div className="ms-title"> QUẢN LÝ CHUYÊN KHOA </div>
                 <div className="add-new-specialty row">
                     <div className="col-6 form-group">
                         <label>Tên chuyên khoa</label>

@@ -1,4 +1,6 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import reduxStore, { persistor, history } from './redux';
