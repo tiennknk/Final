@@ -3,10 +3,9 @@ import { connect } from "react-redux";
 import "./DoctorSchedule.scss";
 import moment from "moment";
 import "moment/locale/vi";
-import { getScheduleByDate } from "../../../services/userService";
+import { getScheduleByDate, getBookedTimeTypesByDate } from "../../../services/userService";
 import localization from "../../../utils/Localization";
 import BookingModal from "./BookingModal";
-import { get } from "lodash";
 
 moment.locale("vi");
 
@@ -19,31 +18,31 @@ class DoctorSchedule extends Component {
             selectedDate: null,
             isOpenModalBooking: false,
             dataScheduleTimeModal: {},
+            bookedTimeTypes: [], // thêm state để lưu slot đã đặt
         };
     }
 
     async componentDidMount() {
         let allDays = this.setarrDays();
-        this.setState({ allDays, selectedDate: allDays[0]?.value || null });
+        let selectedDate = allDays[0]?.value || null;
+        this.setState({ allDays, selectedDate });
+
         if (this.props.doctorIdFromParent) {
-            let res = await getScheduleByDate(this.props.doctorIdFromParent, allDays[0].value);
-            if (res && res.errCode === 0) {
-                this.setState({
-                    allAvailableTime: res.data ? res.data : [],
-                });
-            } else {
-                this.setState({ allAvailableTime: [] });
-            }
+            await this.loadTimeAndBooked(this.props.doctorIdFromParent, selectedDate);
         }
     }
 
-    async componentDidUpdate(prevProps) {
+    async componentDidUpdate(prevProps, prevState) {
         if (prevProps.doctorIdFromParent !== this.props.doctorIdFromParent) {
             let allDays = this.setarrDays();
-            this.setState({ allDays, selectedDate: allDays[0]?.value || null });
+            let selectedDate = allDays[0]?.value || null;
+            this.setState({ allDays, selectedDate });
             if (this.props.doctorIdFromParent && allDays.length > 0) {
-                await this.fetchAvailableTime(this.props.doctorIdFromParent, allDays[0].value);
+                await this.loadTimeAndBooked(this.props.doctorIdFromParent, selectedDate);
             }
+        }
+        if (prevState.selectedDate !== this.state.selectedDate && this.props.doctorIdFromParent) {
+            await this.loadTimeAndBooked(this.props.doctorIdFromParent, this.state.selectedDate);
         }
     }
 
@@ -64,10 +63,10 @@ class DoctorSchedule extends Component {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
-    handleOnChangeSelect = async (event) => {
+    handleOnChangeSelect = (event) => {
         let date = event.target.value || event.value;
         this.setState({ selectedDate: date });
-        await this.fetchAvailableTime(this.props.doctorIdFromParent, date);
+        // API sẽ được gọi lại ở componentDidUpdate
     };
 
     handleClickScheduleTime = (time) => {
@@ -83,19 +82,41 @@ class DoctorSchedule extends Component {
         });
     };
 
-    fetchAvailableTime = async (doctorId, date) => {
-        let res = await getScheduleByDate(doctorId, date);
-        if (res && res.errCode === 0) {
-            this.setState({
-                allAvailableTime: res.data ? res.data : [],
-            });
-        } else {
-            this.setState({ allAvailableTime: [] });
-        }
+    loadTimeAndBooked = async (doctorId, date) => {
+        let [scheduleRes, bookedRes] = await Promise.all([
+            getScheduleByDate(doctorId, date),
+            getBookedTimeTypesByDate(doctorId, date)
+        ]);
+        this.setState({
+            allAvailableTime: scheduleRes && scheduleRes.errCode === 0 ? scheduleRes.data : [],
+            bookedTimeTypes: bookedRes && bookedRes.errCode === 0 ? bookedRes.data : [],
+        });
+    };
+
+    // Lọc slot realtime & ẩn slot đã đặt
+    filterRealtimeAndBookedSlots = (slots, selectedDate, bookedTimeTypes) => {
+        if (!slots || slots.length === 0) return [];
+        const now = moment();
+        const today = moment().startOf("day").valueOf();
+        return slots.filter(item => {
+            // Ẩn slot đã bị book
+            if (bookedTimeTypes.includes(item.timeType)) return false;
+            // Nếu là hôm nay, chỉ lấy slot có giờ bắt đầu lớn hơn giờ hiện tại
+            if (Number(selectedDate) === today) {
+                let timeStr = item.timeTypeData?.valueVi || "";
+                let startHour = parseInt(timeStr.split(":")[0], 10);
+                if (isNaN(startHour)) return true;
+                return startHour > now.hour();
+            }
+            return true;
+        });
     };
 
     render() {
-        let { allDays, allAvailableTime, selectedDate, isOpenModalBooking, dataScheduleTimeModal } = this.state;
+        let { allDays, allAvailableTime, selectedDate, isOpenModalBooking, dataScheduleTimeModal, bookedTimeTypes } = this.state;
+
+        // Lọc realtime và loại slot đã đặt
+        const filteredSlots = this.filterRealtimeAndBookedSlots(allAvailableTime, selectedDate, bookedTimeTypes);
 
         return (
             <>
@@ -115,10 +136,10 @@ class DoctorSchedule extends Component {
                             <span>{localization.patient.schedule}</span>
                         </div>
                         <div className="time-content">
-                            {allAvailableTime && allAvailableTime.length > 0 ? (
+                            {filteredSlots && filteredSlots.length > 0 ? (
                                 <>
                                     <div className="time-content-btns">
-                                        {allAvailableTime.map((item, index) => {
+                                        {filteredSlots.map((item, index) => {
                                             const timesDisplay =
                                                 item.timeTypeData?.valueVi ||
                                                 item.timeTypeData?.valueEn ||

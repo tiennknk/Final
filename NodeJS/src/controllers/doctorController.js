@@ -136,6 +136,18 @@ const sendRemedy = async (req, res) => {
     }
 }
 
+const getBookedTimeTypesByDate = async (req, res) => {
+    try {
+        let result = await doctorService.getBookedTimeTypesByDate(req.query.doctorId, req.query.date);
+        return res.status(200).json(result);
+    } catch (e) {
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+        });
+    }
+};
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
@@ -147,4 +159,5 @@ export default {
     getProfileDoctorById,
     getListPatientForDoctor,
     sendRemedy,
+    getBookedTimeTypesByDate
 };

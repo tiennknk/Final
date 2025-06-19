@@ -74,7 +74,12 @@ const getBodyHTMLEmailRemedy = (dataSend) => {
             <div style="margin: 18px 0; padding: 10px 20px; background: #f6faff; border-radius: 7px;">
                 <span style="font-size:1.08rem;"><strong>Thông tin chi tiết:</strong></span><br>
                 <span style="font-size:1.08rem;">
-                    <strong>Thời gian:</strong> <span style="color:#1677ff;">${dataSend.time}</span>
+                    <strong>Thời gian:</strong> <span style="color:#1677ff;">${dataSend.time}</span><br>
+                    <strong>Địa chỉ:</strong> ${dataSend.address || ""}<br>
+                    <strong>Ngày sinh:</strong> ${dataSend.birthday || ""}<br>
+                    <strong>Số điện thoại:</strong> ${dataSend.phoneNumber || ""}<br>
+                    <strong>Lý do khám:</strong> ${dataSend.reason || ""}<br>
+                    <strong>Email:</strong> ${dataSend.email || ""}
                 </span>
             </div>
             <p style="margin-top:12px; font-size: 1.01rem;">
@@ -115,4 +120,4 @@ const sendAttachment = async (dataSend) => {
 export default {
     sendEmail,
     sendAttachment,
-}
+};

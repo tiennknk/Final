@@ -259,6 +259,28 @@ const getScheduleByDate = async (doctorId, date) => {
     });
 };
 
+const getBookedTimeTypesByDate = async (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let bookings = await db.Booking.findAll({
+                where: {
+                    doctorId: doctorId,
+                    date: date,
+                    statusId: { [db.Sequelize.Op.in]: ['S1', 'S2', 'S3'] }
+                },
+                attributes: ['timeType'],
+                raw: true
+            });
+            resolve({
+                errCode: 0,
+                data: bookings.map(item => item.timeType)
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 const getExtraInfoDoctorById = async (doctorId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -416,7 +438,6 @@ const getListPatientForDoctor = async (doctorId, date) => {
     });
 };
 
-// SỬA ĐẦY ĐỦ DỮ LIỆU GỬI EMAIL REMEDY
 const sendRemedy = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -435,13 +456,24 @@ const sendRemedy = (data) => {
                 return;
             }
 
-            // Truy vấn thông tin bệnh nhân
+            // Lấy thông tin bệnh nhân
             let patient = await db.User.findOne({
                 where: { id: data.patientId },
                 raw: true,
             });
 
-            // Truy vấn thông tin bác sĩ
+            // Lấy thông tin booking để lấy thêm address, phoneNumber, reason
+            let booking = await db.Booking.findOne({
+                where: {
+                    patientId: data.patientId,
+                    doctorId: data.doctorId,
+                    date: data.date,
+                    timeType: data.timeType
+                },
+                raw: true,
+            });
+
+            // Lấy thông tin bác sĩ
             let doctor = await db.User.findOne({
                 where: { id: data.doctorId },
                 raw: true,
@@ -474,13 +506,24 @@ const sendRemedy = (data) => {
                 await appointment.save();
             }
 
-            // Chuẩn bị dữ liệu đầy đủ cho email
+            let patientName = patient
+                ? [patient.lastName, patient.firstName].filter(Boolean).join(' ')
+                : "";
+            let doctorName = doctor
+                ? [doctor.lastName, doctor.firstName].filter(Boolean).join(' ')
+                : "";
+
             let dataSend = {
                 ...data,
-                patientName: patient ? `${patient.lastName} ${patient.firstName}` : "",
-                doctorName: doctor ? `${doctor.lastName} ${doctor.firstName}` : "",
+                patientName,
+                doctorName,
                 time: timeLabel,
                 date: formattedDate,
+                address: booking?.address || "",
+                birthday: patient?.birthday || "",
+                phoneNumber: booking?.phoneNumber || "",
+                reason: booking?.reason || "",
+                email: patient?.email || "",
             };
 
             await emailService.sendAttachment(dataSend);
@@ -502,6 +545,7 @@ export default {
     saveDetailInfoDoctor,
     saveBulkScheduleDoctor,
     getScheduleByDate,
+    getBookedTimeTypesByDate,
     getExtraInfoDoctorById,
     getProfileDoctorById,
     getListPatientForDoctor,
