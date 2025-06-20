@@ -43,6 +43,7 @@ const initWebRoutes = (app) => {
     router.get('/api/get-detail-clinic-by-id', clinicController.getDetailClinicById);
     router.get('/api/get-list-patient-for-doctor', doctorController.getListPatientForDoctor);
     router.get('/api/get-booked-time-type-by-date', doctorController.getBookedTimeTypesByDate);
+    router.get('/api/get-history-patients-by-doctor', doctorController.getHistoryPatientsByDoctor);
     router.post('/api/send-remedy', doctorController.sendRemedy);
     // Patient routes
     router.post('/api/patient-book-appointment', patientController.postBookAppointment);

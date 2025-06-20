@@ -5,6 +5,7 @@ import initWebRoutes from './route/web.js';
 import connectDB from './config/connectDB.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { debugBookingInstance } from './services/debugBookingInstance.js';
 dotenv.config();
 
 const app = express();
@@ -17,6 +18,7 @@ viewEngine(app);
 initWebRoutes(app);
 
 connectDB();
+
 
 const port = process.env.PORT || 8080;
 

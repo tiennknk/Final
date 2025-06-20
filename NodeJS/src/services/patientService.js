@@ -2,8 +2,6 @@ import db from '../models/index.js';
 import dotenv from "dotenv";
 import emailService from './emailService.js';
 import {v4 as uuidv4} from 'uuid';
-import bodyParser from 'body-parser';
-const { raw } = bodyParser;
 
 dotenv.config();
 
@@ -15,14 +13,14 @@ const postBookAppointment = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName
-                || !data.selectedGender || !data.address
+                || !data.selectedGender || !data.address || !data.phoneNumber || !data.reason
             ) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing required parameters',
+                    errMessage: 'Thiếu thông tin bắt buộc!',
                 });
             } else {
-                let token = uuidv4(); // Tạo token duy nhất cho mỗi booking
+                let token = uuidv4();
                 await emailService.sendEmail({
                     receiverEmail: data.email,
                     patientName: data.fullName,
@@ -56,25 +54,27 @@ const postBookAppointment = async (data) => {
                             date: data.date,
                             timeType: data.timeType,
                             statusId: 'S1',
-                            token: token, // Lưu token vào booking
+                            token: token,
+                            address: data.address,
+                            phoneNumber: data.phoneNumber,
+                            reason: data.reason,
                         },
                     });
                     if (!created) {
-                        // Nếu lịch đã tồn tại, trả về thông báo để dễ debug FE
                         resolve({
                             errCode: 2,
-                            errMessage: 'Booking already exists for this slot',
+                            errMessage: 'Bạn đã đặt lịch khám này rồi!',
                         });
                         return;
                     }
                 }
                 resolve({
                     errCode: 0,
-                    errMessage: 'Booking appointment successfully',
+                    errMessage: 'Đặt lịch khám thành công!',
                 });
             }
         } catch (error) {
-            console.log('BOOKING ERROR:', error); // Thêm dòng này
+            console.log('BOOKING ERROR:', error);
             reject(error);
         }
     });
@@ -86,29 +86,29 @@ const postVerifyBookingAppointment = async (data) => {
             if (!data.doctorId || !data.token) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing required parameters',
+                    errMessage: 'Thiếu thông tin xác thực!',
                 });
             } else {
                 let appointment = await db.Booking.findOne({
                     where: {
                         doctorId: data.doctorId,
                         token: data.token,
-                        statusId: 'S1', // Chỉ xác nhận những lịch hẹn chưa được xác nhận
+                        statusId: 'S1',
                     },
                     raw: false
                 });
 
                 if (appointment) {
-                    appointment.statusId = 'S2'; // Cập nhật trạng thái thành đã xác nhận
+                    appointment.statusId = 'S2';
                     await appointment.save();
                     resolve({
                         errCode: 0,
-                        errMessage: 'Booking confirmed successfully',
+                        errMessage: 'Xác nhận lịch khám thành công!',
                     });
                 } else {
                     resolve({
                         errCode: 2,
-                        errMessage: 'Booking not found or already confirmed',
+                        errMessage: 'Lịch khám không tồn tại hoặc đã được xác nhận!',
                     });
                 }
             }

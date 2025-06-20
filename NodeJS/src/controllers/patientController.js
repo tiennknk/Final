@@ -7,7 +7,7 @@ const postBookAppointment = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             errCode: -1,
-            errMessage: 'Error from the server',
+            errMessage: 'Có lỗi xảy ra ở máy chủ, vui lòng thử lại sau!',
         });
     }
 }
@@ -19,7 +19,7 @@ const postVerifyBookingAppointment = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             errCode: -1,
-            errMessage: 'Error from the server',
+            errMessage: 'Có lỗi xảy ra ở máy chủ, vui lòng thử lại sau!',
         });
     }
 }

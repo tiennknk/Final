@@ -15,9 +15,14 @@ export default (sequelize, DataTypes) => {
     date: DataTypes.STRING,
     timeType: DataTypes.STRING,
     token: DataTypes.STRING,
+    address: DataTypes.STRING,
+    phoneNumber: DataTypes.STRING,
+    reason: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Booking',
+    tableName: 'bookings',        // <-- BẮT BUỘC phải có dòng này!
+    timestamps: true              // <-- Nên có
   });
   return Booking;
 };

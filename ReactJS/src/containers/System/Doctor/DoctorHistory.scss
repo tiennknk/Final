@@ -1,0 +1,131 @@
+.doctor-history-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    max-width: 1200px;
+    margin: 30px auto;
+    min-height: 400px;
+
+    .doctor-history-title {
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: #1677ff; // Đổi sang màu xanh chủ đạo giống quản lý bệnh nhân
+        margin-bottom: 24px;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .doctor-history-filter {
+        margin-bottom: 14px;
+        text-align: right;
+
+        label {
+            font-weight: 500;
+            font-size: 16px;
+            color: #1677ff;
+        }
+
+        input[type="date"] {
+            padding: 5px 8px;
+            font-size: 14px;
+            border: 1px solid #bfc6d1;
+            border-radius: 6px;
+            margin-left: 8px;
+            color: #1677ff;
+            background: #f9fafe;
+            transition: border 0.18s;
+        }
+        input[type="date"]:focus {
+            border: 1.5px solid #1677ff;
+            background: #fff;
+        }
+    }
+
+    .doctor-history-table {
+        margin-top: 16px;
+        overflow-x: auto;
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            min-width: 900px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(22,119,255,0.08);
+
+            th, td {
+                border: 1px solid #e6e6e6;
+                padding: 12px 14px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            th {
+                background: #1677ff; // Đổi màu nền header
+                color: #fff;         // Đổi màu chữ trắng
+                font-weight: 600;
+                text-align: center;
+                letter-spacing: 0.5px;
+                font-size: 16px;
+            }
+            td {
+                color: #222;
+                font-size: 1rem;
+            }
+            tr:nth-child(even) {
+                background: #f8fafc;
+            }
+            tr:hover {
+                background: #e6f0ff;
+                transition: background 0.2s;
+            }
+        }
+        tr > td[colspan] {
+            color: #888;
+            font-size: 1rem;
+            font-style: italic;
+            background: #f9f9f9;
+            text-align: center;
+            padding: 18px 0;
+        }
+    }
+}
+
+/* Responsive for tablet and mobile */
+@media (max-width: 900px) {
+    .doctor-history-container {
+        padding: 16px;
+        .doctor-history-title {
+            font-size: 1.4rem;
+        }
+        .doctor-history-table {
+            table {
+                min-width: 700px;
+                th, td {
+                    padding: 6px 4px;
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .doctor-history-container {
+        padding: 6px;
+        .doctor-history-title {
+            font-size: 1.1rem;
+        }
+        .doctor-history-table {
+            table {
+                min-width: 600px;
+                th, td {
+                    padding: 4px 2px;
+                    font-size: 11px;
+                }
+            }
+        }
+    }
+}

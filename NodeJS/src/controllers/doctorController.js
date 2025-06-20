@@ -1,3 +1,5 @@
+// doctorController.js
+
 import lodash from 'lodash';
 const { get } = lodash;
 
@@ -138,12 +140,40 @@ const sendRemedy = async (req, res) => {
 
 const getBookedTimeTypesByDate = async (req, res) => {
     try {
-        let result = await doctorService.getBookedTimeTypesByDate(req.query.doctorId, req.query.date);
+        let result = await doctorService.getBookedTimeTypesByDate(req.query.doctorId);
         return res.status(200).json(result);
     } catch (e) {
         return res.status(500).json({
             errCode: -1,
             errMessage: 'Error from server',
+        });
+    }
+};
+
+// DEBUG: Add detailed logs for input and output
+const getHistoryPatientsByDoctor = async (req, res) => {
+    try {
+        let doctorId = req.query.doctorId;
+        // Debug log for input value
+        console.log('DEBUG getHistoryPatientsByDoctor - doctorId:', doctorId);
+
+        if (!doctorId || isNaN(Number(doctorId))) {
+            console.error('Invalid doctorId received:', doctorId);
+            return res.status(400).json({
+                errCode: 2,
+                errMessage: 'doctorId không hợp lệ!'
+            });
+        }
+
+        let result = await doctorService.getHistoryPatientsByDoctor(Number(doctorId));
+        // Debug log for output value
+        console.log('DEBUG getHistoryPatientsByDoctor - result:', result);
+        return res.status(200).json(result);
+    } catch (e) {
+        console.error('ERROR in getHistoryPatientsByDoctor:', e);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Có lỗi xảy ra ở máy chủ!',
         });
     }
 };
@@ -159,5 +189,6 @@ export default {
     getProfileDoctorById,
     getListPatientForDoctor,
     sendRemedy,
-    getBookedTimeTypesByDate
+    getBookedTimeTypesByDate,
+    getHistoryPatientsByDoctor,
 };

@@ -102,6 +102,11 @@ const postSendRemedy = (data) => {
     return axios.post('/api/send-remedy', data);
 };
 
+const getHistoryPatientsByDoctor = (doctorId) => {
+    let url = `/api/get-history-patients-by-doctor?doctorId=${doctorId}`;
+    return axios.get(url).then(res => res.data);
+};
+
 export {
     handleLoginApi,
     getAllUsers,
@@ -127,5 +132,6 @@ export {
     getDetailClinicById,
     getAllClinic,
     getAllPatientForDoctor,
+    getHistoryPatientsByDoctor,
     postSendRemedy
 };

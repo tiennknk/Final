@@ -2,6 +2,7 @@ import db from "../models/index.js";
 import dotenv from "dotenv";
 import lodash from 'lodash';
 import emailService from './emailService.js';
+import { Op } from "sequelize";
 
 const _ = lodash;
 dotenv.config();
@@ -19,15 +20,18 @@ const getTopDoctorHome = async (limit) => {
                 include: [
                     { model: db.Allcode, as: 'positionData' },
                     { model: db.Allcode, as: 'genderData' }
-                ],
-                raw: true,
-                nest: true
+                ]
+                // KHÔNG dùng raw: true, nest: true
             });
 
-            users = users.map(user => ({
-                ...user,
-                image: user.image ? Buffer.from(user.image).toString('base64') : null
-            }));
+            // Chuyển instance thành plain object
+            users = users.map(user => {
+                let u = user.toJSON();
+                return {
+                    ...u,
+                    image: u.image ? Buffer.from(u.image).toString('base64') : null
+                };
+            });
 
             resolve({
                 errCode: 0,
@@ -45,6 +49,7 @@ const getAllDoctors = async () => {
             let doctor = await db.User.findAll({
                 where: [{ roleId: 'R2' }],
                 attributes: { exclude: ['password'] },
+                raw: true // KHÔNG có include => dùng raw: true OK
             });
             resolve({
                 errCode: 0,
@@ -81,9 +86,7 @@ const getDetailDoctorById = async (id) => {
                                 { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi'] }
                             ]
                         }
-                    ],
-                    raw: false,
-                    nest: true
+                    ]
                 });
 
                 if (info && info.image) {
@@ -92,6 +95,8 @@ const getDetailDoctorById = async (id) => {
 
                 if (!info) {
                     info = {};
+                } else {
+                    info = info.toJSON();
                 }
 
                 resolve({
@@ -125,8 +130,7 @@ const saveDetailInfoDoctor = async (inputData) => {
                     });
                 } else if (inputData.action === 'EDIT') {
                     let doctorMarkdown = await db.Markdown.findOne({
-                        where: { doctorId: inputData.doctorId },
-                        raw: false
+                        where: { doctorId: inputData.doctorId }
                     });
                     if (doctorMarkdown) {
                         doctorMarkdown.contentHTML = inputData.contentHTML;
@@ -138,8 +142,7 @@ const saveDetailInfoDoctor = async (inputData) => {
                 }
 
                 let doctorInfo = await db.Doctor_Info.findOne({
-                    where: { doctorId: inputData.doctorId, specialtyId: inputData.specialtyId },
-                    raw: false
+                    where: { doctorId: inputData.doctorId, specialtyId: inputData.specialtyId }
                 });
 
                 if (doctorInfo) {
@@ -239,14 +242,11 @@ const getScheduleByDate = async (doctorId, date) => {
                             as: 'doctorData',
                             attributes: ['firstName', 'lastName']
                         }
-                    ],
-                    raw: false,
-                    nest: true
+                    ]
                 });
 
-                if (!dataSchedule) {
-                    dataSchedule = [];
-                }
+                // Nếu cần object thường:
+                dataSchedule = dataSchedule.map(x => x.toJSON());
 
                 resolve({
                     errCode: 0,
@@ -297,13 +297,13 @@ const getExtraInfoDoctorById = async (doctorId) => {
                         { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi'] },
                         { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueVi'] },
                         { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi'] }
-                    ],
-                    raw: false,
-                    nest: true
+                    ]
                 });
 
                 if (!data) {
                     data = {};
+                } else {
+                    data = data.toJSON();
                 }
 
                 resolve({
@@ -350,13 +350,15 @@ const getProfileDoctorById = async (doctorId) => {
                                 { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi'] }
                             ]
                         }
-                    ],
-                    raw: false,
-                    nest: true
+                    ]
                 });
 
                 if (data && data.image) {
                     data.image = Buffer.from(data.image).toString('base64');
+                }
+
+                if (data) {
+                    data = data.toJSON();
                 }
 
                 resolve({
@@ -422,10 +424,10 @@ const getListPatientForDoctor = async (doctorId, date) => {
                             ]
                         },
                         { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi', 'valueEn'] }
-                    ],
-                    raw: false,
-                    nest: true
+                    ]
                 });
+
+                data = data.map(x => x.toJSON());
 
                 resolve({
                     errCode: 0,
@@ -497,8 +499,7 @@ const sendRemedy = (data) => {
                     date: data.date,
                     timeType: data.timeType,
                     statusId: 'S2'
-                },
-                raw: false
+                }
             });
 
             if (appointment) {
@@ -520,7 +521,6 @@ const sendRemedy = (data) => {
                 time: timeLabel,
                 date: formattedDate,
                 address: booking?.address || "",
-                birthday: patient?.birthday || "",
                 phoneNumber: booking?.phoneNumber || "",
                 reason: booking?.reason || "",
                 email: patient?.email || "",
@@ -531,6 +531,55 @@ const sendRemedy = (data) => {
             resolve({
                 errCode: 0,
                 errMessage: 'Send remedy successfully!'
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+const getHistoryPatientsByDoctor = async (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Thiếu mã bác sĩ!',
+                    data: []
+                });
+                return;
+            }
+
+            let whereCondition = {
+                doctorId: doctorId,
+                statusId: 'S3', // Đã khám/xong
+            };
+
+            let bookings = await db.Booking.findAll({
+                where: whereCondition,
+                include: [
+                    {
+                        model: db.User,
+                        as: 'patientData',
+                        attributes: [
+                            'firstName', 'lastName', 'address', 'phonenumber',
+                            'gender', 'email'
+                        ]
+                    },
+                    {
+                        model: db.Allcode,
+                        as: 'timeTypeDataPatient',
+                        attributes: ['valueVi', 'valueEn']
+                    }
+                ],
+                order: [['date', 'DESC']]
+            });
+
+            bookings = bookings.map(x => x.toJSON());
+            resolve({
+                errCode: 0,
+                errMessage: 'Lấy lịch sử khám thành công!',
+                data: bookings
             });
         } catch (e) {
             reject(e);
@@ -549,5 +598,6 @@ export default {
     getExtraInfoDoctorById,
     getProfileDoctorById,
     getListPatientForDoctor,
+    getHistoryPatientsByDoctor,
     sendRemedy
 };

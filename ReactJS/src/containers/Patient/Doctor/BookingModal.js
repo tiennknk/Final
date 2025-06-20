@@ -21,7 +21,6 @@ class BookingModal extends Component {
             email: '',
             address: '',
             reason: '',
-            birthday: '',
             selectedGender: '',
             doctorId: '',
             gender: '',
@@ -108,9 +107,10 @@ class BookingModal extends Component {
     }
 
     handleComfirmBooking = async () => {
-        let date = new Date(this.state.birthday).getTime();
-        let timeString = this.buildTimeBooking(this.props.dataTime);
-        let doctorName = this.buildDoctorName(this.props.dataTime);
+        let { dataTime } = this.props;
+        let timeString = this.buildTimeBooking(dataTime);
+        let doctorName = this.buildDoctorName(dataTime);
+    
         let res = await postBookAppointment({
             fullName: this.state.fullName,
             phoneNumber: this.state.phoneNumber,
@@ -118,14 +118,13 @@ class BookingModal extends Component {
             address: this.state.address,
             reason: this.state.reason,
             date: this.props.dataTime.date,
-            birthday: date,
             selectedGender: this.state.selectedGender.value,
             doctorId: this.state.doctorId,
             timeType: this.state.timeType,
             timeString: timeString,
             doctorName: doctorName,
         });
-
+    
         if (res && res.errCode === 0) {
             toast.success('Đặt lịch khám thành công!');
             this.props.closeBookingModal();
@@ -218,14 +217,6 @@ class BookingModal extends Component {
                                     value={this.state.reason}
                                     onChange={(event) => this.handleOnChangeInput(event, 'reason')}
                                     placeholder="Nhập lý do khám"
-                                />
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Ngày sinh</label>
-                                <DatePicker
-                                    className="form-control"
-                                    value={this.state.birthday}
-                                    onChange={this.handleaOnchangeDatePicker}
                                 />
                             </div>
                             <div className="booking-modal-footer">

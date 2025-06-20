@@ -76,7 +76,6 @@ const getBodyHTMLEmailRemedy = (dataSend) => {
                 <span style="font-size:1.08rem;">
                     <strong>Thời gian:</strong> <span style="color:#1677ff;">${dataSend.time}</span><br>
                     <strong>Địa chỉ:</strong> ${dataSend.address || ""}<br>
-                    <strong>Ngày sinh:</strong> ${dataSend.birthday || ""}<br>
                     <strong>Số điện thoại:</strong> ${dataSend.phoneNumber || ""}<br>
                     <strong>Lý do khám:</strong> ${dataSend.reason || ""}<br>
                     <strong>Email:</strong> ${dataSend.email || ""}

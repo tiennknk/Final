@@ -54,7 +54,8 @@
         "doctor": {
             "header": "Bác sĩ",
             "manage-schedule": "Quản lý lịch khám",
-            "manage-patient": "Quản lý bệnh nhân"
+            "manage-patient": "Quản lý bệnh nhân",
+            "history": "Lịch sử khám bệnh"
         }
     },
     "system": {
@@ -141,5 +142,12 @@
         "choose-date": "Chọn ngày",
         "save": "Lưu thông tin",
         "select-doctor-placeholder": "Chọn bác sĩ..."
+    },
+    "doctor": {
+        "history": {
+            "title": "LỊCH SỬ KHÁM BỆNH",
+            "chooseDate": "Chọn ngày khám",
+            "noData": "Không có dữ liệu lịch sử khám"
+        }
     }
 }
