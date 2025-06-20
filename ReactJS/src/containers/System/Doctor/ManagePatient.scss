@@ -1,5 +1,5 @@
 .manage-patient-container {
-    max-width: 1000px; // Tăng chiều ngang
+    max-width: 1000px;
     margin: 36px auto 0 auto;
     background: #fff;
     border-radius: 14px;
@@ -99,6 +99,21 @@
                 font-size: 1rem;
                 &:hover {
                     background: linear-gradient(90deg, #1677ff 0%, #00c6ff 100%);
+                }
+            }
+
+            .mp-btn-cancel {
+                background: #d9534f;
+                color: #fff;
+                font-weight: 500;
+                padding: 6px 18px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background 0.2s;
+                font-size: 1rem;
+                &:hover {
+                    background: #c9302c;
                 }
             }
 

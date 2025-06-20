@@ -178,6 +178,16 @@ const getHistoryPatientsByDoctor = async (req, res) => {
     }
 };
 
+const cancelBooking = async (req, res) => {
+    try {
+        const { bookingId } = req.body;
+        const result = await doctorService.cancelBooking(bookingId);
+        return res.status(200).json(result);
+    } catch (e) {
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
@@ -191,4 +201,5 @@ export default {
     sendRemedy,
     getBookedTimeTypesByDate,
     getHistoryPatientsByDoctor,
+    cancelBooking,
 };

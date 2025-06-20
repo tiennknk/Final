@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import DatePicker from "../../../components/Input/DatePicker";
-import { getAllPatientForDoctor, postSendRemedy } from "../../../services/userService";
+import { getAllPatientForDoctor, postSendRemedy, cancelBooking } from "../../../services/userService";
 import moment from "moment";
 import RemedyModal from "./RemedyModal";
 import { toast } from "react-toastify";
@@ -65,6 +65,18 @@ class ManagePatient extends Component {
             isOpenRemedyModal: true,
             dataModal: data,
         });
+    };
+
+    handleCancelBooking = async (item) => {
+        if (window.confirm("Bạn có chắc muốn hủy lịch khám này?")) {
+            let res = await cancelBooking(item.id);
+            if (res && res.data && res.data.errCode === 0) {
+                toast.success("Đã hủy lịch thành công!");
+                await this.getDataPatient();
+            } else {
+                toast.error("Hủy lịch thất bại!");
+            }
+        }
     };
 
     closeRemedyModal = () => {
@@ -147,12 +159,19 @@ class ManagePatient extends Component {
                                                         >
                                                             Xác nhận
                                                         </button>
+                                                        <button
+                                                            className="mp-btn-cancel"
+                                                            style={{ marginLeft: 8 }}
+                                                            onClick={() => this.handleCancelBooking(item)}
+                                                        >
+                                                            Hủy lịch
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="7" style={{ textAlign: 'center' }}>Không có dữ liệu bệnh nhân</td>
+                                                <td colSpan="6" style={{ textAlign: 'center' }}>Không có dữ liệu bệnh nhân</td>
                                             </tr>
                                         )}
                                     </tbody>
@@ -178,8 +197,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ManagePatient);
+export default connect(mapStateToProps)(ManagePatient);

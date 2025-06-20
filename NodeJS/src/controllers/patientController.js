@@ -27,15 +27,12 @@ const postVerifyBookingAppointment = async (req, res) => {
 const getPatientProfile = async (req, res) => {
     try {
         const patientId = req.query.patientId;
-        console.log('API nhận được patientId:', patientId);
         if (!patientId) {
             return res.status(400).json({ errCode: 1, errMessage: "Missing patientId" });
         }
         const info = await patientService.getPatientProfile(patientId);
-        console.log('Kết quả service.getPatientProfile:', info);
         return res.status(200).json(info);
     } catch (error) {
-        console.log('Lỗi ở getPatientProfile:', error);
         return res.status(500).json({ errCode: -1, errMessage: "Server error" });
     }
 };
@@ -49,9 +46,23 @@ const updatePatientProfile = async (req, res) => {
     }
 };
 
+const getPatientHistory = async (req, res) => {
+    try {
+        const patientId = req.query.patientId;
+        if (!patientId) {
+            return res.status(400).json({ errCode: 1, errMessage: "Missing patientId" });
+        }
+        const result = await patientService.getPatientHistory(patientId);
+        return res.status(200).json(result);
+    } catch (e) {
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
+
 export default {
     postBookAppointment,
     postVerifyBookingAppointment,
     getPatientProfile,
     updatePatientProfile,
+    getPatientHistory
 };

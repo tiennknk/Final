@@ -108,6 +108,10 @@ const getHistoryPatientsByDoctor = (doctorId) => {
     return axios.get(url).then(res => res.data);
 };
 
+const cancelBooking = (bookingId) => {
+    return axios.post('/api/cancel-booking', { bookingId });
+};
+
 const getPatientProfile = (patientId) => {
     return axios.get(`/api/patient-profile?patientId=${patientId}`);
 }
@@ -115,6 +119,35 @@ const getPatientProfile = (patientId) => {
 const updatePatientProfile = (data) => {
     return axios.put('/api/update-patient-profile', data);
 }
+
+const getPatientHistory = (patientId) => {
+    return axios.get(`/api/patient-history?patientId=${patientId}`);
+};
+
+const createReviewService = (data) => {
+    return axios.post('/api/create-review', data);
+}
+
+const getAllReviewsService = ({ doctorId, clinicId } = {}) => {
+    let query = [];
+    if (doctorId !== undefined && doctorId !== null) query.push(`doctorId=${doctorId}`);
+    if (clinicId !== undefined && clinicId !== null) query.push(`clinicId=${clinicId}`);
+    let queryString = query.length ? '?' + query.join('&') : '';
+    const url = `/api/get-all-reviews${queryString}`;
+    // Log tham số truyền lên và URL
+    console.log("Gọi API getAllReviewsService với:", { doctorId, clinicId, url });
+    return axios.get(url)
+        .then(res => {
+            // Log toàn bộ response trả về từ API
+            console.log("API getAllReviewsService response:", res);
+            return res;
+        })
+        .catch(error => {
+            // Log lỗi nếu có
+            console.log("Lỗi khi gọi API getAllReviewsService:", error);
+            throw error;
+        });
+};
 
 export {
     handleLoginApi,
@@ -142,7 +175,11 @@ export {
     getAllClinic,
     getAllPatientForDoctor,
     getHistoryPatientsByDoctor,
+    cancelBooking,
     postSendRemedy,
     getPatientProfile,
-    updatePatientProfile
+    updatePatientProfile,
+    getPatientHistory,
+    createReviewService,
+    getAllReviewsService,
 };

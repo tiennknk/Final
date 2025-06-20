@@ -5,6 +5,7 @@ import doctorController from "../controllers/doctorController.js";
 import patientController from "../controllers/patientController.js";
 import specialtyController from "../controllers/specialtyController.js";
 import clinicController from "../controllers/clinicController.js";
+import reviewController from "../controllers/reviewcontroller.js";
 
 const router = express.Router();
 
@@ -44,12 +45,16 @@ const initWebRoutes = (app) => {
     router.get('/api/get-list-patient-for-doctor', doctorController.getListPatientForDoctor);
     router.get('/api/get-booked-time-type-by-date', doctorController.getBookedTimeTypesByDate);
     router.get('/api/get-history-patients-by-doctor', doctorController.getHistoryPatientsByDoctor);
+    router.post('/api/cancel-booking', doctorController.cancelBooking);
     router.post('/api/send-remedy', doctorController.sendRemedy);
     // Patient routes
     router.post('/api/patient-book-appointment', patientController.postBookAppointment);
     router.post('/api/verify-booking', patientController.postVerifyBookingAppointment);
     router.get('/api/patient-profile', patientController.getPatientProfile);
     router.put('/api/update-patient-profile', patientController.updatePatientProfile);
+    router.get('/api/patient-history', patientController.getPatientHistory);
+    router.post('/api/create-review', reviewController.createReview);
+    router.get('/api/get-all-reviews', reviewController.getAllReviews);
 
     return app.use("/", router);
 };

@@ -5,6 +5,9 @@ import PatientMenu from "../Patient/PatientMenu";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./ProfilePatient.scss";
+import PatientHistory from "./PatientHistory";
+import { Link } from "react-router-dom";
+import { FaBars } from "react-icons/fa";
 
 const ProfilePatient = () => {
     const userInfo = useSelector(state => state.user.userInfo);
@@ -18,12 +21,9 @@ const ProfilePatient = () => {
             if (userInfo && userInfo.id) {
                 setLoading(true);
                 const res = await getPatientProfile(userInfo.id);
-                // Log để debug
-                console.log("Res gốc:", res);
                 if (res && res.errCode === 0) {
                     setProfile(res.data);
                     setForm(res.data);
-                    
                 } else {
                     setProfile(null);
                 }
@@ -36,16 +36,12 @@ const ProfilePatient = () => {
         fetchProfile();
     }, [userInfo]);
 
-    useEffect(() => {
-    }, [profile]);
-
     const handleChange = e => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
     const handleSave = async () => {
         const res = await updatePatientProfile(form);
-  
         if (res && res.errCode === 0) {
             setProfile(form);
             setEditMode(false);
@@ -60,7 +56,7 @@ const ProfilePatient = () => {
             <PatientMenu />
             <div className="patient-profile-container">
                 <div className="profile-box">
-                    <h2>Hồ sơ cá nhân</h2>
+                <div className="history-title">HỒ SƠ CÁ NHÂN</div>
                     {loading ? (
                         <div>Đang tải dữ liệu...</div>
                     ) : !profile ? (
@@ -93,29 +89,38 @@ const ProfilePatient = () => {
                             </div>
                         </form>
                     ) : (
-                        <div className="profile-info">
-                            <div className="info-row">
-                                <span className="info-label">Họ tên:</span>
-                                <span>{profile.lastName || ""} {profile.firstName || ""}</span>
-                            </div>
-                            <div className="info-row">
-                                <span className="info-label">Email:</span>
-                                <span>{profile.email || ""}</span>
-                            </div>
-                            <div className="info-row">
-                                <span className="info-label">SĐT:</span>
-                                <span>{profile.phonenumber || ""}</span>
-                            </div>
-                            <div className="info-row">
-                                <span className="info-label">Địa chỉ:</span>
-                                <span>{profile.address || ""}</span>
-                            </div>
-                            <div className="btn-group">
-                                <button className="btn btn-warning" onClick={() => setEditMode(true)}>Chỉnh sửa</button>
-                            </div>
-                        </div>
+                        <table className="profile-info-table">
+                            <tbody>
+                                <tr>
+                                    <td className="profile-label">Họ tên:</td>
+                                    <td className="profile-value">{profile.lastName || ""} {profile.firstName || ""}</td>
+                                </tr>
+                                <tr>
+                                    <td className="profile-label">Email:</td>
+                                    <td className="profile-value">{profile.email || ""}</td>
+                                </tr>
+                                <tr>
+                                    <td className="profile-label">SĐT:</td>
+                                    <td className="profile-value">{profile.phonenumber || ""}</td>
+                                </tr>
+                                <tr>
+                                    <td className="profile-label">Địa chỉ:</td>
+                                    <td className="profile-value">{profile.address || ""}</td>
+                                </tr>
+                                <tr>
+                                    <td colSpan={2}>
+                                        <div className="btn-group-center">
+                                            <button className="btn btn-warning" onClick={() => setEditMode(true)}>
+                                                Chỉnh sửa
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     )}
                 </div>
+                <PatientHistory />
             </div>
         </>
     );

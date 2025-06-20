@@ -156,9 +156,40 @@ const updatePatientProfile = async (data) => {
     }
 };
 
+const getPatientHistory = async (patientId) => {
+    try {
+        const history = await db.Booking.findAll({
+            where: { patientId: patientId, statusId: 'S2' },
+            include: [
+                {
+                    model: db.User,
+                    as: 'doctorData',
+                    attributes: ['firstName', 'lastName']
+                },
+                {
+                    model: db.Specialty,
+                    as: 'specialtyData',
+                    attributes: ['name']
+                },
+                {
+                    model: db.Clinic,
+                    as: 'clinicData',
+                    attributes: ['name']
+                }
+            ],
+            order: [['date', 'DESC']]
+        });
+        return { errCode: 0, data: history };
+    } catch (e) {
+        console.log('GET PATIENT HISTORY ERROR:', e);
+        return { errCode: -1, errMessage: "Server error" };
+    }
+};
+
 export default {
     postBookAppointment,
     postVerifyBookingAppointment,
     getPatientProfile,
     updatePatientProfile,
+    getPatientHistory
 };

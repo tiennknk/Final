@@ -440,6 +440,18 @@ const getListPatientForDoctor = async (doctorId, date) => {
     });
 };
 
+const cancelBooking = async (bookingId) => {
+    try {
+        let booking = await db.Booking.findOne({ where: { id: bookingId } });
+        if (!booking) return { errCode: 1, errMessage: "Không tìm thấy lịch khám" };
+        booking.statusId = 'S4';
+        await booking.save();
+        return { errCode: 0, errMessage: "Đã hủy lịch thành công" };
+    } catch (e) {
+        return { errCode: -1, errMessage: "Server error" };
+    }
+};
+
 const sendRemedy = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -599,5 +611,6 @@ export default {
     getProfileDoctorById,
     getListPatientForDoctor,
     getHistoryPatientsByDoctor,
+    cancelBooking,
     sendRemedy
 };

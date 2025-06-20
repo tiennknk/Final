@@ -1,1 +1,89 @@
 @import "../styles/common.scss";
+
+// Toastify custom style for modern, rounded, system-themed toast
+.custom-toast-container .Toastify__toast {
+  border-radius: 14px !important;
+  box-shadow: 0 4px 18px rgba(22, 119, 255, 0.13);
+  padding: 16px 26px;
+  font-size: 1.08rem;
+  font-weight: 500;
+  min-width: 320px;
+  max-width: 350px;
+  margin-bottom: 18px;
+  transition: box-shadow 0.22s, background 0.22s;
+  animation: toast-in 0.32s cubic-bezier(0.4,0,0.2,1);
+}
+
+.custom-toast-container .Toastify__toast--success {
+  background: linear-gradient(90deg, #1677ff 0%, #00c6ff 100%) !important;
+  color: #fff;
+}
+
+.custom-toast-container .Toastify__toast--error {
+  background: linear-gradient(90deg, #ff4d4f 0%, #ff7875 100%) !important;
+  color: #fff;
+}
+
+.custom-toast-container .Toastify__toast--info {
+  background: linear-gradient(90deg, #36cfc9 0%, #1677ff 100%) !important;
+  color: #fff;
+}
+
+.custom-toast-container .Toastify__toast--warning,
+.custom-toast-container .Toastify__toast--warn {
+  background: linear-gradient(90deg, #faad14 0%, #ffd666 100%) !important;
+  color: #222;
+}
+
+.custom-toast-container .Toastify__close-button {
+  color: #fff !important;
+  font-size: 1.2em;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+  &:hover {
+    opacity: 1;
+    color: #e1e1e1 !important;
+  }
+}
+
+// Vị trí container BOTTOM-LEFT (nếu dùng position="bottom-left")
+.custom-toast-container.Toastify__toast-container--bottom-left {
+  left: 32px !important;
+  right: auto !important;
+  bottom: 32px !important;
+  top: auto !important;
+}
+
+// Vị trí container TOP-RIGHT (nếu dùng position="top-right")
+.custom-toast-container.Toastify__toast-container--top-right {
+  right: 32px !important;
+  left: auto !important;
+  top: 32px !important;
+  bottom: auto !important;
+}
+
+// Responsive cho mobile
+@media (max-width: 600px) {
+  .custom-toast-container.Toastify__toast-container--bottom-left,
+  .custom-toast-container.Toastify__toast-container--top-right {
+    left: 8px !important;
+    right: 8px !important;
+    top: auto !important;
+    bottom: 8px !important;
+    width: unset !important;
+    max-width: 98vw;
+    min-width: 0;
+  }
+  .custom-toast-container .Toastify__toast {
+    min-width: 0;
+    max-width: 96vw;
+    font-size: 0.97rem;
+    padding: 12px 10px;
+  }
+}
+
+// Animation xuất hiện toast
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(16px);}
+  to { opacity: 1; transform: translateY(0);}
+}

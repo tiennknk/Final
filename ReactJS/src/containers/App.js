@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-
+import './App.scss';
 import { userIsAuthenticated, userIsNotAuthenticated } from '../hoc/authentication';
 import { path } from '../utils';
 
@@ -65,8 +65,8 @@ class App extends React.Component {
                         </CustomScrollbars>
                     </div>
                     <ToastContainer
-  position="top-right"
-  autoClose={5000}
+  position="bottom-left"
+  autoClose={3500}
   hideProgressBar={false}
   newestOnTop={false}
   closeOnClick
@@ -74,6 +74,7 @@ class App extends React.Component {
   pauseOnFocusLoss
   draggable
   pauseOnHover
+  className="custom-toast-container"
 />
                 </div>
             </Fragment>

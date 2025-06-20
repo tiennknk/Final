@@ -5,117 +5,151 @@
     align-items: flex-start;
     justify-content: center;
     padding-top: 60px;
+    flex-direction: column;
+    gap: 32px;
 }
 
 .profile-box {
-    width: 410px;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto 30px auto;
     background: #fff;
-    border-radius: 14px;
+    border-radius: 18px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.09);
-    padding: 34px 30px 28px 30px;
-    margin: 0 auto;
+    padding: 44px 60px 38px 60px;
+}
 
-    h2 {
-        text-align: center;
-        margin-bottom: 28px;
-        color: #1677ff;
-        font-size: 2rem;
-        font-weight: 700;
-        letter-spacing: 1px;
+/* DÙNG CHUNG CHO CẢ HỒ SƠ & LỊCH SỬ */
+.history-title {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #1677ff;
+    margin-bottom: 28px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Thông tin hồ sơ cá nhân dạng bảng */
+.profile-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+
+    td {
+        font-size: 1.08rem;
+        padding: 7px 0 7px 0;
+        vertical-align: middle;
+        border: none;
     }
-
-    .profile-form {
-        .form-group {
-            margin-bottom: 18px;
-
-            label {
-                font-weight: 600;
-                margin-bottom: 6px;
-                display: block;
-                color: #222;
-                font-size: 1rem;
-            }
-            .form-control {
-                width: 100%;
-                font-size: 1rem;
-                border-radius: 6px;
-                padding: 7px 12px;
-                border: 1px solid #bfc6d1;
-                background: #f9fafe;
-                margin-bottom: 2px;
-                transition: border 0.18s;
-            }
-            .form-control:focus {
-                border: 1.5px solid #1677ff;
-                background: #fff;
-            }
-        }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-        .btn {
-            padding: 8px 28px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 500;
-            outline: none;
-            border: none;
-            cursor: pointer;
-            transition: background 0.15s;
-            &.btn-primary {
-                background: linear-gradient(90deg, #00c6ff 0%, #1677ff 100%);
-                color: #fff;
-            }
-            &.btn-secondary {
-                background: #eee;
-                color: #333;
-            }
-        }
+    .profile-label {
+        font-weight: 600;
+        color: #222;
+        width: 140px;
+        min-width: 90px;
+        white-space: nowrap;
+        text-align: left;
+        padding-right: 12px;
     }
-
-    .profile-info {
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            font-size: 1rem;
-            .info-label {
-                font-weight: 600;
-                color: #222;
-            }
-        }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 14px;
-        }
-        .btn {
-            padding: 8px 26px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 500;
-            outline: none;
-            border: none;
-            cursor: pointer;
-            transition: background 0.15s;
-            &.btn-warning {
-                background: #ffc107;
-                color: #222;
-            }
+    .profile-value {
+        text-align: left;
+        color: #222;
+        font-weight: 400;
+        word-break: break-word;
+        padding-left: 12px;
+    }
+    .btn-group-center {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .btn-warning {
+        background: #ffc33b;
+        color: #222;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        padding: 12px 44px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        transition: background 0.16s;
+        &:hover {
+            background: #ffb700;
         }
     }
 }
 
-/* Responsive mobile */
-@media (max-width: 600px) {
+/* Form chỉnh sửa */
+.profile-form {
+    .form-group {
+        margin-bottom: 18px;
+
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            color: #222;
+            font-size: 1rem;
+        }
+        .form-control {
+            width: 100%;
+            font-size: 1rem;
+            border-radius: 6px;
+            padding: 7px 12px;
+            border: 1px solid #bfc6d1;
+            background: #f9fafe;
+            margin-bottom: 2px;
+            transition: border 0.18s;
+        }
+        .form-control:focus {
+            border: 1.5px solid #1677ff;
+            background: #fff;
+        }
+    }
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+    .btn {
+        padding: 8px 28px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s;
+        &.btn-primary {
+            background: linear-gradient(90deg, #00c6ff 0%, #1677ff 100%);
+            color: #fff;
+        }
+        &.btn-secondary {
+            background: #eee;
+            color: #333;
+        }
+    }
+}
+
+/* Responsive cho mobile */
+@media (max-width: 1200px) {
     .profile-box {
-        width: 97vw;
-        padding: 16px 5vw 22px 5vw;
-        h2 { font-size: 1.25rem; }
+        max-width: 99vw;
+        padding: 18px 2vw 18px 2vw;
+    }
+    .history-title {
+        font-size: 1.3rem !important;
+    }
+    .profile-info-table td {
+        font-size: 0.98rem;
+        padding: 7px 2px;
+    }
+    .profile-info-table .profile-label,
+    .profile-info-table .profile-value {
+        padding-left: 8px;
+        padding-right: 8px;
     }
 }

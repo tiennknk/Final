@@ -5,14 +5,16 @@ import './DetailDoctor.scss';
 import { getDetailInfoDoctor } from "../../../services/userService";
 import DoctorSchedule from "./DoctorSchedule";
 import DoctorExtraInfo from "./DoctorExtraInfo";
+import ReviewList from '../Review/ReviewList';
+import ReviewForm from '../Review/ReviewForm';
 
 class DetailDoctor extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
             detailDoctor: {},
             currentDoctorId: -1,
+            reloadReview: false,
         }
     }
 
@@ -31,8 +33,12 @@ class DetailDoctor extends Component {
         }
     }
 
+    handleReloadReview = () => {
+        this.setState(prevState => ({ reloadReview: !prevState.reloadReview }));
+    };
+
     render() {
-        let { detailDoctor } = this.state;
+        let { detailDoctor, currentDoctorId, reloadReview } = this.state;
         let doctorName = '';
         let imageBase64 = '';
 
@@ -47,6 +53,8 @@ class DetailDoctor extends Component {
                 }
             }
         }
+
+        const patientId = this.props.userInfo?.id;
 
         return (
             <>
@@ -73,18 +81,26 @@ class DetailDoctor extends Component {
                     </div>
                     <div className="schedule-doctor">
                         <div className="content-left">
-                            <DoctorSchedule
-                            doctorIdFromParent={this.state.currentDoctorId}/>
+                            <DoctorSchedule doctorIdFromParent={currentDoctorId}/>
                         </div>
                         <div className="content-right">
-                            <DoctorExtraInfo doctorIdFromParent={this.state.currentDoctorId} />
+                            <DoctorExtraInfo doctorIdFromParent={currentDoctorId} />
                         </div>
                     </div>
                     <div className="detail-infor-doctor">
                         {detailDoctor && detailDoctor.Markdown && detailDoctor.Markdown.contentHTML &&
                             <div dangerouslySetInnerHTML={{ __html: detailDoctor.Markdown.contentHTML }}></div>}
                     </div>
-                    <div className="comment-doctor"></div>
+                    <div className="comment-doctor">
+                        <ReviewList doctorId={currentDoctorId} key={reloadReview} />
+                        {patientId &&
+                            <ReviewForm
+                                doctorId={currentDoctorId}
+                                patientId={patientId}
+                                onSuccess={this.handleReloadReview}
+                            />
+                        }
+                    </div>
                 </div>
             </>
         );
@@ -92,11 +108,9 @@ class DetailDoctor extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return {};
+    return {
+        userInfo: state.user.userInfo
+    };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DetailDoctor);
+export default connect(mapStateToProps)(DetailDoctor);
