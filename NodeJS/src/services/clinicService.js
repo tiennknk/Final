@@ -69,6 +69,8 @@ const getDetailClinicById = async (id) => {
                 });
 
                 if (data) {
+                    // Convert instance to plain object
+                    data = data.toJSON();
                     let doctorClinic = await db.Doctor_Info.findAll({
                         where: { clinicId: id },
                         attributes: ['doctorId', 'provinceId'],

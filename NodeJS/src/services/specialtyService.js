@@ -62,36 +62,37 @@ const getDetailSpecialtyById = async (inputId, location) => {
                 });
 
                 if (data) {
+                    // Convert instance to plain object
+                    data = data.toJSON();
                     let doctorSpecialty = [];
                     if (location === 'ALL') {
-                    doctorSpecialty = await db.Doctor_Info.findAll({
-                        where: {specialtyId: inputId},
-                        attributes: ['doctorId', 'provinceId'],
-                    });
-                } else {
-                    doctorSpecialty = await db.Doctor_Info.findAll({
-                        where: {
-                            specialtyId: inputId,
-                            provinceId: location,
-                        },
-                        attributes: ['doctorId', 'provinceId'],
-                    });
-                }
+                        doctorSpecialty = await db.Doctor_Info.findAll({
+                            where: { specialtyId: inputId },
+                            attributes: ['doctorId', 'provinceId'],
+                        });
+                    } else {
+                        doctorSpecialty = await db.Doctor_Info.findAll({
+                            where: {
+                                specialtyId: inputId,
+                                provinceId: location,
+                            },
+                            attributes: ['doctorId', 'provinceId'],
+                        });
+                    }
+                    data.doctorSpecialty = doctorSpecialty;
+                } else data = {};
 
-                data.doctorSpecialty = doctorSpecialty;
-            } else data = {};
-
-                    resolve({
-                        errMessage: "OK",
-                        errCode: 0,
-                        data
-                    })
-                }
-    } catch (error) {
+                resolve({
+                    errMessage: "OK",
+                    errCode: 0,
+                    data
+                });
+            }
+        } catch (error) {
             reject(error);
         }
-})
-}
+    });
+};
 
 
 export default {

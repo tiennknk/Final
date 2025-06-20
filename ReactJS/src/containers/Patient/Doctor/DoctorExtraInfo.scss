@@ -1,9 +1,11 @@
 .doctor-extra-info-container {
     background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    padding: 20px;
-    margin-bottom: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    padding: 24px 22px 14px 22px;
+    margin-bottom: 20px;
+    min-width: 230px;
+    width: 100%;
 
     .content-up {
         margin-bottom: 8px;
@@ -17,6 +19,7 @@
             font-weight: bold;
             color: #222;
             font-size: 15px;
+            margin-bottom: 3px;
         }
         .detail-address {
             color: #222;
@@ -88,5 +91,12 @@
                 color: #0056b3;
             }
         }
+    }
+}
+
+@media (max-width: 900px) {
+    .doctor-extra-info-container {
+        padding: 14px 6px;
+        min-width: unset;
     }
 }

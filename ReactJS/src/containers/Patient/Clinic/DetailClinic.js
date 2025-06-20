@@ -4,8 +4,9 @@ import HomeHeader from "../../HomePage/HomeHeader";
 import DoctorSchedule from "../Doctor/DoctorSchedule";
 import DoctorExtraInfo from "../Doctor/DoctorExtraInfo";
 import ProfileDoctor from "../Doctor/ProfileDoctor";
-import { getDetailClinicById, getAllClinic } from "../../../services/userService";
+import { getDetailClinicById } from "../../../services/userService";
 import _ from "lodash";
+import "./DetailClinic.scss";
 
 class DetailClinic extends Component {
     constructor(props) {
@@ -19,9 +20,7 @@ class DetailClinic extends Component {
     async componentDidMount() {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
-            let res = await getDetailClinicById({
-                id: id
-            });
+            let res = await getDetailClinicById({ id: id });
 
             if (res && res.errCode === 0) {
                 let data = res.data;
@@ -31,7 +30,6 @@ class DetailClinic extends Component {
                         arrDoctorId = data.doctorClinic.map(item => item.doctorId);
                     }
                 }
-
                 this.setState({
                     dataDetailClinic: res.data,
                     arrDoctorId: arrDoctorId,
@@ -54,8 +52,8 @@ class DetailClinic extends Component {
                     {arrDoctorId && arrDoctorId.length > 0 &&
                         arrDoctorId.map((doctorId, index) => {
                             return (
-                                <div className="each-doctor" key={index}>
-                                    <div className="doctor-info">
+                                <div className="doctor-card" key={index}>
+                                    <div className="doctor-left">
                                         <ProfileDoctor
                                             doctorId={doctorId}
                                             isShowDescriptionDoctor={true}
@@ -63,15 +61,16 @@ class DetailClinic extends Component {
                                             isShowPrice={false}
                                         />
                                     </div>
-                                    <div className="doctor-schedule">
+                                    <div className="doctor-right">
                                         <DoctorSchedule doctorIdFromParent={doctorId} />
-                                    </div>
-                                    <div className="doctor-extra-info">
                                         <DoctorExtraInfo doctorIdFromParent={doctorId} />
                                     </div>
                                 </div>
                             );
                         })
+                    }
+                    {(!arrDoctorId || arrDoctorId.length === 0) &&
+                        <div style={{ textAlign: "center", margin: 20, color: "red" }}>Không có bác sĩ nào cho phòng khám này</div>
                     }
                 </div>
             </div>

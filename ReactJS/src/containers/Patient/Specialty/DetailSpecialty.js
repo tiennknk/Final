@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import "./DetailSpecialty.scss";
 import HomeHeader from "../../HomePage/HomeHeader";
 import DoctorSchedule from "../Doctor/DoctorSchedule";
 import DoctorExtraInfo from "../Doctor/DoctorExtraInfo";
 import ProfileDoctor from "../Doctor/ProfileDoctor";
 import { getDetailSpecialtyById, getAllCodeService } from "../../../services/userService";
 import _ from "lodash";
-import './DetailSpecialty.scss';
 
 class DetailSpecialty extends Component {
     constructor(props) {
@@ -23,6 +23,8 @@ class DetailSpecialty extends Component {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
             let res = await getDetailSpecialtyById(id, 'ALL');
+            console.log("Specialty API response:", res);
+
             let resProvinces = await getAllCodeService('PROVINCE');
             let selectedProvince = 'ALL';
 
@@ -30,11 +32,13 @@ class DetailSpecialty extends Component {
                 let data = res.data;
                 let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
+                    console.log("data.doctorSpecialty:", data.doctorSpecialty);
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
                         arrDoctorProvince = data.doctorSpecialty.map(item => ({
                             doctorId: item.doctorId,
                             province: item.province
                         }));
+                        console.log("arrDoctorProvince:", arrDoctorProvince);
                     }
                 }
                 let dataProvince = resProvinces.data;
@@ -59,15 +63,19 @@ class DetailSpecialty extends Component {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
             let res = await getDetailSpecialtyById(id, selectedProvince);
+            console.log("Specialty API response (province change):", res);
+
             if (res && res.errCode === 0) {
                 let data = res.data;
                 let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
+                    console.log("data.doctorSpecialty:", data.doctorSpecialty);
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
                         arrDoctorProvince = data.doctorSpecialty.map(item => ({
                             doctorId: item.doctorId,
                             province: item.province
                         }));
+                        console.log("arrDoctorProvince:", arrDoctorProvince);
                     }
                 }
                 this.setState({
@@ -81,7 +89,6 @@ class DetailSpecialty extends Component {
 
     render() {
         let { arrDoctorProvince, dataDetailSpecialty, listProvince, selectedProvince } = this.state;
-        // Lọc theo khu vực
         let doctorsToShow = arrDoctorProvince;
         if (selectedProvince !== 'ALL') {
             doctorsToShow = arrDoctorProvince.filter(item => item.province === selectedProvince);
