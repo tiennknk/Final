@@ -122,8 +122,9 @@ const postVerifyBookingAppointment = async (data) => {
 const getPatientProfile = async (patientId) => {
     try {
         const user = await db.User.findOne({
-            where: { id: patientId, roleId: 'R3' },
-            attributes: { exclude: ['password'] }
+            where: { id: patientId },
+            attributes: { exclude: ['password'] },
+            raw: true // Đảm bảo trả về plain object!
         });
         if (user) {
             return { errCode: 0, data: user };
