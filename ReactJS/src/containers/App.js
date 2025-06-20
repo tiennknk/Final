@@ -16,6 +16,7 @@ import VerifyEmail from './Patient/VerifyEmail';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty';
 import DetailClinic from './Patient/Clinic/DetailClinic';
 import CustomScrollbars from '../components/CustomScrollbars';
+import PatientProfile from './Patient/ProfilePatient';
 
 class App extends React.Component {
     handlePersistorState = () => {
@@ -57,6 +58,7 @@ class App extends React.Component {
                                 <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
                                 <Route path={'/verify-email'} component={VerifyEmail} />
                                 <Route path={'/verify-booking'} component={VerifyEmail} />
+                                <Route path="/patient/profile" component={PatientProfile} />
                                 {/* Fallback route */}
                                 <Route component={HomePage} />
                             </Switch>

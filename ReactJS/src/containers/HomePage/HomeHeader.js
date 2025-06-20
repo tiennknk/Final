@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './HomeHeader.scss';
-import { withRouter, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { FaSearch, FaSearchMinus } from "react-icons/fa";
+import { FaSearch, FaSearchMinus, FaUserCircle } from "react-icons/fa";
 import * as actions from '../../store/actions';
-
 
 function removeVietnameseTones(str) {
     if (!str) return "";
@@ -33,24 +32,27 @@ class HomeHeader extends Component {
             allDoctors: [],
             allClinics: [],
             allSpecialties: [],
+            showAccountMenu: false,
         };
         this.searchBoxRef = React.createRef();
         this.suggestRef = React.createRef();
+        this.accountMenuRef = React.createRef();
         this._isMounted = false;
     }
 
     componentDidMount() {
         this._isMounted = true;
         this.fetchAllData();
-        document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener('click', this.handleClickOutside);
     }
 
     componentWillUnmount() {
         this._isMounted = false;
-        document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('click', this.handleClickOutside);
     }
 
     handleClickOutside = (event) => {
+        // Đóng search suggest khi click ra ngoài
         if (
             this.suggestRef.current &&
             !this.suggestRef.current.contains(event.target) &&
@@ -58,6 +60,13 @@ class HomeHeader extends Component {
             !this.searchBoxRef.current.contains(event.target)
         ) {
             this.setState({ searching: false });
+        }
+        // Đóng account menu khi click ra ngoài
+        if (
+            this.accountMenuRef.current &&
+            !this.accountMenuRef.current.contains(event.target)
+        ) {
+            this.setState({ showAccountMenu: false });
         }
     };
 
@@ -174,6 +183,7 @@ class HomeHeader extends Component {
 
     handleLogout = () => {
         this.props.processLogout();
+        this.setState({ showAccountMenu: false });
     };
 
     getRoleName = () => {
@@ -185,40 +195,50 @@ class HomeHeader extends Component {
     getUserName = () => {
         const { userInfo } = this.props;
         if (!userInfo) return "";
-        return userInfo.name || userInfo.fullName || userInfo.username || "";
+        return userInfo.name || `${userInfo.lastName || ''} ${userInfo.firstName || ''}`.trim() || userInfo.username || "";
     }
 
-    render() {
-        const { searchValue, searchResults, searching, loading } = this.state;
-        const { isLoggedIn } = this.props;
+    handleGoProfile = () => {
+        this.props.history.push('/patient/profile');
+        this.setState({ showAccountMenu: false });
+    };
 
-        if (!isLoggedIn) {
-            return <Redirect to="/login" />;
-        }
+    handleGoHistory = () => {
+        this.props.history.push('/patient/booking-history');
+        this.setState({ showAccountMenu: false });
+    };
+
+    toggleAccountMenu = (e) => {
+        e.stopPropagation();
+        this.setState(prev => ({ showAccountMenu: !prev.showAccountMenu }));
+    };
+
+    render() {
+        const { searchValue, searchResults, searching, loading, showAccountMenu } = this.state;
+        const { isLoggedIn, userInfo } = this.props;
 
         return (
             <React.Fragment>
                 <div className='home-header-container'>
                     <div className='home-header-content'>
                         <div className='left-content'>
-                            <i className="fas fa-bars"></i>
                             <div className='header-logo' onClick={this.returntoHome}></div>
                         </div>
                         <div className='center-content'>
                             <div className='child-content' onClick={() => this.scrollToSection('specialty-section')}>
-                                <div><b>Chuyên Khoa</b></div>
+                                <div><b>CHUYÊN KHOA</b></div>
                                 <div className='subs-title'>Tìm bác sĩ theo chuyên khoa</div>
                             </div>
                             <div className='child-content' onClick={() => this.scrollToSection('clinic-section')}>
-                                <div><b>Cơ Sở Y Tế</b></div>
+                                <div><b>CƠ SỞ Y TẾ</b></div>
                                 <div className='subs-title'>Chọn bệnh viện phòng khám</div>
                             </div>
                             <div className='child-content' onClick={() => this.scrollToSection('doctor-section')}>
-                                <div><b>Bác Sĩ</b></div>
+                                <div><b>BÁC SĨ</b></div>
                                 <div className='subs-title'>Chọn bác sĩ giỏi</div>
                             </div>
                             <div className='child-content' onClick={() => this.scrollToSection('package-section')}>
-                                <div><b>Gói Khám</b></div>
+                                <div><b>GÓI KHÁM</b></div>
                                 <div className='subs-title'>Khám sức khỏe tổng quát</div>
                             </div>
                         </div>
@@ -229,12 +249,29 @@ class HomeHeader extends Component {
                                     <button className="btn-auth" onClick={this.handleLogin}>Đăng nhập</button>
                                 </div>
                             ) : (
-                                <div className="user-greeting">
-                                    <span className="greeting-text">
-                                        Xin chào {this.getRoleName()}
-                                        {this.getUserName() ? `, ${this.getUserName()}` : ""}
-                                    </span>
-                                    <button className="btn-logout" onClick={this.handleLogout}>Đăng xuất</button>
+                                <div className="account-menu-wrapper" ref={this.accountMenuRef}>
+                                    <div className="avatar-area" 
+                                    onMouseDown={e => e.stopPropagation()}
+                                    onClick={this.toggleAccountMenu}>
+                                        {userInfo && userInfo.avatar ? (
+                                            <img
+                                                src={userInfo.avatar}
+                                                alt="avatar"
+                                                className="avatar-img"
+                                            />
+                                        ) : (
+                                            <FaUserCircle className="avatar-img-default" />
+                                        )}
+                                        <span className="avatar-name">{this.getUserName()}</span>
+                                        <span className="avatar-caret">&#9660;</span>
+                                    </div>
+                                    {showAccountMenu && (
+                                        <div className="account-dropdown-menu">
+                                            <div className="dropdown-item" onClick={this.handleGoProfile}>Hồ sơ cá nhân</div>
+                                            <div className="dropdown-item" onClick={this.handleGoHistory}>Lịch sử đặt lịch</div>
+                                            <div className="dropdown-item" onClick={this.handleLogout}>Đăng xuất</div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

@@ -119,7 +119,45 @@ const postVerifyBookingAppointment = async (data) => {
     });
 }
 
+const getPatientProfile = async (patientId) => {
+    try {
+        const user = await db.User.findOne({
+            where: { id: patientId, roleId: 'R3' },
+            attributes: { exclude: ['password'] }
+        });
+        if (user) {
+            return { errCode: 0, data: user };
+        }
+        return { errCode: 2, errMessage: "User not found" };
+    } catch (e) {
+        return { errCode: -1, errMessage: "Server error" };
+    }
+};
+
+const updatePatientProfile = async (data) => {
+    try {
+        if (!data.id) return { errCode: 1, errMessage: "Missing user id" };
+        let user = await db.User.findOne({ where: { id: data.id, roleId: 'R3' } });
+        if (!user) return { errCode: 2, errMessage: "User not found" };
+
+        // Update fields
+        user.firstName = data.firstName || user.firstName;
+        user.lastName = data.lastName || user.lastName;
+        user.email = data.email || user.email;
+        user.address = data.address || user.address;
+        user.phonenumber = data.phonenumber || user.phonenumber;
+        user.gender = data.gender || user.gender;
+        await user.save();
+
+        return { errCode: 0, errMessage: "Update successful" };
+    } catch (e) {
+        return { errCode: -1, errMessage: "Server error" };
+    }
+};
+
 export default {
     postBookAppointment,
     postVerifyBookingAppointment,
+    getPatientProfile,
+    updatePatientProfile,
 };

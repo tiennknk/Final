@@ -48,6 +48,8 @@ const initWebRoutes = (app) => {
     // Patient routes
     router.post('/api/patient-book-appointment', patientController.postBookAppointment);
     router.post('/api/verify-booking', patientController.postVerifyBookingAppointment);
+    router.get('/api/patient-profile', patientController.getPatientProfile);
+    router.put('/api/update-patient-profile', patientController.updatePatientProfile);
 
     return app.use("/", router);
 };

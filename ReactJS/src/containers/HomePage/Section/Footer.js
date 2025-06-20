@@ -2,7 +2,7 @@ import React from 'react';
 import './Footer.scss';
 
 const Footer = () => (
-  <footer className="footer-container">
+  <footer className="home-footer">
     <div className="footer-content">
       <div className="footer-brand">
         <span className="footer-logo">CallDr</span>

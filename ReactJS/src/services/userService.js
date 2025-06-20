@@ -98,6 +98,7 @@ const getDetailClinicById = (data) => {
 const getAllPatientForDoctor = (data) => {
     return axios.get(`/api/get-list-patient-for-doctor?doctorId=${data.doctorId}&date=${data.date}`);
 };
+
 const postSendRemedy = (data) => {
     return axios.post('/api/send-remedy', data);
 };
@@ -106,6 +107,14 @@ const getHistoryPatientsByDoctor = (doctorId) => {
     let url = `/api/get-history-patients-by-doctor?doctorId=${doctorId}`;
     return axios.get(url).then(res => res.data);
 };
+
+const getPatientProfile = (patientId) => {
+    return axios.get(`/api/patient-profile?patientId=${patientId}`);
+}
+
+const updatePatientProfile = (data) => {
+    return axios.put('/api/update-patient-profile', data);
+}
 
 export {
     handleLoginApi,
@@ -133,5 +142,7 @@ export {
     getAllClinic,
     getAllPatientForDoctor,
     getHistoryPatientsByDoctor,
-    postSendRemedy
+    postSendRemedy,
+    getPatientProfile,
+    updatePatientProfile
 };

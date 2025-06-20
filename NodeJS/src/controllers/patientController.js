@@ -24,7 +24,31 @@ const postVerifyBookingAppointment = async (req, res) => {
     }
 }
 
+const getPatientProfile = async (req, res) => {
+    try {
+        const patientId = req.query.patientId;
+        if (!patientId) {
+            return res.status(400).json({ errCode: 1, errMessage: "Missing patientId" });
+        }
+        const info = await patientService.getPatientProfile(patientId);
+        return res.status(200).json(info);
+    } catch (error) {
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
+
+const updatePatientProfile = async (req, res) => {
+    try {
+        const info = await patientService.updatePatientProfile(req.body);
+        return res.status(200).json(info);
+    } catch (error) {
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
+
 export default {
     postBookAppointment,
     postVerifyBookingAppointment,
+    getPatientProfile,
+    updatePatientProfile,
 };

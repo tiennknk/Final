@@ -43,10 +43,10 @@ class Header extends Component {
                 </div>
                 <div className="header-right">
                     <span className="welcome-text">
-                        Welcome, {userInfo && userInfo.firstName ? userInfo.firstName : ''} !
+                        Xin chào, {userInfo && userInfo.firstName ? userInfo.firstName : ''} !
                     </span>
                     <button className="btn-logout" onClick={processLogout}>
-                        <i className="fas fa-sign-out-alt"></i> Logout
+                        <i className="fas fa-sign-out-alt"></i> Đăng xuất
                     </button>
                 </div>
             </div>

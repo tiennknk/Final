@@ -1,139 +1,88 @@
-.slick-prev{
-    left: -10px !important;
-    z-index: 1000 !important;
-    height: 48px !important;
-    width: 44px !important;
-    background: #fff !important;
+$primary: #1677ff;
+$section-bg: #f9fafe;
+$section-radius: 28px;
+$section-shadow: 0 4px 24px rgba(22,119,255,0.07);
 
-    &:hover{
-        background: #eceaea !important;
-    }
+.homepage-bg {
+    width: 100vw;
+    min-height: 100vh;
+    background: #f5f8fd;
+    padding: 0;
 }
 
-.slick-prev::before,
-.slick-next::before{
-    font-family: Font Awesome !important;
-    color: red !important;
+.home-header-banner {
+    margin-bottom: 40px; // Cách dưới menu
 }
 
-.slick-next{
-    right: -10px !important;
-    z-index: 1000 !important;
-    height: 48px !important;
-    width: 44px !important;
-    background: #fff !important;
-    border: 2px solid #fff !important;
-
-    &:hover{
-        background: #eceaea !important;
-    }
+.banner-content {
+    max-width: 950px;
+    width: 90vw;
+    margin: 0 auto;
+    border-radius: $section-radius;
+    box-shadow: $section-shadow;
+    padding: 40px 38px 34px 38px;
+    position: relative;
 }
 
-.section-share{
-    &.section-specialty{
-        background: #f5f5f5;
-    }
-
-    &.section-outstanding-doctor{
-        background: #f5f5f5;
-    }
-
-    .section-body{
-        .section-customize{
-            .bg-image{
-            width: 278px;
-            height: 150px;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-color: #eee;
-            
-
-            &.section-specialty{
-                // background-image: url('../../assets/images/Download.jpg');
-            }
-
-            &.section-medical-facility{
-                // background-image: url('../../assets/images/medical-facility/083122lo-go-viet-duc.jpg');
-            }
-
-            &.section-outstanding-doctor{
-                // background-image: url('../../assets/images/Download.jpg');
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-            }
-
-            &.section-handbook{
-                // background-image: url('../../assets/images/Download.jpg');
-            }
-        }
-        }
-    }
+.homepage-content {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.sick-disabled{
-    display: none !important;
+.homepage-section {
+    width: 100%;
+    max-width: 950px;
+    margin: 38px auto 0 auto;
+    background: $section-bg;
+    border-radius: $section-radius;
+    box-shadow: $section-shadow;
+    padding: 32px 38px 28px 38px;
+    position: relative;
 }
 
-.section-share{
-    height: 330px;
+.section-list-page,
+.clinic-list-page {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
 
-    .section-container{
-        margin: 0 100px;
+.site-footer, .home-footer {
+    background: linear-gradient(90deg, #0d47a1, #1677ff 95%);
+    color: #fff;
+    padding: 22px 0 8px 0;
+    margin-top: 46px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    font-size: 1.06rem;
+    .footer-content {
+        max-width: 1100px;
+        margin: 0 auto;
         display: flex;
-        flex-direction: column;
-
-        .section-header{
-            height: 60px;
-            margin-bottom: 30px;
-            padding-top: 30px;
-
-            .title-section{
-                font-size: 22px;
-                font-weight: 600;
-            }
-
-            .btn-section{
-                float: right;
-                padding: 10px 20px;
-                border: none;
-                outline: none;
-                display: block;
-                background: #ebebeb;
-                color: black;
-                cursor: pointer;
-                text-transform: uppercase;
-
-                &:hover{
-                    background: #fff;
-                    color: #f7d800;
-                }
-            }
-        }
+        justify-content: space-between;
+        align-items: center;
     }
-}
-
-.section-outstanding-doctor{
-
-    .outer-bg{
+    .footer-links {
         display: flex;
-        justify-content: center;
-        margin-bottom: 10px;
+        gap: 22px;
+        a {
+            color: #fff;
+            opacity: 0.88;
+            font-weight: 500;
+            &:hover { color: #ffe066; }
         }
-        .section-customize{
-            padding: 5px;
-            cursor: pointer;
-
-            .customize-border{
-                border: 1px solid orange;
-                padding: 20px;
-            }
     }
 }
 
-.home-footer{
-    text-align: center;
-    padding: 20px;
-    
+@media (max-width: 1200px) {
+    .banner-content, .homepage-section {
+        max-width: 99vw;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
 }

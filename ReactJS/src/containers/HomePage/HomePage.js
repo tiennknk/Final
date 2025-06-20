@@ -14,11 +14,9 @@ import "slick-carousel/slick/slick-theme.css";
 class HomePage extends React.Component {
     render() {
         const { isLoggedIn, userInfo } = this.props;
-        // Redirect user theo role nếu cần
         if (isLoggedIn && userInfo) {
             if (userInfo.roleId === 'R1') return <Redirect to="/system/user-manage" />;
             if (userInfo.roleId === 'R2') return <Redirect to="/doctor" />;
-            // Nếu muốn user thường về /home, không cần redirect
         }
 
         let settings = {
@@ -33,12 +31,22 @@ class HomePage extends React.Component {
         };
 
         return (
-            <div>
+            <div className="homepage-bg">
                 <HomeHeader isShowBanner={true} />
-                <Specialty settings={settings} />
-                <MedicalFacility settings={settings} />
-                <OutStandingDoctor settings={settings} />
-                <HandBook settings={settings} />
+                <div className="homepage-content">
+                    <div className="homepage-section">
+                        <Specialty settings={settings} />
+                    </div>
+                    <div className="homepage-section">
+                        <MedicalFacility settings={settings} />
+                    </div>
+                    <div className="homepage-section">
+                        <OutStandingDoctor settings={settings} />
+                    </div>
+                    <div className="homepage-section">
+                        <HandBook settings={settings} />
+                    </div>
+                </div>
                 <Footer />
             </div>
         );
