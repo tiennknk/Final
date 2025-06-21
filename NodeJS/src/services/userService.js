@@ -99,7 +99,7 @@ const createNewUser = (data) => {
             if (check === true) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Email da ton tai'
+                    errMessage: 'Email đã tồn tại, vui lòng nhập email khác!'
                 });
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
@@ -140,7 +140,7 @@ const deleteUser = (userId) => {
         if (!founduser) {
             resolve({
                 errCode: 2,
-                errMessage: `user khong ton tai`
+                errMessage: `User không tồn tại`
             });
         }
         await db.User.destroy({
@@ -148,7 +148,7 @@ const deleteUser = (userId) => {
         });
         resolve({
             errCode: 0,
-            message: 'Delete user thanh cong'
+            message: 'Xóa người dùng thành công'
         });
     });
 };
@@ -183,7 +183,7 @@ const updateUserData = (data) => {
 
                 resolve({
                     errCode: 0,
-                    message: 'Update the user succeed'
+                    message: 'Cập nhật người dùng thành công'
                 });
             } else {
                 resolve({

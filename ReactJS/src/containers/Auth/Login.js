@@ -16,8 +16,8 @@ const Login = (props) => {
     useEffect(() => {
         if (isLoggedIn && userInfo && userInfo.roleId) {
             let target = "/home";
-            if (userInfo.roleId === "R1") target = "/system/user-manage";
-            else if (userInfo.roleId === "R2") target = "/doctor";
+            if (userInfo.roleId === "R1") target = "/system/user-redux";
+            else if (userInfo.roleId === "R2") target = "/doctor/manage-schedule";
             if (window.location.pathname !== target) {
                 push(target);
             }

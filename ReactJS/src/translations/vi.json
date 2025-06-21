@@ -47,12 +47,10 @@
             "manage-clinic": "Quản lý phòng khám",
             "specialty": "Chuyên khoa",
             "manage-specialty": "Quản lý chuyên khoa",
-            "handbook": "Cẩm nang",
-            "manage-handbook": "Quản lý cẩm nang",
             "manage-user": "Quản lý người dùng"
         },
         "doctor": {
-            "header": "Bác sĩ",
+            "header": "Menu",
             "manage-schedule": "Quản lý lịch khám",
             "manage-patient": "Quản lý bệnh nhân",
             "history": "Lịch sử khám bệnh"

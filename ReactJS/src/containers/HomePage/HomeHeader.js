@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import './HomeHeader.scss';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { FaSearch, FaSearchMinus, FaUserCircle } from "react-icons/fa";
+import { FaSearch, FaSearchMinus, FaUserCircle, FaBars } from "react-icons/fa";
 import * as actions from '../../store/actions';
 
 function removeVietnameseTones(str) {
@@ -222,7 +222,23 @@ class HomeHeader extends Component {
                 <div className='home-header-container'>
                     <div className='home-header-content'>
                         <div className='left-content'>
-                            <div className='header-logo' onClick={this.returntoHome}></div>
+                            {/* Nút menu fa-bars - click về trang chủ */}
+                            <button
+                                className="header-menu-btn"
+                                onClick={this.returntoHome}
+                                aria-label="Trở về trang chủ"
+                            >
+                                <FaBars />
+                            </button>
+                            {/* Logo cạnh menu */}
+                            <div className='header-logo-wrap'>
+                                {/* Thay src dưới đây bằng ảnh logo thực tế */}
+                                <img
+                                    src="/logo192.png"
+                                    alt="Logo"
+                                    className="header-logo-img"
+                                />
+                            </div>
                         </div>
                         <div className='center-content'>
                             <div className='child-content' onClick={() => this.scrollToSection('specialty-section')}>
@@ -267,8 +283,7 @@ class HomeHeader extends Component {
                                     </div>
                                     {showAccountMenu && (
                                         <div className="account-dropdown-menu">
-                                            <div className="dropdown-item" onClick={this.handleGoProfile}>Hồ sơ cá nhân</div>
-                                            <div className="dropdown-item" onClick={this.handleGoHistory}>Lịch sử đặt lịch</div>
+                                            <div className="dropdown-item" onClick={this.handleGoProfile}>Thông tin cá nhân</div>
                                             <div className="dropdown-item" onClick={this.handleLogout}>Đăng xuất</div>
                                         </div>
                                     )}

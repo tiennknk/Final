@@ -25,12 +25,35 @@ $header-shadow: 0 2px 8px rgba(0,0,0,0.03);
             display: flex;
             align-items: center;
             position: relative;
-            .header-logo {
+
+            .header-menu-btn {
+                background: none;
+                border: none;
+                font-size: 26px;
+                color: $primary;
+                cursor: pointer;
+                margin-right: 12px;
+                outline: none;
+                display: flex;
+                align-items: center;
+                transition: background 0.13s;
+                padding: 6px 8px;
+                border-radius: 5px;
+                &:hover {
+                    background: #e9f3ff;
+                }
+            }
+
+            .header-logo-wrap {
                 height: 40px;
                 width: 120px;
-                margin-left: 12px;
-                cursor: pointer;
-                background: center center no-repeat;
+                display: flex;
+                align-items: center;
+                .header-logo-img {
+                    height: 40px;
+                    width: auto;
+                    display: block;
+                }
             }
         }
         .center-content {

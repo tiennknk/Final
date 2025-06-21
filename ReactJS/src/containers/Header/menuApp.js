@@ -20,12 +20,6 @@ export const adminMenu = [
             { name: 'menu.admin.manage-specialty', link: '/system/manage-specialty' }
         ]
     },
-    {
-        name: 'menu.admin.handbook',
-        menus: [
-            { name: 'menu.admin.manage-handbook', link: '/system/manage-handbook' }
-        ]
-    },
 ];
 
 export const doctorMenu = [

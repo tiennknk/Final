@@ -15,8 +15,8 @@ class HomePage extends React.Component {
     render() {
         const { isLoggedIn, userInfo } = this.props;
         if (isLoggedIn && userInfo) {
-            if (userInfo.roleId === 'R1') return <Redirect to="/system/user-manage" />;
-            if (userInfo.roleId === 'R2') return <Redirect to="/doctor" />;
+            if (userInfo.roleId === 'R1') return <Redirect to="/system/user-redux" />;
+            if (userInfo.roleId === 'R2') return <Redirect to="/doctor/manage-schedule" />;
         }
 
         let settings = {

@@ -18,7 +18,7 @@ const createNewSpecialty = async (data) => {
                 });
                 resolve({
                     errCode: 0,
-                    errMessage: "Create specialty successfully",
+                    errMessage: "Tạo chuyên khoa thành công",
                 });
             }
         } catch (error) {

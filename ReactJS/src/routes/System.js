@@ -11,7 +11,8 @@ import ManageClinic from '../containers/System/Clinic/ManageClinic';
 
 class System extends Component {
     render() {
-        const { systemMenuPath, isLoggedIn } = this.props;
+        const {  isLoggedIn } = this.props;
+        const systemMenuPath = '/system/user-redux';
         return (
             <React.Fragment>
                 {isLoggedIn && <Header />}
@@ -35,7 +36,7 @@ class System extends Component {
 
 const mapStateToProps = state => {
     return {
-        systemMenuPath: state.app.systemMenuPath,
+        
         isLoggedIn: state.user.isLoggedIn
     };
 };

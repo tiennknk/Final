@@ -21,11 +21,11 @@ const Register = (props) => {
 
     if (isLoggedIn && userInfo) {
         if (userInfo.roleId === "R1") {
-            dispatch(push("/system/user-manage"));
+            dispatch(push("/system/user-redux"));
             return null;
         }
         if (userInfo.roleId === "R2") {
-            dispatch(push("/doctor"));
+            dispatch(push("/doctor/manage-schedule"));
             return null;
         }
         dispatch(push("/home"));
