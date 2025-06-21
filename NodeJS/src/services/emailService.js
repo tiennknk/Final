@@ -20,7 +20,8 @@ const getBodyHTMLEmail = (dataSend) => {
             <div style="margin: 18px 0; padding: 10px 20px; background: #f6faff; border-radius: 7px;">
                 <span style="font-size:1.08rem;"><strong>Thông tin chi tiết:</strong></span><br>
                 <span style="font-size:1.08rem;">
-                    <strong>Thời gian:</strong> <span style="color:#1677ff;">${dataSend.time}</span>
+                    <strong>Thời gian:</strong> <span style="color:#1677ff;">${dataSend.time}</span><br>
+                    <strong>Ngày:</strong> <span style="color:#1677ff;">${dataSend.date}</span>
                 </span>
             </div>
             <p style="margin-top:12px; font-size: 1.01rem;">

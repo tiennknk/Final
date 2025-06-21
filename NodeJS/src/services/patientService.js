@@ -1,7 +1,7 @@
 import db from '../models/index.js';
 import dotenv from "dotenv";
 import emailService from './emailService.js';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
 
@@ -21,11 +21,16 @@ const postBookAppointment = async (data) => {
                 });
             } else {
                 let token = uuidv4();
+
+                // Format ngày cho email
+                let formattedDate = new Date(Number(data.date)).toLocaleDateString('vi-VN');
+
                 await emailService.sendEmail({
                     receiverEmail: data.email,
                     patientName: data.fullName,
                     time: data.timeString,
                     doctorName: data.doctorName,
+                    date: formattedDate, // THÊM DÒNG NÀY!
                     redirectLink: buildUrlEmail(data.doctorId, token),
                 });
 

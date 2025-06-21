@@ -114,10 +114,11 @@ export const createNewUser = (data) => {
         try {
             let res = await createNewUserService(data);
             if (res && res.errCode === 0) {
-                toast.success("Create a new user succeed!");
+                toast.success("Tạo mới người dùng thành công!");
                 dispatch(saveUserSuccess())
                 dispatch(fetchAllUserStart());
             } else {
+                toast.error("Tạo mới người dùng thất bại!");
                 dispatch(saveUserFailed());
             }
             return res;

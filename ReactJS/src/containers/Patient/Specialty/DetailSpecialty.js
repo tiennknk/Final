@@ -23,8 +23,6 @@ class DetailSpecialty extends Component {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
             let res = await getDetailSpecialtyById(id, 'ALL');
-            console.log("Specialty API response:", res);
-
             let resProvinces = await getAllCodeService('PROVINCE');
             let selectedProvince = 'ALL';
 
@@ -32,13 +30,11 @@ class DetailSpecialty extends Component {
                 let data = res.data;
                 let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
-                    console.log("data.doctorSpecialty:", data.doctorSpecialty);
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
                         arrDoctorProvince = data.doctorSpecialty.map(item => ({
                             doctorId: item.doctorId,
                             province: item.province
                         }));
-                        console.log("arrDoctorProvince:", arrDoctorProvince);
                     }
                 }
                 let dataProvince = resProvinces.data;
@@ -63,19 +59,16 @@ class DetailSpecialty extends Component {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
             let res = await getDetailSpecialtyById(id, selectedProvince);
-            console.log("Specialty API response (province change):", res);
 
             if (res && res.errCode === 0) {
                 let data = res.data;
                 let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
-                    console.log("data.doctorSpecialty:", data.doctorSpecialty);
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
                         arrDoctorProvince = data.doctorSpecialty.map(item => ({
                             doctorId: item.doctorId,
                             province: item.province
                         }));
-                        console.log("arrDoctorProvince:", arrDoctorProvince);
                     }
                 }
                 this.setState({
@@ -90,9 +83,6 @@ class DetailSpecialty extends Component {
     render() {
         let { arrDoctorProvince, dataDetailSpecialty, listProvince, selectedProvince } = this.state;
         let doctorsToShow = arrDoctorProvince;
-        if (selectedProvince !== 'ALL') {
-            doctorsToShow = arrDoctorProvince.filter(item => item.province === selectedProvince);
-        }
 
         return (
             <div className="detail-specialty-container">
@@ -104,7 +94,7 @@ class DetailSpecialty extends Component {
                         }
                     </div>
                     <div className="search-sp-doctor">
-                        <div className="filter-location">
+                        <div className="filter-location compact-location-filter">
                             <label htmlFor="province-select">Lọc theo địa điểm:</label>
                             <select
                                 id="province-select"
@@ -113,20 +103,18 @@ class DetailSpecialty extends Component {
                                 value={selectedProvince}
                             >
                                 {listProvince && listProvince.length > 0 &&
-                                    listProvince.map((item, index) => {
-                                        return (
-                                            <option key={index} value={item.keyMap}>
-                                                {item.valueVi}
-                                            </option>
-                                        );
-                                    })
+                                    listProvince.map((item, index) => (
+                                        <option key={index} value={item.keyMap}>
+                                            {item.valueVi}
+                                        </option>
+                                    ))
                                 }
                             </select>
                         </div>
                         {doctorsToShow && doctorsToShow.length > 0 ? (
                             doctorsToShow.map((item, index) => (
-                                <div className="each-doctor" key={index}>
-                                    <div className="doctor-info">
+                                <div className="each-doctor-compact" key={index}>
+                                    <div className="doctor-basic-info">
                                         <ProfileDoctor
                                             doctorId={item.doctorId}
                                             isShowDescriptionDoctor={true}
@@ -134,11 +122,13 @@ class DetailSpecialty extends Component {
                                             isShowPrice={false}
                                         />
                                     </div>
-                                    <div className="doctor-schedule">
-                                        <DoctorSchedule doctorIdFromParent={item.doctorId} />
-                                    </div>
-                                    <div className="doctor-extra-info">
-                                        <DoctorExtraInfo doctorIdFromParent={item.doctorId} />
+                                    <div className="doctor-box-right">
+                                        <div className="doctor-schedule-compact">
+                                            <DoctorSchedule doctorIdFromParent={item.doctorId} />
+                                        </div>
+                                        <div className="doctor-extra-info-compact">
+                                            <DoctorExtraInfo doctorIdFromParent={item.doctorId} />
+                                        </div>
                                     </div>
                                 </div>
                             ))

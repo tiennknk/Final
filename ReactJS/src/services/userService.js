@@ -143,6 +143,10 @@ const getAllReviewsService = ({ doctorId, clinicId } = {}) => {
         });
 };
 
+const deleteScheduleSlot = (doctorId, date, timeType) => {
+    return axios.delete('/api/delete-schedule-slot', { data: { doctorId, date, timeType } });
+};
+
 export {
     handleLoginApi,
     getAllUsers,
@@ -176,4 +180,5 @@ export {
     getPatientHistory,
     createReviewService,
     getAllReviewsService,
+    deleteScheduleSlot,
 };

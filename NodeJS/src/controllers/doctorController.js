@@ -2,7 +2,7 @@
 
 import lodash from 'lodash';
 const { get } = lodash;
-
+import db from "../models/index.js";
 import doctorService from '../services/doctorService.js';
 
 const getTopDoctorHome = async (req, res) => {
@@ -140,7 +140,8 @@ const sendRemedy = async (req, res) => {
 
 const getBookedTimeTypesByDate = async (req, res) => {
     try {
-        let result = await doctorService.getBookedTimeTypesByDate(req.query.doctorId);
+        // truyền đúng cả 2 tham số doctorId và date
+        let result = await doctorService.getBookedTimeTypesByDate(req.query.doctorId, req.query.date);
         return res.status(200).json(result);
     } catch (e) {
         return res.status(500).json({
@@ -188,6 +189,27 @@ const cancelBooking = async (req, res) => {
     }
 };
 
+const deleteScheduleSlot = async (req, res) => {
+    try {
+      const { doctorId, date, timeType } = req.body;
+      console.log('DELETE SLOT BODY:', req.body); // log để debug
+      if (!doctorId || !date || !timeType) {
+        return res.status(400).json({ errCode: 1, errMessage: "Thiếu tham số!" });
+      }
+      const deleted = await db.Schedule.destroy({
+        where: { doctorId, date, timeType }
+      });
+      if (deleted) {
+        return res.status(200).json({ errCode: 0, errMessage: "Đã xóa slot thành công!" });
+      } else {
+        return res.status(404).json({ errCode: 2, errMessage: "Không tìm thấy slot!" });
+      }
+    } catch (e) {
+      console.error(e);
+      return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
@@ -202,4 +224,5 @@ export default {
     getBookedTimeTypesByDate,
     getHistoryPatientsByDoctor,
     cancelBooking,
+    deleteScheduleSlot,
 };

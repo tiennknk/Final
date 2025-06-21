@@ -9,7 +9,7 @@ import { dateFormat } from '../../../utils';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
 import moment from 'moment';
-import { saveBulkScheduleDoctor } from '../../../services/userService';
+import { saveBulkScheduleDoctor, getScheduleByDate, deleteScheduleSlot } from '../../../services/userService';
 
 class ManageSchedule extends Component {
     constructor(props) {
@@ -19,6 +19,7 @@ class ManageSchedule extends Component {
             selectedDoctor: null,
             currentDate: '',
             rangeTime: [],
+            scheduledSlots: [], // NEW: slots đã lên lịch
         }
     }
 
@@ -27,12 +28,10 @@ class ManageSchedule extends Component {
         this.props.fetchAllScheduleTime();
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps, prevState) {
         if (prevProps.allDoctors !== this.props.allDoctors) {
             let dataSelect = this.buildDataInputSelect(this.props.allDoctors);
-            this.setState({
-                listDoctors: dataSelect,
-            });
+            this.setState({ listDoctors: dataSelect });
         }
         if (prevProps.allScheduleTime !== this.props.allScheduleTime) {
             let data = this.props.allScheduleTime;
@@ -42,9 +41,14 @@ class ManageSchedule extends Component {
                     isSelected: false,
                 }));
             }
-            this.setState({
-                rangeTime: data,
-            });
+            this.setState({ rangeTime: data });
+        }
+        // Khi đổi bác sĩ hoặc ngày, load lại slot đã lên lịch
+        if (
+            (prevState.selectedDoctor !== this.state.selectedDoctor || prevState.currentDate !== this.state.currentDate)
+            && this.state.selectedDoctor && this.state.currentDate
+        ) {
+            this.fetchScheduledSlots();
         }
     }
 
@@ -66,9 +70,7 @@ class ManageSchedule extends Component {
     }
 
     handleOnChangeDatePicker = (date) => {
-        this.setState({
-            currentDate: date[0]
-        });
+        this.setState({ currentDate: date[0] });
     }
 
     handleClickBtnTime = (time) => {
@@ -81,6 +83,30 @@ class ManageSchedule extends Component {
                 return item;
             });
             this.setState({ rangeTime });
+        }
+    }
+
+    fetchScheduledSlots = async () => {
+        const { selectedDoctor, currentDate } = this.state;
+        if (!selectedDoctor || !currentDate) return;
+        let res = await getScheduleByDate(selectedDoctor.value, new Date(currentDate).getTime());
+        if (res && res.errCode === 0) {
+            this.setState({ scheduledSlots: res.data });
+        } else {
+            this.setState({ scheduledSlots: [] });
+        }
+    }
+
+    handleCancelSlot = async (slot) => {
+        const { selectedDoctor, currentDate } = this.state;
+        if (!selectedDoctor || !currentDate) return;
+        if (!window.confirm('Bạn chắc chắn muốn hủy khung giờ này?')) return;
+        let res = await deleteScheduleSlot(selectedDoctor.value, new Date(currentDate).getTime(), slot.timeType);
+        if (res && res.errCode === 0) {
+            toast.success('Đã hủy slot thành công!');
+            this.fetchScheduledSlots();
+        } else {
+            toast.error(res.errMessage || 'Hủy slot thất bại!');
         }
     }
 
@@ -119,13 +145,14 @@ class ManageSchedule extends Component {
             this.setState({
                 rangeTime: this.state.rangeTime.map(item => ({ ...item, isSelected: false }))
             });
+            this.fetchScheduledSlots(); // reload slots
         } else {
             toast.error(res.errMessage || "Lưu lịch thất bại!");
         }
     }
 
     render() {
-        let { rangeTime } = this.state;
+        let { rangeTime, scheduledSlots } = this.state;
         let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
         return (
             <React.Fragment>
@@ -155,6 +182,7 @@ class ManageSchedule extends Component {
                                 />
                             </div>
                         </div>
+
                         <div className="pick-hour-container">
                             {rangeTime && rangeTime.length > 0 &&
                                 rangeTime.map((item) => {
@@ -169,6 +197,21 @@ class ManageSchedule extends Component {
                                     );
                                 })}
                         </div>
+                        {/* Hiển thị các slot đã lên lịch và nút hủy */}
+                        <div className="scheduled-slots" style={{ margin: '12px 0' }}>
+                            {scheduledSlots && scheduledSlots.length > 0 &&
+                                scheduledSlots.map(slot => (
+                                    <button
+                                        key={slot.timeType}
+                                        className="btn btn-danger btn-cancel-schedule"
+                                        style={{ marginRight: 8, marginBottom: 8 }}
+                                        onClick={() => this.handleCancelSlot(slot)}
+                                    >
+                                        {slot.timeTypeData?.valueVi || slot.timeType} &nbsp;Hủy
+                                    </button>
+                                ))
+                            }
+                        </div>
                         <div className='col-12'>
                             <button className='btn btn-primary btn-save-schedule'
                                 onClick={this.handleSaveSchedule}>
@@ -182,19 +225,15 @@ class ManageSchedule extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.admin.isLoggedIn,
-        allDoctors: state.admin.allDoctors,
-        allScheduleTime: state.admin.allScheduleTime,
-    };
-};
+const mapStateToProps = state => ({
+    isLoggedIn: state.admin.isLoggedIn,
+    allDoctors: state.admin.allDoctors,
+    allScheduleTime: state.admin.allScheduleTime,
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchAllDoctors: () => dispatch(actions.fetchAllDoctors()),
-        fetchAllScheduleTime: () => dispatch(actions.fetchAllScheduleTime()),
-    };
-}
+const mapDispatchToProps = dispatch => ({
+    fetchAllDoctors: () => dispatch(actions.fetchAllDoctors()),
+    fetchAllScheduleTime: () => dispatch(actions.fetchAllScheduleTime()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageSchedule);
