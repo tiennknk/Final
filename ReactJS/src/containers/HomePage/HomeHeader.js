@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch, FaSearchMinus, FaUserCircle, FaBars } from "react-icons/fa";
 import * as actions from '../../store/actions';
+import logo from '../../assets/images/logo.png';
 
 function removeVietnameseTones(str) {
     if (!str) return "";
@@ -230,14 +231,8 @@ class HomeHeader extends Component {
                             >
                                 <FaBars />
                             </button>
-                            {/* Logo cạnh menu */}
                             <div className='header-logo-wrap'>
-                                {/* Thay src dưới đây bằng ảnh logo thực tế */}
-                                <img
-                                    src="/logo192.png"
-                                    alt="Logo"
-                                    className="header-logo-img"
-                                />
+                                <img src={logo} alt="Logo" className="header-logo-img" />
                             </div>
                         </div>
                         <div className='center-content'>
@@ -266,9 +261,9 @@ class HomeHeader extends Component {
                                 </div>
                             ) : (
                                 <div className="account-menu-wrapper" ref={this.accountMenuRef}>
-                                    <div className="avatar-area" 
-                                    onMouseDown={e => e.stopPropagation()}
-                                    onClick={this.toggleAccountMenu}>
+                                    <div className="avatar-area"
+                                        onMouseDown={e => e.stopPropagation()}
+                                        onClick={this.toggleAccountMenu}>
                                         {userInfo && userInfo.avatar ? (
                                             <img
                                                 src={userInfo.avatar}
