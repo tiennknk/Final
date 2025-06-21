@@ -33,7 +33,15 @@ const Login = (props) => {
         }
         try {
             const res = await handleLoginApi(username, password);
+            console.log("Login API response:", res);
             if (res && res.errCode === 0 && res.user) {
+                // Lưu token vào localStorage nếu có
+                if (res.token) {
+                    localStorage.setItem('token', res.token);
+                    console.log('[Login] Đã lưu token vào localStorage:', res.token);
+                } else {
+                    console.warn('[Login] Không thấy token trả về từ backend!');
+                }
                 userLoginSuccess(res.user);
             } else {
                 setLoginError(res?.message || "Sai tài khoản hoặc mật khẩu!");

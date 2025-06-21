@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
 import "./DoctorSchedule.scss";
 import moment from "moment";
 import "moment/locale/vi";
@@ -18,7 +17,7 @@ class DoctorSchedule extends Component {
             selectedDate: null,
             isOpenModalBooking: false,
             dataScheduleTimeModal: {},
-            bookedTimeTypes: [], // thêm state để lưu slot đã đặt
+            bookedTimeTypes: [],
         };
     }
 
@@ -66,7 +65,6 @@ class DoctorSchedule extends Component {
     handleOnChangeSelect = (event) => {
         let date = event.target.value || event.value;
         this.setState({ selectedDate: date });
-        // API sẽ được gọi lại ở componentDidUpdate
     };
 
     handleClickScheduleTime = (time) => {
@@ -93,15 +91,12 @@ class DoctorSchedule extends Component {
         });
     };
 
-    // Lọc slot realtime & ẩn slot đã đặt
     filterRealtimeAndBookedSlots = (slots, selectedDate, bookedTimeTypes) => {
         if (!slots || slots.length === 0) return [];
         const now = moment();
         const today = moment().startOf("day").valueOf();
         return slots.filter(item => {
-            // Ẩn slot đã bị book
             if (bookedTimeTypes.includes(item.timeType)) return false;
-            // Nếu là hôm nay, chỉ lấy slot có giờ bắt đầu lớn hơn giờ hiện tại
             if (Number(selectedDate) === today) {
                 let timeStr = item.timeTypeData?.valueVi || "";
                 let startHour = parseInt(timeStr.split(":")[0], 10);
@@ -114,8 +109,10 @@ class DoctorSchedule extends Component {
 
     render() {
         let { allDays, allAvailableTime, selectedDate, isOpenModalBooking, dataScheduleTimeModal, bookedTimeTypes } = this.state;
-
-        // Lọc realtime và loại slot đã đặt
+        const { detailDoctor } = this.props;
+        const clinicId = detailDoctor?.doctorInfo?.[0]?.clinicId;
+        const specialtyId = detailDoctor?.doctorInfo?.[0]?.specialtyId;
+        console.log('clinicId:', clinicId, 'specialtyId:', specialtyId);
         const filteredSlots = this.filterRealtimeAndBookedSlots(allAvailableTime, selectedDate, bookedTimeTypes);
 
         return (
@@ -167,16 +164,16 @@ class DoctorSchedule extends Component {
                     </div>
                 </div>
                 <BookingModal 
-                    isOpenModalBooking={isOpenModalBooking}
-                    closeBookingModal={this.closeBookingModal}
-                    dataTime={dataScheduleTimeModal}
+                isOpenModalBooking={isOpenModalBooking}
+                closeBookingModal={this.closeBookingModal}
+                dataTime={dataScheduleTimeModal}
+                clinicId={detailDoctor?.doctorInfo?.[0]?.clinicId}
+                specialtyId={detailDoctor?.doctorInfo?.[0]?.specialtyId}
+                doctor={detailDoctor}
                 />
             </>
         );
     }
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = () => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(DoctorSchedule);
+export default DoctorSchedule;

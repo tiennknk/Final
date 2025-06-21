@@ -9,32 +9,63 @@ const buildUrlEmail = (doctorId, token) => {
     return `${process.env.URL_REACT}/verify-booking?token=${token}&doctorId=${doctorId}`;
 };
 
-const postBookAppointment = async (data) => {
+const postBookAppointment = async (data, loggedInUser = null) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName
-                || !data.selectedGender || !data.address || !data.phoneNumber || !data.reason
+            // Validate các field chung
+            if (
+                !data.doctorId ||
+                !data.timeType ||
+                !data.date ||
+                !data.reason ||
+                !data.specialtyId ||
+                !data.clinicId ||
+                !data.bookingFor
             ) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Thiếu thông tin bắt buộc!',
                 });
+                return;
+            }
+
+            let token = uuidv4();
+            let formattedDate = new Date(Number(data.date)).toLocaleDateString('vi-VN');
+
+            let patientUser = null;
+            let patientEmail = '';
+            let patientName = '';
+
+            if (data.bookingFor === 'me') {
+                // Đặt cho mình, lấy thông tin user từ loggedInUser (req.user)
+                if (!loggedInUser) {
+                    resolve({ errCode: 99, errMessage: "Không xác định được user đăng nhập!" });
+                    return;
+                }
+                patientUser = await db.User.findOne({ where: { id: loggedInUser.id } });
+                if (!patientUser) {
+                    resolve({ errCode: 100, errMessage: "User không tồn tại!" });
+                    return;
+                }
+                patientEmail = patientUser.email;
+                patientName = patientUser.firstName + (patientUser.lastName ? ' ' + patientUser.lastName : '');
             } else {
-                let token = uuidv4();
-
-                // Format ngày cho email
-                let formattedDate = new Date(Number(data.date)).toLocaleDateString('vi-VN');
-
-                await emailService.sendEmail({
-                    receiverEmail: data.email,
-                    patientName: data.fullName,
-                    time: data.timeString,
-                    doctorName: data.doctorName,
-                    date: formattedDate, // THÊM DÒNG NÀY!
-                    redirectLink: buildUrlEmail(data.doctorId, token),
-                });
-
-                let user = await db.User.findOrCreate({
+                // Đặt cho người khác, cần đủ info người bệnh
+                if (
+                    !data.email ||
+                    !data.fullName ||
+                    !data.selectedGender ||
+                    !data.address ||
+                    !data.phoneNumber
+                ) {
+                    resolve({
+                        errCode: 1,
+                        errMessage: 'Thiếu thông tin người bệnh!',
+                    });
+                    return;
+                }
+                // Tìm hoặc tạo user mới
+                let [userCreated] = await db.User.findOrCreate({
                     where: { email: data.email },
                     defaults: {
                         email: data.email,
@@ -42,42 +73,60 @@ const postBookAppointment = async (data) => {
                         gender: data.selectedGender,
                         firstName: data.fullName,
                         address: data.address,
+                        phonenumber: data.phoneNumber,
                     },
                 });
-
-                if (user && user[0]) {
-                    let [booking, created] = await db.Booking.findOrCreate({
-                        where: {
-                            patientId: user[0].id,
-                            doctorId: data.doctorId,
-                            date: data.date,
-                            timeType: data.timeType,
-                        },
-                        defaults: {
-                            patientId: user[0].id,
-                            doctorId: data.doctorId,
-                            date: data.date,
-                            timeType: data.timeType,
-                            statusId: 'S1',
-                            token: token,
-                            address: data.address,
-                            phoneNumber: data.phoneNumber,
-                            reason: data.reason,
-                        },
-                    });
-                    if (!created) {
-                        resolve({
-                            errCode: 2,
-                            errMessage: 'Bạn đã đặt lịch khám này rồi!',
-                        });
-                        return;
-                    }
-                }
-                resolve({
-                    errCode: 0,
-                    errMessage: 'Đặt lịch khám thành công!',
-                });
+                patientUser = userCreated;
+                patientEmail = data.email;
+                patientName = data.fullName;
             }
+
+            // Gửi email xác nhận
+            await emailService.sendEmail({
+                receiverEmail: patientEmail,
+                patientName: patientName,
+                time: data.timeString,
+                doctorName: data.doctorName,
+                date: formattedDate,
+                redirectLink: buildUrlEmail(data.doctorId, token),
+            });
+
+            // Tạo booking
+            let [booking, created] = await db.Booking.findOrCreate({
+                where: {
+                    patientId: patientUser.id,
+                    doctorId: data.doctorId,
+                    date: data.date,
+                    timeType: data.timeType,
+                },
+                defaults: {
+                    patientId: patientUser.id,
+                    doctorId: data.doctorId,
+                    date: data.date,
+                    timeType: data.timeType,
+                    statusId: 'S1',
+                    token: token,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    reason: data.reason,
+                    specialtyId: data.specialtyId,
+                    clinicId: data.clinicId,
+                    // Nếu muốn lưu người đặt hộ, cần cột bookerId trong bảng Booking
+                    bookerId: (data.bookingFor === 'other' && loggedInUser) ? loggedInUser.id : null,
+                },
+            });
+            if (!created) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Bạn đã đặt lịch khám này rồi!',
+                });
+                return;
+            }
+
+            resolve({
+                errCode: 0,
+                errMessage: 'Đặt lịch khám thành công!',
+            });
         } catch (error) {
             console.log('BOOKING ERROR:', error);
             reject(error);
@@ -122,14 +171,14 @@ const postVerifyBookingAppointment = async (data) => {
             reject(error);
         }
     });
-}
+};
 
 const getPatientProfile = async (patientId) => {
     try {
         const user = await db.User.findOne({
             where: { id: patientId },
             attributes: { exclude: ['password'] },
-            raw: true // Đảm bảo trả về plain object!
+            raw: true
         });
         if (user) {
             return { errCode: 0, data: user };
@@ -164,7 +213,7 @@ const updatePatientProfile = async (data) => {
 const getPatientHistory = async (patientId) => {
     try {
         const history = await db.Booking.findAll({
-            where: { patientId: patientId, statusId: 'S2' },
+            where: { patientId: patientId, statusId: 'S2' }, // hoặc S3 nếu là lịch sử đã khám
             include: [
                 {
                     model: db.User,

@@ -6,9 +6,9 @@ export default (sequelize, DataTypes) => {
     static associate(models) {
       Doctor_Info.belongsTo(models.User, { foreignKey: 'doctorId', as: 'doctorData' });
       Doctor_Info.belongsTo(models.Specialty, { foreignKey: 'specialtyId', as: 'specialty' });
-Doctor_Info.belongsTo(models.Allcode, { foreignKey: 'priceId', targetKey: 'keyMap', as: 'priceTypeData' });
-Doctor_Info.belongsTo(models.Allcode, { foreignKey: 'provinceId', targetKey: 'keyMap', as: 'provinceTypeData' });
-Doctor_Info.belongsTo(models.Allcode, { foreignKey: 'paymentId', targetKey: 'keyMap', as: 'paymentTypeData' });
+      Doctor_Info.belongsTo(models.Allcode, { foreignKey: 'priceId', targetKey: 'keyMap', as: 'priceTypeData' });
+      Doctor_Info.belongsTo(models.Allcode, { foreignKey: 'provinceId', targetKey: 'keyMap', as: 'provinceTypeData' });
+      Doctor_Info.belongsTo(models.Allcode, { foreignKey: 'paymentId', targetKey: 'keyMap', as: 'paymentTypeData' });
     }
   }
   Doctor_Info.init({

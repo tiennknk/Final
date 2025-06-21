@@ -2,7 +2,8 @@ import patientService from "../services/patientService.js";
 
 const postBookAppointment = async (req, res) => {
     try {
-        let info = await patientService.postBookAppointment(req.body);
+        // Giả sử có middleware xác thực, req.user là user đang đăng nhập
+        let info = await patientService.postBookAppointment(req.body, req.user);
         return res.status(200).json(info);
     } catch (error) {
         return res.status(500).json({

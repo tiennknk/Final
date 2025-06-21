@@ -53,7 +53,6 @@ class HomeHeader extends Component {
     }
 
     handleClickOutside = (event) => {
-        // Đóng search suggest khi click ra ngoài
         if (
             this.suggestRef.current &&
             !this.suggestRef.current.contains(event.target) &&
@@ -62,7 +61,6 @@ class HomeHeader extends Component {
         ) {
             this.setState({ searching: false });
         }
-        // Đóng account menu khi click ra ngoài
         if (
             this.accountMenuRef.current &&
             !this.accountMenuRef.current.contains(event.target)
@@ -223,7 +221,6 @@ class HomeHeader extends Component {
                 <div className='home-header-container'>
                     <div className='home-header-content'>
                         <div className='left-content'>
-                            {/* Nút menu fa-bars - click về trang chủ */}
                             <button
                                 className="header-menu-btn"
                                 onClick={this.returntoHome}
@@ -377,6 +374,8 @@ class HomeHeader extends Component {
                                 </div>
                             </div>
                         </div>
+                        {/* LỚP MỜ PHỦ FULL PHẦN DƯỚI ẢNH */}
+                        <div className="banner-bottom-blur"></div>
                     </div>
                 }
             </React.Fragment>

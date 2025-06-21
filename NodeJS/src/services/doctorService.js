@@ -171,7 +171,7 @@ const saveDetailInfoDoctor = async (inputData) => {
                 }
                 resolve({
                     errCode: 0,
-                    errMessage: 'Save doctor info successfully!'
+                    errMessage: 'Luu thông tin bác sĩ thành công!'
                 });
             }
         } catch (e) {

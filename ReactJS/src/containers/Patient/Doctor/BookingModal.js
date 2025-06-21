@@ -1,7 +1,7 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
+import React, { Component } from "react";
+import { connect } from "react-redux";
 import "./BookingModal.scss";
-import {Modal} from "reactstrap";
+import { Modal } from "reactstrap";
 import _ from "lodash";
 import ProfileDoctor from '../Doctor/ProfileDoctor';
 import DatePicker from "../../../components/Input/DatePicker";
@@ -12,10 +12,10 @@ import { postBookAppointment } from "../../../services/userService";
 import moment from "moment";
 
 class BookingModal extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
+            bookingFor: 'me',
             fullName: '',
             phoneNumber: '',
             email: '',
@@ -31,17 +31,83 @@ class BookingModal extends Component {
 
     async componentDidMount() {
         this.props.getGenderStart();
+        // Gọi setFormByBookingFor khi đã có genderArr ở componentDidUpdate
+        console.log('[BookingModal][componentDidMount] userInfo:', this.props.userInfo);
     }
-    
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.dataTime !== this.props.dataTime) {
+            let { dataTime } = this.props;
+            if (dataTime && !_.isEmpty(dataTime)) {
+                let doctorId = dataTime.doctorId;
+                let timeType = dataTime.timeType;
+                this.setState({
+                    doctorId: doctorId,
+                    timeType: timeType,
+                });
+            }
+        }
+        // Khi genders thay đổi, build lại genderArr và set mặc định
+        if (prevProps.genders !== this.props.genders) {
+            const genderArr = this.buildDataGender(this.props.genders);
+            this.setState({ genderArr }, () => {
+                this.setFormByBookingFor(this.state.bookingFor);
+            });
+        }
+        // Nếu info user hoặc chế độ đặt cho ai thay đổi thì cũng set lại form (nếu genderArr đã có)
+        if (
+            (prevProps.userInfo !== this.props.userInfo ||
+            prevState.bookingFor !== this.state.bookingFor)
+            && this.state.genderArr.length > 0
+        ) {
+            this.setFormByBookingFor(this.state.bookingFor);
+            console.log('[BookingModal][componentDidUpdate] userInfo changed:', this.props.userInfo);
+        }
+    }
+
+    setFormByBookingFor = (type) => {
+        if (type === 'me' && this.props.userInfo) {
+            // Ghép họ tên nếu có both firstName, lastName
+            const fullName = [
+                this.props.userInfo.firstName,
+                this.props.userInfo.lastName
+            ].filter(Boolean).join(' ').trim();
+
+            // Lấy đúng trường phonenumber và address (giống DB)
+            const phoneNumber = this.props.userInfo.phonenumber || this.props.userInfo.phoneNumber || '';
+            const address = this.props.userInfo.address || '';
+            // Chọn đúng object gender cho react-select
+            let genderOption = '';
+            if (this.state.genderArr.length > 0 && this.props.userInfo.gender) {
+                genderOption =
+                    this.state.genderArr.find(g => g.value === this.props.userInfo.gender) || '';
+            }
+            this.setState({
+                fullName,
+                phoneNumber,
+                email: this.props.userInfo.email || '',
+                address,
+                selectedGender: genderOption,
+            });
+        } else if (type === 'other') {
+            this.setState({
+                fullName: '',
+                phoneNumber: '',
+                email: '',
+                address: '',
+                selectedGender: '',
+            });
+        }
+    };
+
     buildDataGender = (data) => {
         let result = [];
         if (data && data.length > 0) {
-            data.map((item) => {
+            data.forEach((item) => {
                 let object = {};
                 object.label = item.valueVi;
                 object.value = item.keyMap;
                 result.push(object);
-                return null;
             });
         }
         return result;
@@ -64,82 +130,83 @@ class BookingModal extends Component {
         return doctorName;
     }
 
-    async componentDidUpdate(prevProps, prevState, snapshot) {
-        // Khi dataTime thay đổi, cập nhật doctorId và timeType
-        if (prevProps.dataTime !== this.props.dataTime) {
-            let {dataTime} = this.props;
-            if (dataTime && !_.isEmpty(dataTime)) {
-                let doctorId = dataTime.doctorId;
-                let timeType = dataTime.timeType;
-                this.setState({
-                    doctorId: doctorId,
-                    timeType: timeType,
-                });
-            }
-        }
-        // Khi genders thay đổi, cập nhật lại state.genderArr (chỉ tiếng Việt)
-        if (prevProps.genders !== this.props.genders) {
-            this.setState({
-                genderArr: this.buildDataGender(this.props.genders),
-            });
-        }
-    }
-
     handleOnChangeInput = (event, id) => {
         let value = event.target.value;
-        let stateCopy = {...this.state};
+        let stateCopy = { ...this.state };
         stateCopy[id] = value;
         this.setState({
             ...stateCopy
         });
-    }
-
-    handleaOnchangeDatePicker = (date) => {
-        this.setState({
-            birthday: date[0]
-        });
+        console.log(`[BookingModal][handleOnChangeInput] ${id}:`, value);
     }
 
     handleChangeSelect = (selectedOption) => {
         this.setState({
             selectedGender: selectedOption,
         });
+        console.log('[BookingModal][handleChangeSelect] selectedGender:', selectedOption);
+    }
+
+    handleBookingForChange = (event) => {
+        const value = event.target.value;
+        console.log('[BookingModal][handleBookingForChange] bookingFor:', value);
+        this.setState({ bookingFor: value }, () => {
+            this.setFormByBookingFor(value);
+        });
     }
 
     handleComfirmBooking = async () => {
-        let { dataTime } = this.props;
+        let { dataTime, specialtyId: propSpecialtyId, clinicId: propClinicId, doctor } = this.props;
         let timeString = this.buildTimeBooking(dataTime);
         let doctorName = this.buildDoctorName(dataTime);
-    
-        let res = await postBookAppointment({
+
+        let specialtyId = dataTime?.specialtyId
+            || dataTime?.doctorData?.specialtyId
+            || propSpecialtyId
+            || doctor?.specialtyId;
+        let clinicId = dataTime?.clinicId
+            || dataTime?.doctorData?.clinicId
+            || propClinicId
+            || doctor?.clinicId;
+
+        let reqData = {
             fullName: this.state.fullName,
             phoneNumber: this.state.phoneNumber,
             email: this.state.email,
             address: this.state.address,
             reason: this.state.reason,
             date: this.props.dataTime.date,
-            selectedGender: this.state.selectedGender.value,
+            selectedGender: this.state.selectedGender?.value,
             doctorId: this.state.doctorId,
             timeType: this.state.timeType,
             timeString: timeString,
             doctorName: doctorName,
-        });
-    
+            specialtyId,
+            clinicId,
+            bookingFor: this.state.bookingFor
+        };
+
+        console.log('[BookingModal][handleComfirmBooking] reqData:', reqData);
+
+        let res = await postBookAppointment(reqData);
+
+        console.log('[BookingModal][handleComfirmBooking] API response:', res);
+
         if (res && res.errCode === 0) {
             toast.success('Đặt lịch khám thành công!');
             this.props.closeBookingModal();
-        }
-        else {
-            toast.error('Đặt lịch khám thất bại!');
+        } else {
+            toast.error(res && res.errMessage ? res.errMessage : 'Đặt lịch khám thất bại!');
         }
     }
 
     render() {
         let doctorId = '';
-        let {isOpenModalBooking, closeBookingModal, dataTime} = this.props;
+        let { isOpenModalBooking, closeBookingModal, dataTime } = this.props;
         if (dataTime && !_.isEmpty(dataTime)) {
             doctorId = dataTime.doctorId;
         }
+        const { bookingFor } = this.state;
         return (
             <Modal
                 isOpen={isOpenModalBooking}
@@ -164,6 +231,28 @@ class BookingModal extends Component {
                                 isShowPrice={true}
                             />
                         </div>
+                        <div className="row mb-2">
+                            <div className="col-12">
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value="me"
+                                        checked={bookingFor === 'me'}
+                                        onChange={this.handleBookingForChange}
+                                        style={{ marginRight: 4 }}
+                                    /> Đặt cho mình
+                                </label>
+                                <label style={{ marginLeft: 20 }}>
+                                    <input
+                                        type="radio"
+                                        value="other"
+                                        checked={bookingFor === 'other'}
+                                        onChange={this.handleBookingForChange}
+                                        style={{ marginRight: 4 }}
+                                    /> Đặt cho người khác
+                                </label>
+                            </div>
+                        </div>
                         <div className="row">
                             <div className="col-6 form-group">
                                 <label>Họ tên</label>
@@ -172,6 +261,7 @@ class BookingModal extends Component {
                                     value={this.state.fullName}
                                     onChange={(event) => this.handleOnChangeInput(event, 'fullName')}
                                     placeholder="Nhập họ tên"
+                                    disabled={bookingFor === 'me'}
                                 />
                             </div>
                             <div className="col-6 form-group" >
@@ -181,6 +271,7 @@ class BookingModal extends Component {
                                     value={this.state.phoneNumber}
                                     onChange={(event) => this.handleOnChangeInput(event, 'phoneNumber')}
                                     placeholder="Nhập số điện thoại"
+                                    disabled={bookingFor === 'me'}
                                 />
                             </div>
                             <div className="col-6 form-group">
@@ -190,6 +281,7 @@ class BookingModal extends Component {
                                     onChange={this.handleChangeSelect}
                                     options={this.state.genderArr}
                                     placeholder="Chọn giới tính"
+                                    isDisabled={bookingFor === 'me'}
                                 />
                             </div>
                             <div className="col-6 form-group">
@@ -199,6 +291,7 @@ class BookingModal extends Component {
                                     value={this.state.email}
                                     onChange={(event) => this.handleOnChangeInput(event, 'email')}
                                     placeholder="Nhập địa chỉ email"
+                                    disabled={bookingFor === 'me'}
                                 />
                             </div>
                             <div className="col-6 form-group">
@@ -208,6 +301,7 @@ class BookingModal extends Component {
                                     value={this.state.address}
                                     onChange={(event) => this.handleOnChangeInput(event, 'address')}
                                     placeholder="Nhập địa chỉ liên hệ"
+                                    disabled={bookingFor === 'me'}
                                 />
                             </div>
                             <div className="col-6 form-group">
@@ -238,6 +332,7 @@ class BookingModal extends Component {
 const mapStateToProps = (state) => {
     return {
         genders: state.admin.genders,
+        userInfo: state.user.userInfo,
     };
 }
 

@@ -1,4 +1,5 @@
 import express from "express";
+import authenticateToken from "../middleware/authenticateToken.js";
 import homeController from "../controllers/homeController.js";
 import userController from "../controllers/userController.js";
 import doctorController from "../controllers/doctorController.js";
@@ -49,7 +50,7 @@ const initWebRoutes = (app) => {
     router.delete('/api/delete-schedule-slot', doctorController.deleteScheduleSlot);
     router.post('/api/send-remedy', doctorController.sendRemedy);
     // Patient routes
-    router.post('/api/patient-book-appointment', patientController.postBookAppointment);
+    router.post('/api/patient-book-appointment', authenticateToken, patientController.postBookAppointment);
     router.post('/api/verify-booking', patientController.postVerifyBookingAppointment);
     router.get('/api/patient-profile', patientController.getPatientProfile);
     router.put('/api/update-patient-profile', patientController.updatePatientProfile);

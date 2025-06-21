@@ -64,7 +64,19 @@ const getProfileDoctorById = (doctorId) => {
 }
 
 const postBookAppointment = (data) => {
-    return axios.post('/api/patient-book-appointment', data);
+    // Lấy token từ localStorage (hoặc nơi bạn lưu token sau khi login)
+    const token = localStorage.getItem('token');
+    console.log('[userService][postBookAppointment] token:', token);
+    console.log('[userService][postBookAppointment] data:', data);
+    return axios.post(
+        '/api/patient-book-appointment',
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
 }
 
 const postVerifyBookingAppointment = (data) => {

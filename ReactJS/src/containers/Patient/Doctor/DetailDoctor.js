@@ -25,6 +25,7 @@ class DetailDoctor extends Component {
                 currentDoctorId: id
             });
             let res = await getDetailInfoDoctor(id);
+            console.log('detailDoctor:', res.data)
             if (res && res.errCode === 0) {
                 this.setState({
                     detailDoctor: res.data
@@ -81,7 +82,10 @@ class DetailDoctor extends Component {
                     </div>
                     <div className="schedule-doctor">
                         <div className="content-left">
-                            <DoctorSchedule doctorIdFromParent={currentDoctorId}/>
+                            <DoctorSchedule
+                                doctorIdFromParent={currentDoctorId}
+                                detailDoctor={detailDoctor}
+                            />
                         </div>
                         <div className="content-right">
                             <DoctorExtraInfo doctorIdFromParent={currentDoctorId} />
