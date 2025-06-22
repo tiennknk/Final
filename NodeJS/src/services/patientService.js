@@ -2,6 +2,7 @@ import db from '../models/index.js';
 import dotenv from "dotenv";
 import emailService from './emailService.js';
 import { v4 as uuidv4 } from 'uuid';
+import vietqrService from './QRService.js';
 
 dotenv.config();
 
@@ -91,6 +92,9 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                 redirectLink: buildUrlEmail(data.doctorId, token),
             });
 
+            // -- Bổ sung: Sinh mã booking code (để đưa vào nội dung chuyển khoản QR)
+            const bookingCode = "DL" + Date.now();
+
             // Tạo booking
             let [booking, created] = await db.Booking.findOrCreate({
                 where: {
@@ -111,8 +115,10 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                     reason: data.reason,
                     specialtyId: data.specialtyId,
                     clinicId: data.clinicId,
-                    // Nếu muốn lưu người đặt hộ, cần cột bookerId trong bảng Booking
                     bookerId: (data.bookingFor === 'other' && loggedInUser) ? loggedInUser.id : null,
+                    bookingCode: bookingCode,
+                    paymentStatus: 'unpaid',
+                    paymentMethod: data.paymentMethod || 'QR_BANK', // default
                 },
             });
             if (!created) {
@@ -123,6 +129,39 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                 return;
             }
 
+            // Nếu chọn phương thức thanh toán QR ngân hàng (QR_BANK)
+            if (data.paymentMethod === 'QR_BANK') {
+                // Lấy thông tin tài khoản nhận tiền (có thể lấy từ .env hoặc config)
+                const bank = process.env.PAYQR_BANK || "VCB";
+                const accountNumber = process.env.PAYQR_ACCOUNT || "0123456789";
+                const accountName = process.env.PAYQR_ACCNAME || "NGUYEN VAN A";
+                // Lấy số tiền (giả sử truyền từ FE hoặc lấy cứng)
+                const price = data.price || 500000;
+                const addInfo = `DATLICH-${bookingCode}`;
+                const qrUrl = vietqrService.generateVietQRLink({
+                    bank,
+                    accountNumber,
+                    accountName,
+                    amount: price,
+                    addInfo,
+                });
+
+                resolve({
+                    errCode: 0,
+                    paymentType: "vietqr",
+                    qrUrl,
+                    bookingCode,
+                    price,
+                    accountName,
+                    accountNumber,
+                    bank,
+                    addInfo,
+                    errMessage: 'Vui lòng chuyển khoản đúng nội dung để hoàn tất đặt lịch!',
+                });
+                return;
+            }
+
+            // Nếu không chọn QR_BANK thì trả về bình thường
             resolve({
                 errCode: 0,
                 errMessage: 'Đặt lịch khám thành công!',
@@ -245,5 +284,5 @@ export default {
     postVerifyBookingAppointment,
     getPatientProfile,
     updatePatientProfile,
-    getPatientHistory
+    getPatientHistory,
 };

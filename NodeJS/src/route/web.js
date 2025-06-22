@@ -1,6 +1,7 @@
 import express from "express";
 import authenticateToken from "../middleware/authenticateToken.js";
 import homeController from "../controllers/homeController.js";
+import adminController from "../controllers/adminController.js";
 import userController from "../controllers/userController.js";
 import doctorController from "../controllers/doctorController.js";
 import patientController from "../controllers/patientController.js";
@@ -49,6 +50,7 @@ const initWebRoutes = (app) => {
     router.post('/api/cancel-booking', doctorController.cancelBooking);
     router.delete('/api/delete-schedule-slot', doctorController.deleteScheduleSlot);
     router.post('/api/send-remedy', doctorController.sendRemedy);
+
     // Patient routes
     router.post('/api/patient-book-appointment', authenticateToken, patientController.postBookAppointment);
     router.post('/api/verify-booking', patientController.postVerifyBookingAppointment);
@@ -58,6 +60,12 @@ const initWebRoutes = (app) => {
     router.post('/api/create-review', reviewController.createReview);
     router.get('/api/get-all-reviews', reviewController.getAllReviews);
 
+    // Admin routes
+    router.post('/api/admin/clinic-confirm-payment', authenticateToken, adminController.clinicConfirmPayment);
+    router.get('/api/get-bookings-wait-confirm', authenticateToken, adminController.getBookingsWaitConfirm);
+    router.get('/api/get-all-bookings', authenticateToken, adminController.getAllBookings);
+    router.post('/api/patient-confirm-payment', authenticateToken, adminController.confirmPayment);
+    
     return app.use("/", router);
 };
 

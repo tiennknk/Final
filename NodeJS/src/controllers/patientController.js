@@ -11,7 +11,7 @@ const postBookAppointment = async (req, res) => {
             errMessage: 'Có lỗi xảy ra ở máy chủ, vui lòng thử lại sau!',
         });
     }
-}
+};
 
 const postVerifyBookingAppointment = async (req, res) => {
     try {
@@ -23,7 +23,7 @@ const postVerifyBookingAppointment = async (req, res) => {
             errMessage: 'Có lỗi xảy ra ở máy chủ, vui lòng thử lại sau!',
         });
     }
-}
+};
 
 const getPatientProfile = async (req, res) => {
     try {
@@ -65,5 +65,5 @@ export default {
     postVerifyBookingAppointment,
     getPatientProfile,
     updatePatientProfile,
-    getPatientHistory
+    getPatientHistory,
 };

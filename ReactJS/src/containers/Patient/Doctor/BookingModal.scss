@@ -109,6 +109,40 @@
   }
 }
 
+.booking-for-group,
+.payment-method-group {
+  .section-label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+    color: #45c3d2;
+    font-size: 15px;
+  }
+  .btn-group-toggle {
+    display: flex;
+    gap: 16px;
+  }
+  .btn-booking-for,
+  .btn-payment-method {
+    background: #ececec;
+    color: #333;
+    border: 1.5px solid #ececec;
+    border-radius: 30px;
+    padding: 7px 20px;
+    font-weight: 500;
+    transition: background 0.16s, color 0.16s, border 0.16s;
+    cursor: pointer;
+    input[type="radio"] {
+      display: none;
+    }
+    &.active, &:hover {
+      background: #45c3d2;
+      color: #fff;
+      border: 1.5px solid #45c3d2;
+    }
+  }
+}
+
 /* Responsive adjustments for small screens */
 @media (max-width: 600px) {
   .booking-modal-container {

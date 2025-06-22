@@ -159,6 +159,42 @@ const deleteScheduleSlot = (doctorId, date, timeType) => {
     return axios.delete('/api/delete-schedule-slot', { data: { doctorId, date, timeType } });
 };
 
+
+const confirmQrPayment = (bookingCode) => {
+    const token = localStorage.getItem('token');
+    const req = axios.post(
+        '/api/admin/clinic-confirm-payment',
+        { bookingCode },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+    req.then(res => console.log('[userService] confirmQrPayment result:', res));
+    return req;
+}
+
+const getAllQrPayments = () => {
+    const token = localStorage.getItem('token');
+    return axios.get('/api/get-all-qr-payments', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+}
+
+const getBookingsWaitConfirm = () => {
+    const token = localStorage.getItem('token');
+    return axios.get('/api/get-bookings-wait-confirm', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+}
+
+
+
 export {
     handleLoginApi,
     getAllUsers,
@@ -193,4 +229,7 @@ export {
     createReviewService,
     getAllReviewsService,
     deleteScheduleSlot,
+    getAllQrPayments,
+    confirmQrPayment,
+    getBookingsWaitConfirm
 };

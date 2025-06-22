@@ -47,7 +47,8 @@
             "manage-clinic": "Quản lý phòng khám",
             "specialty": "Chuyên khoa",
             "manage-specialty": "Quản lý chuyên khoa",
-            "manage-user": "Quản lý người dùng"
+            "manage-user": "Quản lý người dùng",
+            "manage-qr-payment": "Quản lý thanh toán QR"
         },
         "doctor": {
             "header": "Menu",

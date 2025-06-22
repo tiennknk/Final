@@ -1,0 +1,119 @@
+.manage-qr-payment-container {
+    /* giữ nguyên border-radius */
+    border-radius: 14px;
+    /* cho phép container tự giãn theo chiều ngang của bảng */
+    width: max-content;
+    margin: 36px auto 0;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px 38px 18px;
+    min-height: 420px;
+    overflow: visible;
+
+    .qr-title {
+        text-transform: uppercase;
+        margin: 15px 0 28px;
+        font-weight: 700;
+        text-align: center;
+        font-size: 2rem;
+        letter-spacing: 1px;
+        color: #1677ff;
+    }
+
+    .table-custom {
+        border-radius: 10px;           /* radius cho bảng bên trong */
+        overflow: hidden;              /* ẩn viền thừa khi có radius */
+        display: table;
+        width: auto;
+        table-layout: auto;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fff;
+
+        th, td {
+            border: 1px solid #e6e6e6;
+            padding: 14px 8px;
+            font-size: 1.06rem;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: visible;
+            text-overflow: clip;
+        }
+
+        th {
+            background: #059eff;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9fbfd;
+        }
+        tr {
+            background: #fff;
+        }
+        tr:hover {
+            background-color: #e6f3ff;
+        }
+        td {
+            font-weight: 500;
+        }
+
+        /* Border radius cho 4 góc của bảng */
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
+        tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+        tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+    }
+
+    .btn-confirm {
+        background: linear-gradient(90deg, #00c6ff 0%, #059eff 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        transition: background 0.18s;
+
+        &:hover {
+            background: linear-gradient(90deg, #059eff 0%, #00c6ff 100%);
+            filter: brightness(1.05);
+        }
+        &:disabled {
+            background: #b0cffe;
+            cursor: not-allowed;
+        }
+    }
+}
+
+/* Responsive cho mobile */
+@media (max-width: 600px) {
+    .manage-qr-payment-container {
+        padding: 18px 6px 10px;
+
+        .qr-title {
+            font-size: 1.15rem;
+        }
+        .table-custom th,
+        .table-custom td {
+            padding: 8px 2px;
+            font-size: 0.95rem;
+        }
+        .btn-confirm {
+            font-size: 0.92rem;
+            padding: 8px;
+        }
+    }
+}
