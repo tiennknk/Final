@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions';
 import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
-import { getAllSpecialty } from '../../../services/userService'; // API lấy danh sách chuyên khoa
+import { getAllSpecialty } from '../../../services/userService';
 import './SectionList.scss';
 
 class OutStandingDoctor extends Component {
@@ -17,10 +17,15 @@ class OutStandingDoctor extends Component {
 
     async componentDidMount() {
         this.props.loadTopDoctors();
+
         // Lấy danh sách chuyên khoa
         let res = await getAllSpecialty();
         if (res && res.errCode === 0 && Array.isArray(res.data)) {
             this.setState({ specialties: res.data });
+        } else if (res && res.errCode === 0 && res.data && Array.isArray(res.data.data)) {
+            this.setState({ specialties: res.data.data });
+        } else {
+            console.log('Lỗi khi lấy danh sách chuyên khoa:', res);
         }
     }
 
@@ -46,14 +51,35 @@ class OutStandingDoctor extends Component {
         let arrDoctors = this.state.arrDoctors || [];
         const { specialties, selectedSpecialty } = this.state;
 
-        // Lọc theo chuyên khoa nếu đã chọn
-        let filteredDoctors = arrDoctors;
-        if (selectedSpecialty !== 'all') {
-            filteredDoctors = arrDoctors.filter(doctor => 
-                doctor.specialtyId === selectedSpecialty ||
-                (doctor.Doctor_In_Specialty && doctor.Doctor_In_Specialty.some(s => s.specialtyId === selectedSpecialty))
-            );
+        // Log doctor mẫu KHÔNG có trường image để debug filter
+        if (arrDoctors.length > 0) {
+            const { image, ...doctorNoImage } = arrDoctors[0];
+            console.log("==== Doctor mẫu không image ====");
+            console.log(JSON.stringify(doctorNoImage, null, 2));
         }
+
+        // Log dữ liệu để debug
+        console.log("==== Debug arrDoctors ====");
+        console.log(arrDoctors);
+        console.log("==== Debug specialties ====");
+        console.log(specialties);
+        console.log("==== selectedSpecialty ====");
+        console.log(selectedSpecialty);
+
+        // Lọc theo chuyên khoa nếu đã chọn (so sánh theo string)
+        let filteredDoctors = arrDoctors;
+if (selectedSpecialty !== 'all') {
+    filteredDoctors = arrDoctors.filter(doctor =>
+        Array.isArray(doctor.doctorInfo) &&
+        doctor.doctorInfo.some(info =>
+            String(info.specialtyId) === String(selectedSpecialty)
+        )
+    );
+}
+
+        // Log kết quả filter để kiểm tra
+        console.log("==== filteredDoctors ====");
+        console.log(filteredDoctors);
 
         return (
             <div id="doctor-section" className="section-list-page">

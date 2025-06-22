@@ -268,6 +268,11 @@ const getPatientHistory = async (patientId) => {
                     model: db.Clinic,
                     as: 'clinicData',
                     attributes: ['name']
+                },
+                {
+                    model: db.Allcode,
+                    as: 'timeTypeDataPatient',
+                    attributes: ['valueVi', 'valueEn']
                 }
             ],
             order: [['date', 'DESC']]

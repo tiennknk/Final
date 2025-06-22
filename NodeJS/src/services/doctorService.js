@@ -19,9 +19,13 @@ const getTopDoctorHome = async (limit) => {
                 attributes: { exclude: ['password'] },
                 include: [
                     { model: db.Allcode, as: 'positionData' },
-                    { model: db.Allcode, as: 'genderData' }
+                    { model: db.Allcode, as: 'genderData' },
+                    {
+                        model: db.Doctor_Info,
+                        as: 'doctorInfo',
+                        attributes: ['specialtyId'], // chỉ cần trường này!
+                    }
                 ]
-                // KHÔNG dùng raw: true, nest: true
             });
 
             // Chuyển instance thành plain object

@@ -51,11 +51,16 @@ const Register = (props) => {
         if (!checkValidateInput()) return;
         try {
             const res = await createNewUserService({ ...form, roleId: "R3", positionId: "P0" });
-            if (res && res.data && res.data.errCode === 0) {
+            // Log kết quả trả về từ API để debug
+            console.log("Response từ API Register:", res);
+
+            // Nếu dùng axios, response trả về sẽ là { data: { ... } }
+            const apiData = res && res.data ? res.data : res;
+            if (apiData && apiData.errCode === 0) {
                 setErrMessage("Đăng ký thành công! Vui lòng đăng nhập.");
                 setTimeout(() => dispatch(push('/login')), 1200);
             } else {
-                setErrMessage(res?.data?.errMessage || res?.data?.message || "Đăng ký thất bại!");
+                setErrMessage(apiData?.errMessage || apiData?.message || "Đăng ký thất bại!");
             }
         } catch (e) {
             setErrMessage("Lỗi kết nối backend!");

@@ -40,9 +40,7 @@ const handleGetAllUsers = async (req, res) => {
 
 const handleCreateNewUser = async (req, res) => {
     const data = req.body;
-    console.log("Tạo user với data:", data);
     let message = await userService.createNewUser(data);
-    console.log("Kết quả trả về FE:", message);
     return res.status(200).json(message);
 };
 
