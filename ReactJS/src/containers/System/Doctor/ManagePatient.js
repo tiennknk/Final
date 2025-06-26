@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import DatePicker from "../../../components/Input/DatePicker";
-import { getAllPatientForDoctor, postSendRemedy, cancelBooking } from "../../../services/userService";
+import { getAllPatientForDoctor, postSendRemedy, cancelBooking, confirmPaymentCash } from "../../../services/userService";  // Thêm confirmPaymentCash
 import moment from "moment";
 import RemedyModal from "./RemedyModal";
 import { toast } from "react-toastify";
@@ -32,6 +32,7 @@ class ManagePatient extends Component {
             doctorId: user.id,
             date: formatDate
         });
+
         if (res && res.errCode === 0) {
             this.setState({
                 dataPatient: res.data
@@ -52,7 +53,6 @@ class ManagePatient extends Component {
     };
 
     handleConfirmPatient = (item) => {
-        // Truyền đủ dữ liệu vào modal
         let data = {
             patientId: item.patientId,
             doctorId: item.doctorId,
@@ -70,12 +70,30 @@ class ManagePatient extends Component {
     handleCancelBooking = async (item) => {
         if (window.confirm("Bạn có chắc muốn hủy lịch khám này?")) {
             let res = await cancelBooking(item.id);
-            if (res && res.data && res.data.errCode === 0) {
-                toast.success("Đã hủy lịch thành công!");
-                await this.getDataPatient();
+            console.log("Response cancelBooking:", res);  // Log kết quả từ API để kiểm tra
+        
+            if (res && res.errCode === 0) {
+                toast.success(res.errMessage);  // Thông báo thành công
+                await this.getDataPatient();  // Cập nhật lại dữ liệu
             } else {
-                toast.error("Hủy lịch thất bại!");
+                toast.error("Hủy lịch thất bại: " + (res?.errMessage || "Không có chi tiết lỗi"));  // Thông báo lỗi nếu có
             }
+        }
+    };
+
+    // Xác nhận thanh toán tiền mặt
+    handleConfirmPaymentCash = async (bookingCode) => {
+        if (!window.confirm("Xác nhận thanh toán tiền mặt cho mã booking: " + bookingCode + "?")) return;
+        try {
+            const res = await confirmPaymentCash(bookingCode);
+            if (res && res.errCode === 0) {
+                toast.success(res.errMessage || "Đã xác nhận thanh toán tiền mặt!");
+                this.getDataPatient();
+            } else {
+                toast.error(res?.errMessage || "Lỗi xác nhận thanh toán tiền mặt!");
+            }
+        } catch (err) {
+            toast.error("Server error khi xác nhận thanh toán tiền mặt!");
         }
     };
 
@@ -142,6 +160,7 @@ class ManagePatient extends Component {
                                             <th>Họ tên</th>
                                             <th>Giới tính</th>
                                             <th>Địa chỉ</th>
+                                            <th>Trạng thái thanh toán</th>
                                             <th>Hành động</th>
                                         </tr>
                                         {dataPatient && dataPatient.length > 0 ? (
@@ -153,12 +172,29 @@ class ManagePatient extends Component {
                                                     <td>{item.patientData.genderData?.valueVi || ""}</td>
                                                     <td>{item.patientData.address}</td>
                                                     <td>
-                                                        <button
-                                                            className="mp-btn-confirm"
-                                                            onClick={() => this.handleConfirmPatient(item)}
-                                                        >
-                                                            Xác nhận
-                                                        </button>
+                                                        {item.paymentStatus === "paid" 
+                                                            ? "Đã thanh toán" 
+                                                            : item.paymentStatus === "wait_confirm" 
+                                                            ? "Chờ xác nhận của Admin" 
+                                                            : "Thanh toán tiền mặt"}
+                                                    </td>
+                                                    <td>
+                                                        {item.paymentStatus === "paid" && (
+                                                            <button
+                                                                className="mp-btn-confirm"
+                                                                onClick={() => this.handleConfirmPatient(item)}
+                                                            >
+                                                                Gửi hóa đơn
+                                                            </button>
+                                                        )}
+                                                        {item.paymentStatus !== "paid" && (
+                                                            <button
+                                                                className="mp-btn-confirm"
+                                                                onClick={() => this.handleConfirmPaymentCash(item.bookingCode)}
+                                                            >
+                                                                Xác nhận thanh toán tiền mặt
+                                                            </button>
+                                                        )}
                                                         <button
                                                             className="mp-btn-cancel"
                                                             style={{ marginLeft: 8 }}
@@ -171,7 +207,7 @@ class ManagePatient extends Component {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="6" style={{ textAlign: 'center' }}>Không có dữ liệu bệnh nhân</td>
+                                                <td colSpan="7" style={{ textAlign: 'center' }}>Không có dữ liệu bệnh nhân</td>
                                             </tr>
                                         )}
                                     </tbody>

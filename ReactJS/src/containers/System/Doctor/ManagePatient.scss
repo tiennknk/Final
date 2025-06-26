@@ -1,19 +1,20 @@
 .manage-patient-container {
-    max-width: 1000px;
-    margin: 36px auto 0 auto;
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    padding: 32px 38px 18px 38px;
-    min-height: 540px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    max-width: 1200px;
+    margin: 30px auto;
+    min-height: 400px;
 
     .m-p-title {
-        text-align: center;
-        font-size: 2rem;
+        font-size: 2.1rem;
         font-weight: 700;
-        margin-bottom: 30px;
         color: #1677ff;
+        margin-bottom: 24px;
+        text-align: center;
         letter-spacing: 1px;
+        text-transform: uppercase;
     }
 
     .m-p-body {
@@ -48,6 +49,7 @@
     .table-manage-patient {
         margin-top: 20px;
         overflow-x: auto;
+
         table {
             width: 100%;
             border-collapse: separate;
@@ -56,12 +58,14 @@
             min-width: 900px;
             border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(22,119,255,0.08);
+            box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
 
-            th, td {
+            th,
+            td {
                 border: 1px solid #e6e6e6;
                 padding: 12px 14px;
                 font-size: 1rem;
+                text-align: center;
             }
 
             th {
@@ -70,66 +74,21 @@
                 font-weight: 600;
                 text-align: center;
                 letter-spacing: 0.5px;
-            }
-
-            tr:nth-child(even) {
-                background-color: #f8fafc;
-            }
-
-            tr:hover {
-                background-color: #e6f0ff;
+                font-size: 16px;
             }
 
             td {
-                text-align: center;
-                vertical-align: middle;
                 color: #222;
+                font-size: 1rem;
             }
 
-            .mp-btn-confirm {
-                background: linear-gradient(90deg, #00c6ff 0%, #1677ff 100%);
-                color: #fff;
-                font-weight: 500;
-                padding: 6px 18px;
-                border: none;
-                border-radius: 4px;
-                margin-right: 9px;
-                cursor: pointer;
-                transition: background 0.2s;
-                font-size: 1rem;
-                &:hover {
-                    background: linear-gradient(90deg, #1677ff 0%, #00c6ff 100%);
-                }
+            tr:nth-child(even) {
+                background: #f8fafc;
             }
 
-            .mp-btn-cancel {
-                background: #d9534f;
-                color: #fff;
-                font-weight: 500;
-                padding: 6px 18px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
+            tr:hover {
+                background: #e6f0ff;
                 transition: background 0.2s;
-                font-size: 1rem;
-                &:hover {
-                    background: #c9302c;
-                }
-            }
-
-            .mp-btn-remedy {
-                background: #01d18b;
-                color: #fff;
-                font-weight: 500;
-                padding: 6px 18px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: background 0.2s;
-                font-size: 1rem;
-                &:hover {
-                    background: #01b97a;
-                }
             }
         }
 
@@ -142,13 +101,87 @@
             padding: 18px 0;
         }
     }
+
+    /* Chỉnh sửa kích thước nút ở đây */
+    .mp-btn-confirm,
+    .mp-btn-cancel,
+    .mp-btn-remedy {
+        padding: 8px 16px;  /* Đảm bảo kích thước nút đồng đều */
+        font-size: 1rem;    /* Kích thước chữ trong nút */
+        border-radius: 6px;
+        border: none; 
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        transition: background 0.2s;
+    }
+
+    .mp-btn-confirm {
+        background: linear-gradient(90deg, #00c6ff 0%, #1677ff 100%);
+        color: #fff;
+        font-weight: 500;
+        &:hover {
+            background: linear-gradient(90deg, #1677ff 0%, #00c6ff 100%);
+        }
+    }
+
+    .mp-btn-cancel {
+        background: #d9534f;
+        color: #fff;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+        &:hover {
+            background: #c9302c;
+        }
+    }
+
+    .mp-btn-remedy {
+        background: #01d18b;
+        color: #fff;
+        font-weight: 500;
+        &:hover {
+            background: #01b97a;
+        }
+    }
 }
 
-/* Responsive for mobile */
-@media (max-width: 1100px) {
+/* Responsive for tablet and mobile */
+@media (max-width: 900px) {
     .manage-patient-container {
-        max-width: 100%;
-        padding: 18px 6px 10px 6px;
-        min-width: 0;
+        padding: 16px;
+        .m-p-title {
+            font-size: 1.4rem;
+        }
+        .table-manage-patient {
+            table {
+                min-width: 700px;
+                th,
+                td {
+                    padding: 6px 4px;
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .manage-patient-container {
+        padding: 6px;
+        .m-p-title {
+            font-size: 1.1rem;
+        }
+        .table-manage-patient {
+            table {
+                min-width: 600px;
+                th,
+                td {
+                    padding: 4px 2px;
+                    font-size: 11px;
+                }
+            }
+        }
     }
 }

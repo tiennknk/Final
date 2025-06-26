@@ -29,6 +29,7 @@ class DoctorSchedule extends Component {
         if (this.props.doctorIdFromParent) {
             await this.loadTimeAndBooked(this.props.doctorIdFromParent, selectedDate);
         }
+        console.log('detailDoctor:', this.props.detailDoctor);
     }
 
     async componentDidUpdate(prevProps, prevState) {

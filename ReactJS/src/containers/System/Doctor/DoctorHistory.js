@@ -91,6 +91,7 @@ const DoctorHistory = ({ userInfo }) => {
                             <th>Email</th>
                             <th>Địa chỉ</th>
                             <th>Lý do khám</th>
+                            <th>Trạng thái</th> {/* Thêm cột trạng thái */}
                         </tr>
                     </thead>
                     <tbody>
@@ -122,10 +123,16 @@ const DoctorHistory = ({ userInfo }) => {
                                     item.address ||
                                     "-";
                                 const reason = item.reason || "-";
+                                const status =
+                                    item.statusId === "S4"
+                                        ? "Đã hủy"
+                                        : item.statusId === "S3"
+                                            ? "Đã khám"
+                                            : "-"; // Hiển thị trạng thái
 
                                 // Log từng dòng sẽ render ra bảng
                                 console.log('Render dòng:', {
-                                    idx, timeType, dateStr, fullName, gender, phone, email, address, reason
+                                    idx, timeType, dateStr, fullName, gender, phone, email, address, reason, status
                                 });
 
                                 return (
@@ -140,12 +147,13 @@ const DoctorHistory = ({ userInfo }) => {
                                         <td>{email}</td>
                                         <td>{address}</td>
                                         <td>{reason}</td>
+                                        <td>{status}</td> {/* Thêm trạng thái vào cột */}
                                     </tr>
                                 );
                             })
                         ) : (
                             <tr>
-                                <td colSpan="8" style={{ textAlign: "center", fontStyle: "italic", color: "#888" }}>
+                                <td colSpan="9" style={{ textAlign: "center", fontStyle: "italic", color: "#888" }}>
                                     Không có dữ liệu lịch sử khám
                                 </td>
                             </tr>

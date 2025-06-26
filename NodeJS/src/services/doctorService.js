@@ -447,9 +447,14 @@ const getListPatientForDoctor = async (doctorId, date) => {
 const cancelBooking = async (bookingId) => {
     try {
         let booking = await db.Booking.findOne({ where: { id: bookingId } });
-        if (!booking) return { errCode: 1, errMessage: "Không tìm thấy lịch khám" };
-        booking.statusId = 'S4';
+        if (!booking) {
+            return { errCode: 1, errMessage: "Không tìm thấy lịch khám" };
+        }
+
+        // Cập nhật trạng thái hủy lịch thành công
+        booking.statusId = 'S4';  // Chuyển trạng thái thành 'S4' khi hủy
         await booking.save();
+
         return { errCode: 0, errMessage: "Đã hủy lịch thành công" };
     } catch (e) {
         return { errCode: -1, errMessage: "Server error" };
@@ -568,7 +573,10 @@ const getHistoryPatientsByDoctor = async (doctorId) => {
 
             let whereCondition = {
                 doctorId: doctorId,
-                statusId: 'S3', // Đã khám/xong
+                [Op.or]: [
+                    { statusId: 'S3' }, // Đã khám/xong
+                    { statusId: 'S4' }  // Đã hủy
+                ]
             };
 
             let bookings = await db.Booking.findAll({
@@ -603,6 +611,45 @@ const getHistoryPatientsByDoctor = async (doctorId) => {
     });
 };
 
+const confirmPaymentCash = async (bookingCode) => {
+    try {
+        // Cập nhật trạng thái thanh toán của booking
+        const booking = await db.Booking.findOne({ where: { bookingCode } });
+
+        if (!booking) {
+            return { errCode: 1, errMessage: "Booking không tồn tại!" };
+        }
+
+        // Cập nhật paymentStatus về "paid" cho thanh toán tiền mặt
+        booking.paymentStatus = "paid";
+        await booking.save();
+
+        return { errCode: 0, errMessage: "Đã xác nhận thanh toán tiền mặt!" };
+    } catch (e) {
+        console.error(e);
+        return { errCode: -1, errMessage: "Có lỗi xảy ra khi xác nhận thanh toán tiền mặt!" };
+    }
+};
+
+const confirmQrPaymentStatus = async (bookingCode) => {
+    try {
+        const booking = await db.Booking.findOne({ where: { bookingCode } });
+        if (!booking) return { errCode: 1, errMessage: "Booking không tồn tại" };
+
+        // Chỉ xác nhận thanh toán QR khi paymentStatus là wait_confirm
+        if (booking.paymentStatus === 'wait_confirm') {
+            booking.paymentStatus = 'paid';  // Thay đổi status
+            await booking.save();
+            return { errCode: 0, errMessage: "Thanh toán QR đã được xác nhận!" };
+        } else {
+            return { errCode: 2, errMessage: "Thanh toán đã được xác nhận trước đó!" };
+        }
+    } catch (error) {
+        console.log(error);
+        return { errCode: -1, errMessage: "Server error" };
+    }
+};
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
@@ -616,5 +663,7 @@ export default {
     getListPatientForDoctor,
     getHistoryPatientsByDoctor,
     cancelBooking,
-    sendRemedy
+    sendRemedy,
+    confirmPaymentCash,
+    confirmQrPaymentStatus
 };

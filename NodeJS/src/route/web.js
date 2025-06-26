@@ -50,6 +50,8 @@ const initWebRoutes = (app) => {
     router.post('/api/cancel-booking', doctorController.cancelBooking);
     router.delete('/api/delete-schedule-slot', doctorController.deleteScheduleSlot);
     router.post('/api/send-remedy', doctorController.sendRemedy);
+    router.post('/api/doctor/confirm-payment-cash', doctorController.confirmPaymentCash);
+    router.post('/api/doctor/confirm-qr-payment', doctorController.confirmQrPaymentStatus);
 
     // Patient routes
     router.post('/api/patient-book-appointment', authenticateToken, patientController.postBookAppointment);

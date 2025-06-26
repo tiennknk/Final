@@ -193,7 +193,19 @@ const getBookingsWaitConfirm = () => {
     });
 }
 
+const confirmPaymentCash = (bookingCode) => {
+    const token = localStorage.getItem('token');
+    return axios.post('/api/doctor/confirm-payment-cash', { bookingCode }, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
 
+const confirmQrPaymentStatus = (bookingCode) => {
+    const token = localStorage.getItem('token');
+    return axios.post('/api/doctor/confirm-qr-payment', { bookingCode }, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
 
 export {
     handleLoginApi,
@@ -231,5 +243,7 @@ export {
     deleteScheduleSlot,
     getAllQrPayments,
     confirmQrPayment,
-    getBookingsWaitConfirm
+    getBookingsWaitConfirm,
+    confirmPaymentCash,
+    confirmQrPaymentStatus
 };

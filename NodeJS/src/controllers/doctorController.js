@@ -156,7 +156,6 @@ const getHistoryPatientsByDoctor = async (req, res) => {
     try {
         let doctorId = req.query.doctorId;
         // Debug log for input value
-        console.log('DEBUG getHistoryPatientsByDoctor - doctorId:', doctorId);
 
         if (!doctorId || isNaN(Number(doctorId))) {
             console.error('Invalid doctorId received:', doctorId);
@@ -168,10 +167,9 @@ const getHistoryPatientsByDoctor = async (req, res) => {
 
         let result = await doctorService.getHistoryPatientsByDoctor(Number(doctorId));
         // Debug log for output value
-        console.log('DEBUG getHistoryPatientsByDoctor - result:', result);
+
         return res.status(200).json(result);
     } catch (e) {
-        console.error('ERROR in getHistoryPatientsByDoctor:', e);
         return res.status(500).json({
             errCode: -1,
             errMessage: 'Có lỗi xảy ra ở máy chủ!',
@@ -210,6 +208,28 @@ const deleteScheduleSlot = async (req, res) => {
     }
 };
 
+const confirmPaymentCash = async (req, res) => {
+    try {
+        const { bookingCode } = req.body;
+        const result = await doctorService.confirmPaymentCash(bookingCode);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
+
+const confirmQrPaymentStatus = async (req, res) => {
+    try {
+        const { bookingCode } = req.body;
+        const result = await doctorService.confirmQrPaymentStatus(bookingCode);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
@@ -225,4 +245,6 @@ export default {
     getHistoryPatientsByDoctor,
     cancelBooking,
     deleteScheduleSlot,
+    confirmPaymentCash,
+    confirmQrPaymentStatus,
 };

@@ -61,13 +61,13 @@ html, body, #root {
     }
   
     .section-list {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid; /* Sửa: dùng grid thay cho flex để căn 4 bác sĩ 1 hàng */
+      grid-template-columns: repeat(4, 1fr); /* Sửa: 4 cột cho 4 bác sĩ 1 hàng */
       gap: 24px;
       justify-content: center;
   
       .section-card {
-        width: 320px;
+        width: 100%;
         max-width: 100%;
         background: #fff;
         border-radius: 14px;

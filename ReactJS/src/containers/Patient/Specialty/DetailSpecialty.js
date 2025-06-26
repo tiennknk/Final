@@ -5,7 +5,7 @@ import HomeHeader from "../../HomePage/HomeHeader";
 import DoctorSchedule from "../Doctor/DoctorSchedule";
 import DoctorExtraInfo from "../Doctor/DoctorExtraInfo";
 import ProfileDoctor from "../Doctor/ProfileDoctor";
-import { getDetailSpecialtyById, getAllCodeService } from "../../../services/userService";
+import { getDetailSpecialtyById, getAllCodeService, getDetailInfoDoctor } from "../../../services/userService";
 import _ from "lodash";
 
 class DetailSpecialty extends Component {
@@ -26,31 +26,38 @@ class DetailSpecialty extends Component {
             let resProvinces = await getAllCodeService('PROVINCE');
             let selectedProvince = 'ALL';
 
+            let arrDoctorProvince = [];
             if (res && res.errCode === 0) {
                 let data = res.data;
-                let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
-                        arrDoctorProvince = data.doctorSpecialty.map(item => ({
-                            doctorId: item.doctorId,
-                            province: item.province
-                        }));
+                        // Thêm: fetch detailDoctor cho từng bác sĩ
+                        arrDoctorProvince = await Promise.all(
+                            data.doctorSpecialty.map(async item => {
+                                let detailRes = await getDetailInfoDoctor(item.doctorId);
+                                return {
+                                    doctorId: item.doctorId,
+                                    province: item.province,
+                                    detailDoctor: detailRes && detailRes.errCode === 0 ? detailRes.data : {},
+                                };
+                            })
+                        );
                     }
                 }
-                let dataProvince = resProvinces.data;
-                if (dataProvince && dataProvince.length > 0) {
-                    dataProvince.unshift({
-                        keyMap: 'ALL',
-                        valueVi: 'Tất cả địa điểm',
-                    });
-                }
-                this.setState({
-                    dataDetailSpecialty: data,
-                    arrDoctorProvince: arrDoctorProvince,
-                    listProvince: dataProvince ? dataProvince : [],
-                    selectedProvince
+            }
+            let dataProvince = resProvinces.data;
+            if (dataProvince && dataProvince.length > 0) {
+                dataProvince.unshift({
+                    keyMap: 'ALL',
+                    valueVi: 'Tất cả địa điểm',
                 });
             }
+            this.setState({
+                dataDetailSpecialty: res.data,
+                arrDoctorProvince: arrDoctorProvince,
+                listProvince: dataProvince ? dataProvince : [],
+                selectedProvince
+            });
         }
     }
 
@@ -60,15 +67,22 @@ class DetailSpecialty extends Component {
             let id = this.props.match.params.id;
             let res = await getDetailSpecialtyById(id, selectedProvince);
 
+            let arrDoctorProvince = [];
             if (res && res.errCode === 0) {
                 let data = res.data;
-                let arrDoctorProvince = [];
                 if (data && !_.isEmpty(data)) {
                     if (data.doctorSpecialty && data.doctorSpecialty.length > 0) {
-                        arrDoctorProvince = data.doctorSpecialty.map(item => ({
-                            doctorId: item.doctorId,
-                            province: item.province
-                        }));
+                        // Thêm: fetch detailDoctor cho từng bác sĩ khi lọc tỉnh
+                        arrDoctorProvince = await Promise.all(
+                            data.doctorSpecialty.map(async item => {
+                                let detailRes = await getDetailInfoDoctor(item.doctorId);
+                                return {
+                                    doctorId: item.doctorId,
+                                    province: item.province,
+                                    detailDoctor: detailRes && detailRes.errCode === 0 ? detailRes.data : {},
+                                };
+                            })
+                        );
                     }
                 }
                 this.setState({
@@ -124,7 +138,10 @@ class DetailSpecialty extends Component {
                                     </div>
                                     <div className="doctor-box-right">
                                         <div className="doctor-schedule-compact">
-                                            <DoctorSchedule doctorIdFromParent={item.doctorId} />
+                                            <DoctorSchedule
+                                                doctorIdFromParent={item.doctorId}
+                                                detailDoctor={item.detailDoctor}
+                                            />
                                         </div>
                                         <div className="doctor-extra-info-compact">
                                             <DoctorExtraInfo doctorIdFromParent={item.doctorId} />
