@@ -189,22 +189,20 @@ const cancelBooking = async (req, res) => {
 
 const deleteScheduleSlot = async (req, res) => {
     try {
-      const { doctorId, date, timeType } = req.body;
-      console.log('DELETE SLOT BODY:', req.body); // log để debug
-      if (!doctorId || !date || !timeType) {
-        return res.status(400).json({ errCode: 1, errMessage: "Thiếu tham số!" });
-      }
-      const deleted = await db.Schedule.destroy({
-        where: { doctorId, date, timeType }
-      });
-      if (deleted) {
-        return res.status(200).json({ errCode: 0, errMessage: "Đã xóa slot thành công!" });
-      } else {
-        return res.status(404).json({ errCode: 2, errMessage: "Không tìm thấy slot!" });
-      }
+        const { doctorId, date, timeType } = req.body;
+        if (!doctorId || !date || !timeType) {
+            return res.status(400).json({ errCode: 1, errMessage: "Thiếu tham số!" });
+        }
+        // Gọi service để kiểm tra nghiệp vụ
+        const result = await doctorService.deleteScheduleSlot(doctorId, date, timeType);
+        if (result.errCode === 0) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(400).json(result);
+        }
     } catch (e) {
-      console.error(e);
-      return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+        console.error(e);
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
     }
 };
 

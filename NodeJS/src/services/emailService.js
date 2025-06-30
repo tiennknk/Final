@@ -69,7 +69,7 @@ const getBodyHTMLEmailRemedy = (dataSend) => {
                 <strong>Xin chào <span style="color:#1677ff;">${dataSend.patientName}</span>!</strong>
             </p>
             <p style="font-size: 1.02rem;">
-                Bạn đã xác nhận lịch khám bệnh thành công với bác sĩ: 
+                Bạn đã khám bệnh thành công với bác sĩ: 
                 <strong style="color:#1677ff;">${dataSend.doctorName}</strong>
             </p>
             <div style="margin: 18px 0; padding: 10px 20px; background: #f6faff; border-radius: 7px;">

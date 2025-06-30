@@ -650,6 +650,20 @@ const confirmQrPaymentStatus = async (bookingCode) => {
     }
 };
 
+const deleteScheduleSlot = async (doctorId, date, timeType) => {
+    try {
+        const slot = await db.Schedule.findOne({ where: { doctorId, date, timeType } });
+        if (!slot) return { errCode: 2, errMessage: "Không tìm thấy slot!" };
+        if (slot.currentNumber > 0) return { errCode: 3, errMessage: "Slot đã có bệnh nhân đặt, không thể hủy!" };
+
+        const deleted = await db.Schedule.destroy({ where: { doctorId, date, timeType } });
+        if (deleted) return { errCode: 0, errMessage: "Đã xóa slot thành công!" };
+        else return { errCode: 2, errMessage: "Không tìm thấy slot!" };
+    } catch (e) {
+        return { errCode: -1, errMessage: "Server error" };
+    }
+};
+
 export default {
     getTopDoctorHome,
     getAllDoctors,
@@ -665,5 +679,6 @@ export default {
     cancelBooking,
     sendRemedy,
     confirmPaymentCash,
-    confirmQrPaymentStatus
+    confirmQrPaymentStatus,
+    deleteScheduleSlot
 };

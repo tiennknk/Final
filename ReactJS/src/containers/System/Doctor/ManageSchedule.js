@@ -5,7 +5,6 @@ import { FormattedMessage } from 'react-intl';
 import * as actions from '../../../store/actions';
 import Select from 'react-select';
 import DatePicker from '../../../components/Input/DatePicker';
-import { dateFormat } from '../../../utils';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
 import moment from 'moment';
@@ -19,17 +18,30 @@ class ManageSchedule extends Component {
             selectedDoctor: null,
             currentDate: '',
             rangeTime: [],
-            scheduledSlots: [], // NEW: slots đã lên lịch
+            scheduledSlots: [],
         }
     }
 
     componentDidMount() {
-        this.props.fetchAllDoctors();
         this.props.fetchAllScheduleTime();
+        const { userInfo } = this.props;
+        if (userInfo && userInfo.roleId === 'R2') {
+            this.setState({
+                selectedDoctor: {
+                    label: `${userInfo.firstName} ${userInfo.lastName}`,
+                    value: userInfo.id
+                }
+            });
+        } else {
+            this.props.fetchAllDoctors();
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.allDoctors !== this.props.allDoctors) {
+        if (
+            prevProps.allDoctors !== this.props.allDoctors &&
+            (!this.props.userInfo || this.props.userInfo.roleId !== 'R2')
+        ) {
             let dataSelect = this.buildDataInputSelect(this.props.allDoctors);
             this.setState({ listDoctors: dataSelect });
         }
@@ -43,7 +55,6 @@ class ManageSchedule extends Component {
             }
             this.setState({ rangeTime: data });
         }
-        // Khi đổi bác sĩ hoặc ngày, load lại slot đã lên lịch
         if (
             (prevState.selectedDoctor !== this.state.selectedDoctor || prevState.currentDate !== this.state.currentDate)
             && this.state.selectedDoctor && this.state.currentDate
@@ -154,6 +165,8 @@ class ManageSchedule extends Component {
     render() {
         let { rangeTime, scheduledSlots } = this.state;
         let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+        const { userInfo } = this.props;
+        const isDoctor = userInfo && userInfo.roleId === 'R2';
         return (
             <React.Fragment>
                 <div className="manage-schedule-container">
@@ -164,13 +177,23 @@ class ManageSchedule extends Component {
                         <div className="row align-items-end select-row">
                             <div className="col-6 form-group">
                                 <label><FormattedMessage id="manage-schedule.select-doctor" /></label>
-                                <Select
-                                    value={this.state.selectedDoctor}
-                                    onChange={this.handleChangeSelect}
-                                    options={this.state.listDoctors}
-                                    placeholder={<FormattedMessage id="manage-schedule.select-doctor-placeholder" />}
-                                    isClearable={true}
-                                />
+                                {isDoctor ? (
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={`${userInfo.firstName} ${userInfo.lastName}`}
+                                        disabled
+                                        style={{ backgroundColor: '#e9ecef' }}
+                                    />
+                                ) : (
+                                    <Select
+                                        value={this.state.selectedDoctor}
+                                        onChange={this.handleChangeSelect}
+                                        options={this.state.listDoctors}
+                                        placeholder={<FormattedMessage id="manage-schedule.select-doctor-placeholder" />}
+                                        isClearable={true}
+                                    />
+                                )}
                             </div>
                             <div className="col-6 form-group">
                                 <label><FormattedMessage id="manage-schedule.choose-date" /></label>
@@ -197,7 +220,7 @@ class ManageSchedule extends Component {
                                     );
                                 })}
                         </div>
-                        {/* Hiển thị các slot đã lên lịch và nút hủy */}
+                        {/* Hiển thị các slot đã lên lịch và nút hủy, disable nút nếu đã có người đặt */}
                         <div className="scheduled-slots" style={{ margin: '12px 0' }}>
                             {scheduledSlots && scheduledSlots.length > 0 &&
                                 scheduledSlots.map(slot => (
@@ -206,6 +229,7 @@ class ManageSchedule extends Component {
                                         className="btn btn-danger btn-cancel-schedule"
                                         style={{ marginRight: 8, marginBottom: 8 }}
                                         onClick={() => this.handleCancelSlot(slot)}
+                                        disabled={slot.currentNumber > 0} // Disable nếu slot đã có người đặt
                                     >
                                         {slot.timeTypeData?.valueVi || slot.timeType} &nbsp;Hủy
                                     </button>
@@ -229,6 +253,7 @@ const mapStateToProps = state => ({
     isLoggedIn: state.admin.isLoggedIn,
     allDoctors: state.admin.allDoctors,
     allScheduleTime: state.admin.allScheduleTime,
+    userInfo: state.user.userInfo,
 });
 
 const mapDispatchToProps = dispatch => ({

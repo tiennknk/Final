@@ -129,6 +129,11 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                 return;
             }
 
+            await db.Schedule.update(
+                { currentNumber: 1 },
+                { where: { doctorId: data.doctorId, date: data.date, timeType: data.timeType } }
+            );
+
             // Nếu chọn phương thức thanh toán QR ngân hàng (QR_BANK)
             if (data.paymentMethod === 'QR_BANK') {
                 // Lấy thông tin tài khoản nhận tiền (có thể lấy từ .env hoặc config)
