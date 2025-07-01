@@ -23,10 +23,11 @@ const getAllBookings = async (req, res) => {
 // Xác nhận thanh toán QR (admin/phòng khám)
 const clinicConfirmPayment = async (req, res) => {
     try {
-        const { bookingCode } = req.body;
-        const result = await adminService.clinicConfirmPayment(bookingCode, req.user);
+        // Truyền vào bookingId hoặc bookingCode từ FE
+        const { bookingId, bookingCode } = req.body;
+        const result = await adminService.clinicConfirmPayment(bookingId, bookingCode);
         return res.status(200).json(result);
-    } catch (error) {
+    } catch (e) {
         return res.status(500).json({ errCode: -1, errMessage: "Server error" });
     }
 };
@@ -41,6 +42,8 @@ const confirmPayment = async (req, res) => {
         return res.status(500).json({ errCode: -1, errMessage: "Server error" });
     }
 };
+
+
 
 export default {
     getBookingsWaitConfirm,

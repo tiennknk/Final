@@ -117,7 +117,51 @@ const sendAttachment = async (dataSend) => {
     return info;
 }
 
+const getBodyHTMLEmailQrSuccess = (dataSend) => {
+    return `
+        <div style="font-family: Arial, sans-serif; color: #222;">
+            <h2 style="color: #1677ff; font-size: 1.3rem; margin-bottom: 12px;">
+                Xác nhận thanh toán QR thành công
+            </h2>
+            <p style="font-size: 1.08rem; margin-bottom: 8px;">
+                <strong>Xin chào <span style="color:#1677ff;">${dataSend.patientName}</span>!</strong>
+            </p>
+            <p style="font-size: 1.02rem;">
+                Thanh toán qua QR cho lịch khám với bác sĩ
+                <strong style="color:#1677ff;">${dataSend.doctorName}</strong> vào lúc
+                <strong>${dataSend.time}</strong> ngày <strong>${dataSend.date}</strong> tại 
+                <strong>${dataSend.clinicName}</strong> đã được xác nhận thành công.
+            </p>
+            <p style="margin-top:12px; font-size: 1.01rem;">
+                Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!
+            </p>
+        </div>
+    `;
+};
+
+const sendEmailQrSuccess = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+
+    let info = await transporter.sendMail({
+        from: `"Booking" <${process.env.EMAIL_APP}>`,
+        to: dataSend.receiverEmail,
+        subject: "Xác nhận thanh toán QR thành công",
+        html: getBodyHTMLEmailQrSuccess(dataSend),
+    });
+
+    return info;
+};
+
 export default {
     sendEmail,
     sendAttachment,
+    sendEmailQrSuccess,
 };

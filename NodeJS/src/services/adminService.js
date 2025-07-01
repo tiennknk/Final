@@ -1,4 +1,5 @@
 import db from '../models/index.js';
+import emailService from "./emailService.js";
 
 // Lấy danh sách booking QR chờ xác nhận, include giá tiền và khung giờ tiếng Việt
 const getBookingsWaitConfirm = async () => {
@@ -69,14 +70,57 @@ const getAllBookings = async () => {
 };
 
 // Xác nhận thanh toán bởi admin/phòng khám
-const clinicConfirmPayment = async (bookingCode, user) => {
-    if (!bookingCode) return { errCode: 1, errMessage: "Thiếu bookingCode" };
-    if (!user || (user.roleId !== 'R1' && user.roleId !== 'R2')) {
-        return { errCode: 3, errMessage: "Không có quyền xác nhận!" };
+const clinicConfirmPayment = async (bookingId, bookingCode) => {
+    try {
+        // 1. Tìm booking
+        let where = {};
+        if (bookingId) where.id = bookingId;
+        if (bookingCode) where.bookingCode = bookingCode;
+        const booking = await db.Booking.findOne({ where });
+
+        if (!booking) {
+            return { errCode: 1, errMessage: "Không tìm thấy booking!" };
+        }
+
+        if (booking.paymentStatus === "paid") {
+            return { errCode: 2, errMessage: "Đã xác nhận thanh toán trước đó!" };
+        }
+
+        // 2. Cập nhật trạng thái thanh toán "paid"
+        booking.paymentStatus = "paid";
+        await booking.save();
+
+        // 3. Lấy thông tin bệnh nhân, bác sĩ, thời gian và phòng khám
+        const patient = await db.User.findOne({ where: { id: booking.patientId } });
+        const doctor = await db.User.findOne({ where: { id: booking.doctorId } });
+        // Lấy thêm thông tin timeTypeData nếu có
+        let timeVi = booking.timeType;
+        if (db.Allcode && booking.timeType) {
+            const timeTypeData = await db.Allcode.findOne({ where: { keyMap: booking.timeType, type: 'TIME' } });
+            if (timeTypeData) timeVi = timeTypeData.valueVi;
+        }
+        // Lấy tên phòng khám
+        let clinicName = "";
+        if (booking.clinicId) {
+            const clinic = await db.Clinic.findOne({ where: { id: booking.clinicId } });
+            clinicName = clinic ? clinic.name : "";
+        }
+
+        // 4. Gửi email xác nhận QR thành công
+        await emailService.sendEmailQrSuccess({
+            receiverEmail: patient.email,
+            patientName: patient.firstName + " " + (patient.lastName || ""),
+            doctorName: doctor.firstName + " " + (doctor.lastName || ""),
+            time: timeVi,
+            date: new Date(Number(booking.date)).toLocaleDateString('vi-VN'),
+            clinicName,
+        });
+
+        return { errCode: 0, errMessage: "Đã xác nhận thanh toán QR và gửi email thông báo cho bệnh nhân." };
+    } catch (error) {
+        console.error(error);
+        return { errCode: -1, errMessage: "Server error" };
     }
-    const updated = await db.Booking.update({ paymentStatus: 'paid' }, { where: { bookingCode } });
-    if (updated[0] === 0) return { errCode: 2, errMessage: "Không tìm thấy booking!" };
-    return { errCode: 0, errMessage: "Đã xác nhận thanh toán thành công!" };
 };
 
 // Xác nhận trạng thái chờ kiểm tra thanh toán (bệnh nhân đã chuyển khoản, chờ admin xác nhận)

@@ -46,10 +46,8 @@ class ManageQrPayment extends Component {
     handleConfirmPayment = async (bookingCode) => {
         if (!window.confirm("Xác nhận đã nhận tiền với mã booking: " + bookingCode + "?")) return;
         try {
-            // Đoạn này xử lý cho cả trường hợp res là object (data luôn), hoặc là axios response (có res.data)
             const res = await confirmQrPayment(bookingCode);
-            const result = res && res.data ? res.data : res; // Nếu có res.data thì lấy, không thì lấy chính res
-            console.log('[userService] confirmQrPayment result:', result);
+            const result = res && res.data ? res.data : res;
             if (result && result.errCode === 0) {
                 toast.success(result.errMessage || "Đã xác nhận thanh toán!");
                 this.fetchBookings();
