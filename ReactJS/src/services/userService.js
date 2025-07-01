@@ -300,6 +300,13 @@ const confirmQrPaymentStatus = (bookingCode) => {
     });
 };
 
+const getAdminStatistics = () => {
+    const token = localStorage.getItem('token');
+    return axios.get('/api/admin/statistics', {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
 export {
     // Auth & Users
     handleLoginApi,
@@ -353,5 +360,7 @@ export {
     confirmQrPayment,
     getBookingsWaitConfirm,
     confirmPaymentCash,
-    confirmQrPaymentStatus
+    confirmQrPaymentStatus,
+
+    getAdminStatistics
 };

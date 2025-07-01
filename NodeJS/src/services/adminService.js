@@ -1,5 +1,6 @@
 import db from '../models/index.js';
 import emailService from "./emailService.js";
+import { Sequelize } from 'sequelize';
 
 // Lấy danh sách booking QR chờ xác nhận, include giá tiền và khung giờ tiếng Việt
 const getBookingsWaitConfirm = async () => {
@@ -136,9 +137,47 @@ const confirmPayment = async (bookingCode) => {
     return { errCode: 0, errMessage: "Đã xác nhận chờ kiểm tra thanh toán!" };
 };
 
+const getStatistics = async () => {
+    // 1. Số lượng booking theo trạng thái
+    const bookingByStatus = await db.Booking.findAll({
+        attributes: ["paymentStatus", [Sequelize.fn("COUNT", Sequelize.col("paymentStatus")), "count"]],
+        group: ["paymentStatus"],
+        raw: true,
+    });
+
+    // 2. Tổng số booking theo ngày (dùng createdAt)
+    const bookingByDate = await db.Booking.findAll({
+        attributes: [
+            [Sequelize.literal('DATE(FROM_UNIXTIME(`date` / 1000))'), 'bookingDate'],
+            [Sequelize.fn('COUNT', Sequelize.col('id')), 'total'],
+          ],
+          group: [Sequelize.literal('DATE(FROM_UNIXTIME(`date` / 1000))')],
+        raw: true,
+    });
+
+    // 3. Tổng số bệnh nhân mới đăng ký hôm nay
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const totalPatientsToday = await db.User.count({
+        where: {
+            roleId: 'R3', // hoặc 'patient' tùy DB của bạn
+            createdAt: {
+                [Sequelize.Op.gte]: new Date(today + ' 00:00:00'),
+                [Sequelize.Op.lte]: new Date(today + ' 23:59:59'),
+            },
+        },
+    });
+
+    return {
+        bookingByStatus,
+        bookingByDate,
+        totalPatientsToday,
+    };
+};
+
 export default {
     getBookingsWaitConfirm,
     getAllBookings,
     clinicConfirmPayment,
     confirmPayment,
+    getStatistics,
 };

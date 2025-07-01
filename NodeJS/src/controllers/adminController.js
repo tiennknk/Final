@@ -1,5 +1,6 @@
 import adminService from "../services/adminService.js";
 
+
 // Lấy danh sách booking QR chờ xác nhận
 const getBookingsWaitConfirm = async (req, res) => {
     try {
@@ -43,11 +44,20 @@ const confirmPayment = async (req, res) => {
     }
 };
 
-
+const getStatistics = async (req, res) => {
+    try {
+        const stats = await adminService.getStatistics();
+        return res.status(200).json(stats);
+    } catch (e) {
+        console.error('Lỗi thống kê:', e); // Thêm dòng này để xem lỗi thực tế
+        return res.status(500).json({ errCode: -1, errMessage: "Server error" });
+    }
+};
 
 export default {
     getBookingsWaitConfirm,
     getAllBookings,
     clinicConfirmPayment,
     confirmPayment,
+    getStatistics,
 };

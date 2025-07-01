@@ -1,0 +1,60 @@
+.admin-statistics-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px 32px 24px 32px;
+    min-height: 480px;
+    .stat-title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 32px;
+        color: #1677ff;
+        letter-spacing: 1px;
+    }
+    .stat-kpi-cards {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        margin-bottom: 30px;
+        .kpi-card {
+            background: linear-gradient(90deg, #00c6ff 0%, #1677ff 100%);
+            color: #fff;
+            border-radius: 10px;
+            padding: 20px 32px;
+            box-shadow: 0 4px 16px rgba(22,119,255,0.08);
+            min-width: 180px;
+            text-align: center;
+            .kpi-title {
+                font-size: 1rem;
+                font-weight: 400;
+                margin-bottom: 8px;
+            }
+            .kpi-value {
+                font-size: 2.6rem;
+                font-weight: 700;
+            }
+        }
+    }
+    .stat-charts-wrapper {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+        align-items: flex-start;
+        .stat-chart {
+            background: #f8fafc;
+            padding: 20px 18px 12px 18px;
+            border-radius: 14px;
+            min-width: 340px;
+            box-shadow: 0 1px 6px rgba(22,119,255,0.05);
+            h3 {
+                text-align: center;
+                font-size: 1.1rem;
+                color: #1677ff;
+                margin-bottom: 10px;
+            }
+        }
+    }
+}

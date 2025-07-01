@@ -67,6 +67,7 @@ const initWebRoutes = (app) => {
     router.get('/api/get-bookings-wait-confirm', authenticateToken, adminController.getBookingsWaitConfirm);
     router.get('/api/get-all-bookings', authenticateToken, adminController.getAllBookings);
     router.post('/api/patient-confirm-payment', authenticateToken, adminController.confirmPayment);
+    router.get('/api/admin/statistics', authenticateToken, adminController.getStatistics);
     
     return app.use("/", router);
 };

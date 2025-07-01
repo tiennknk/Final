@@ -9,6 +9,7 @@ import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
 import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty';
 import ManageClinic from '../containers/System/Clinic/ManageClinic';
 import ManageQrPayment from '../containers/System/Admin/ManageQrPayment';
+import AdminStatistics from '../containers/System/Admin/AdminStatistics';
 
 class System extends Component {
     render() {
@@ -27,6 +28,7 @@ class System extends Component {
                             <Route path="/system/manage-specialty" component={ManageSpecialty} />
                             <Route path="/system/manage-clinic" component={ManageClinic} />
                             <Route path="/system/manage-qr-payment" component={ManageQrPayment} />
+                            <Route path="/system/statistics" component={AdminStatistics} />
                             <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />
                         </Switch>
                     </div>

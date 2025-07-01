@@ -48,7 +48,8 @@
             "specialty": "Chuyên khoa",
             "manage-specialty": "Quản lý chuyên khoa",
             "manage-user": "Quản lý người dùng",
-            "manage-qr-payment": "Quản lý thanh toán QR"
+            "manage-qr-payment": "Quản lý thanh toán QR",
+            "statistics": "Thống kê"
         },
         "doctor": {
             "header": "Menu",
