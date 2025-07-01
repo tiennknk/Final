@@ -167,6 +167,8 @@ class BookingModal extends Component {
     };
 
     handleComfirmBooking = async () => {
+        console.log("[BookingModal] props.clinicId:", this.props.clinicId);
+        console.log("[BookingModal] props.specialtyId:", this.props.specialtyId);
         let {
             dataTime,
             specialtyId: propSpecialtyId,
@@ -204,6 +206,8 @@ class BookingModal extends Component {
             bookingFor: this.state.bookingFor,
             paymentMethod: this.state.paymentMethod, // QR_BANK hoặc CASH
         };
+
+        console.log("[BookingModal] reqData gửi đi:", reqData);
 
         // Debug log
         console.log("[BookingModal][handleComfirmBooking] reqData:", reqData);

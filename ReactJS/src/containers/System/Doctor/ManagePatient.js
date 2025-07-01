@@ -187,13 +187,23 @@ class ManagePatient extends Component {
                                                                 Gửi hóa đơn
                                                             </button>
                                                         )}
-                                                        {item.paymentStatus !== "paid" && (
-                                                            <button
-                                                                className="mp-btn-confirm"
-                                                                onClick={() => this.handleConfirmPaymentCash(item.bookingCode)}
-                                                            >
-                                                                Xác nhận thanh toán tiền mặt
-                                                            </button>
+                                                        {item.paymentStatus === "unpaid" && (
+                                                        <button
+                                                         className="mp-btn-confirm"
+                                                         onClick={() => this.handleConfirmPaymentCash(item.bookingCode)}
+                                                        >
+                                                         Xác nhận thanh toán tiền mặt
+                                                        </button>
+                                                        )}
+                                                        {item.paymentStatus === "wait_confirm" && (
+                                                         <button
+                                                          className="mp-btn-confirm"
+                                                          disabled
+                                                          title="Đang chờ xác nhận thanh toán QR từ Admin"
+                                                          style={{ opacity: 0.7, cursor: "not-allowed" }}
+                                                        >
+                                                         Chờ xác nhận QR
+                                                         </button>
                                                         )}
                                                         <button
                                                             className="mp-btn-cancel"

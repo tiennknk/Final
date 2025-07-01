@@ -147,7 +147,7 @@ const DoctorHistory = ({ userInfo }) => {
                                         <td>{email}</td>
                                         <td>{address}</td>
                                         <td>{reason}</td>
-                                        <td>{status}</td> {/* Thêm trạng thái vào cột */}
+                                        <td>{status}</td>
                                     </tr>
                                 );
                             })

@@ -82,7 +82,58 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                 patientName = data.fullName;
             }
 
-            // Gửi email xác nhận
+            // 1. Chặn: 1 bệnh nhân - 1 bác sĩ - 1 ngày chỉ đặt được 1 khung giờ bất kỳ
+            const existedSlotBookingWithDoctor = await db.Booking.findOne({
+                where: {
+                    patientId: patientUser.id,
+                    doctorId: data.doctorId,
+                    date: data.date,
+                    statusId: ['S1', 'S2']
+                }
+            });
+            if (existedSlotBookingWithDoctor) {
+                resolve({
+                    errCode: 5,
+                    errMessage: 'Bạn chỉ được phép đặt 1 khung giờ với 1 bác sĩ trong ngày này!',
+                });
+                return;
+            }
+
+            // 2. Chặn: 1 bệnh nhân - nhiều bác sĩ - cùng ngày, không được trùng khung giờ
+            const existedSlotBookingWithTimeType = await db.Booking.findOne({
+                where: {
+                    patientId: patientUser.id,
+                    date: data.date.toString(),
+                    timeType: data.timeType,
+                    statusId: ['S1', 'S2']
+                }
+            });
+            if (existedSlotBookingWithTimeType) {
+                resolve({
+                    errCode: 6,
+                    errMessage: 'Bạn đã đặt khung giờ này với một bác sĩ khác trong ngày này!',
+                });
+                return;
+            }
+
+            // 3. Kiểm tra: mỗi khung giờ tối đa 10 người đặt (với từng bác sĩ)
+            const countBooking = await db.Booking.count({
+                where: {
+                    doctorId: data.doctorId,
+                    date: data.date,
+                    timeType: data.timeType,
+                    statusId: ['S1', 'S2']
+                }
+            });
+            if (countBooking >= 10) {
+                resolve({
+                    errCode: 3,
+                    errMessage: 'Khung giờ này đã đủ người, vui lòng chọn khung giờ khác!'
+                });
+                return;
+            }
+
+            // 4. Gửi email xác nhận
             await emailService.sendEmail({
                 receiverEmail: patientEmail,
                 patientName: patientName,
@@ -92,10 +143,10 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                 redirectLink: buildUrlEmail(data.doctorId, token),
             });
 
-            // -- Bổ sung: Sinh mã booking code (để đưa vào nội dung chuyển khoản QR)
+            // 5. Bổ sung: Sinh mã booking code (để đưa vào nội dung chuyển khoản QR)
             const bookingCode = "DL" + Date.now();
 
-            // Tạo booking
+            // 6. Tạo booking (vẫn cho phép đặt nhiều bác sĩ/ngày, miễn không cùng khung giờ)
             let [booking, created] = await db.Booking.findOrCreate({
                 where: {
                     patientId: patientUser.id,
@@ -129,12 +180,14 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                 return;
             }
 
-            await db.Schedule.update(
+            // 7. Tăng số lượng đã đặt lên cho schedule
+            const result = await db.Schedule.increment(
                 { currentNumber: 1 },
-                { where: { doctorId: data.doctorId, date: data.date, timeType: data.timeType } }
+                { where: { doctorId: data.doctorId, date: data.date.toString(), timeType: data.timeType } }
             );
+            console.log('Increment result:', result);
 
-            // Nếu chọn phương thức thanh toán QR ngân hàng (QR_BANK)
+            // 8. Nếu chọn phương thức thanh toán QR ngân hàng (QR_BANK)
             if (data.paymentMethod === 'QR_BANK') {
                 // Lấy thông tin tài khoản nhận tiền (có thể lấy từ .env hoặc config)
                 const bank = process.env.PAYQR_BANK || "VCB";
@@ -166,7 +219,7 @@ const postBookAppointment = async (data, loggedInUser = null) => {
                 return;
             }
 
-            // Nếu không chọn QR_BANK thì trả về bình thường
+            // 9. Nếu không chọn QR_BANK thì trả về bình thường
             resolve({
                 errCode: 0,
                 errMessage: 'Đặt lịch khám thành công!',

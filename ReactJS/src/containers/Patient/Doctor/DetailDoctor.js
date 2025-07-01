@@ -57,6 +57,14 @@ class DetailDoctor extends Component {
 
         const patientId = this.props.userInfo?.id;
 
+        const clinicId = detailDoctor?.doctorInfo?.[0]?.clinicId;
+        const specialtyId = detailDoctor?.doctorInfo?.[0]?.specialtyId;
+        console.log("[DetailDoctor] Render DoctorSchedule with", {
+            currentDoctorId,
+            clinicId,
+            specialtyId
+        });
+
         return (
             <>
                 <HomeHeader isShowBanner={false} />
@@ -82,10 +90,12 @@ class DetailDoctor extends Component {
                     </div>
                     <div className="schedule-doctor">
                         <div className="content-left">
-                            <DoctorSchedule
-                                doctorIdFromParent={currentDoctorId}
-                                detailDoctor={detailDoctor}
-                            />
+                        <DoctorSchedule
+                        doctorIdFromParent={currentDoctorId}
+                        detailDoctor={detailDoctor}
+                        clinicId={detailDoctor?.doctorInfo?.[0]?.clinicId}
+                        specialtyId={detailDoctor?.doctorInfo?.[0]?.specialtyId}
+                        />
                         </div>
                         <div className="content-right">
                             <DoctorExtraInfo doctorIdFromParent={currentDoctorId} />

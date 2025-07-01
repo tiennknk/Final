@@ -65,7 +65,8 @@ const getDetailClinicById = async (id) => {
             } else {
                 let data = await db.Clinic.findOne({
                     where: { id: id },
-                    attributes: ['name', 'address', 'descriptionMarkdown', 'descriptionHTML'],
+                    // Thêm 'id' vào attributes
+                    attributes: ['id', 'name', 'address', 'descriptionMarkdown', 'descriptionHTML'],
                 });
 
                 if (data) {

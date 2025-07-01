@@ -94,7 +94,7 @@ const PatientHistory = () => {
                     <td>{clinic.name || "-"}</td>
                     
                     <td>
-                      {item.statusId === 'S2' ? "Đã khám" : "Chờ xác nhận"}
+                      {item.statusId === 'S2' ? "Chờ khám" : "Đã khám"}
                     </td>
                   </tr>
                 );

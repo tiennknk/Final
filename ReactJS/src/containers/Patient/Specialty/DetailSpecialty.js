@@ -138,10 +138,12 @@ class DetailSpecialty extends Component {
                                     </div>
                                     <div className="doctor-box-right">
                                         <div className="doctor-schedule-compact">
-                                            <DoctorSchedule
-                                                doctorIdFromParent={item.doctorId}
-                                                detailDoctor={item.detailDoctor}
-                                            />
+                                        <DoctorSchedule
+    doctorIdFromParent={item.doctorId}
+    detailDoctor={item.detailDoctor}
+    clinicId={item.detailDoctor?.doctorInfo?.[0]?.clinicId}
+    specialtyId={item.detailDoctor?.doctorInfo?.[0]?.specialtyId}
+/>
                                         </div>
                                         <div className="doctor-extra-info-compact">
                                             <DoctorExtraInfo doctorIdFromParent={item.doctorId} />

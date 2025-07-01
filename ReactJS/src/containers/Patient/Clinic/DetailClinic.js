@@ -97,7 +97,6 @@ class DetailClinic extends Component {
                             )}
                         </select>
                     </div>
-
                     {filteredDoctors && filteredDoctors.length > 0 &&
                         filteredDoctors.map((item, index) => {
                             return (
@@ -111,8 +110,16 @@ class DetailClinic extends Component {
                                         />
                                     </div>
                                     <div className="doctor-right">
-                                        <DoctorSchedule doctorIdFromParent={item.doctorId} />
-                                        <DoctorExtraInfo doctorIdFromParent={item.doctorId} />
+                                    <DoctorSchedule
+                                     doctorIdFromParent={item.doctorId}
+                                     clinicId={dataDetailClinic.id}
+                                     specialtyId={item.specialtyId}
+                                    />
+                                        <DoctorExtraInfo 
+                                        doctorIdFromParent={item.doctorId}
+                                        clinicId={dataDetailClinic.id}
+                                        specialtyId={item.specialtyId}
+                                        />
                                     </div>
                                 </div>
                             );

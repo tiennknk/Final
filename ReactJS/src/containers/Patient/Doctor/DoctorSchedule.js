@@ -18,6 +18,7 @@ class DoctorSchedule extends Component {
             isOpenModalBooking: false,
             dataScheduleTimeModal: {},
             bookedTimeTypes: [],
+            bookedCountPerTimeType: {}, // Số lượng đã đặt trên từng timeType (backend trả về)
         };
     }
 
@@ -29,7 +30,7 @@ class DoctorSchedule extends Component {
         if (this.props.doctorIdFromParent) {
             await this.loadTimeAndBooked(this.props.doctorIdFromParent, selectedDate);
         }
-        console.log('detailDoctor:', this.props.detailDoctor);
+        // console.log('detailDoctor:', this.props.detailDoctor);
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -81,23 +82,32 @@ class DoctorSchedule extends Component {
         });
     };
 
+    // Hàm này giả định API getBookedTimeTypesByDate trả về dạng:
     loadTimeAndBooked = async (doctorId, date) => {
         let [scheduleRes, bookedRes] = await Promise.all([
             getScheduleByDate(doctorId, date),
             getBookedTimeTypesByDate(doctorId, date)
         ]);
+        // Xử lý count booking từng timeType
+        let bookedCountPerTimeType = {};
+        if (Array.isArray(bookedRes?.data)) {
+            bookedRes.data.forEach(item => {
+                bookedCountPerTimeType[item.timeType] = item.count || 0;
+            });
+        }
         this.setState({
             allAvailableTime: scheduleRes && scheduleRes.errCode === 0 ? scheduleRes.data : [],
-            bookedTimeTypes: bookedRes && bookedRes.errCode === 0 ? bookedRes.data : [],
+            bookedTimeTypes: bookedRes && bookedRes.errCode === 0 ? bookedRes.data.map(x => x.timeType) : [],
+            bookedCountPerTimeType,
         });
     };
 
-    filterRealtimeAndBookedSlots = (slots, selectedDate, bookedTimeTypes) => {
+    // KHÔNG ẩn khung giờ đã có người đặt, chỉ ẩn nếu quá giờ hiện tại
+    filterRealtimeSlots = (slots, selectedDate) => {
         if (!slots || slots.length === 0) return [];
         const now = moment();
         const today = moment().startOf("day").valueOf();
         return slots.filter(item => {
-            if (bookedTimeTypes.includes(item.timeType)) return false;
             if (Number(selectedDate) === today) {
                 let timeStr = item.timeTypeData?.valueVi || "";
                 let startHour = parseInt(timeStr.split(":")[0], 10);
@@ -109,12 +119,12 @@ class DoctorSchedule extends Component {
     };
 
     render() {
-        let { allDays, allAvailableTime, selectedDate, isOpenModalBooking, dataScheduleTimeModal, bookedTimeTypes } = this.state;
+        let { allDays, allAvailableTime, selectedDate, isOpenModalBooking, dataScheduleTimeModal, bookedCountPerTimeType } = this.state;
         const { detailDoctor } = this.props;
         const clinicId = detailDoctor?.doctorInfo?.[0]?.clinicId;
         const specialtyId = detailDoctor?.doctorInfo?.[0]?.specialtyId;
-        console.log('clinicId:', clinicId, 'specialtyId:', specialtyId);
-        const filteredSlots = this.filterRealtimeAndBookedSlots(allAvailableTime, selectedDate, bookedTimeTypes);
+        // Không ẩn khung giờ đã đủ người, chỉ disable nút nếu đủ 10
+        const filteredSlots = this.filterRealtimeSlots(allAvailableTime, selectedDate);
 
         return (
             <>
@@ -143,13 +153,20 @@ class DoctorSchedule extends Component {
                                                 item.timeTypeData?.valueEn ||
                                                 item.timeType ||
                                                 "";
+                                            const count = bookedCountPerTimeType[item.timeType] || 0;
+                                            const isFull = count >= 10;
                                             return (
                                                 <button
                                                     key={index}
-                                                    className="btn btn-primary"
+                                                    className={`btn btn-primary${isFull ? " btn-disabled" : ""}`}
                                                     onClick={() => this.handleClickScheduleTime(item)}
+                                                    disabled={isFull}
+                                                    title={isFull
+                                                        ? "Khung giờ này đã đủ người đặt"
+                                                        : `Đã có ${count}/10 người đặt`}
                                                 >
                                                     {timesDisplay}
+                                                    {isFull ? " (Đã đầy)" : count > 0 ? ` (${count}/10)` : ""}
                                                 </button>
                                             );
                                         })}
@@ -164,12 +181,12 @@ class DoctorSchedule extends Component {
                         </div>
                     </div>
                 </div>
-                <BookingModal 
+                <BookingModal
                 isOpenModalBooking={isOpenModalBooking}
                 closeBookingModal={this.closeBookingModal}
                 dataTime={dataScheduleTimeModal}
-                clinicId={detailDoctor?.doctorInfo?.[0]?.clinicId}
-                specialtyId={detailDoctor?.doctorInfo?.[0]?.specialtyId}
+                clinicId={this.props.clinicId}
+                specialtyId={this.props.specialtyId}
                 doctor={detailDoctor}
                 />
             </>
